@@ -1,0 +1,56 @@
+# ---- Python ----
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# ---- Environments & secrets ----
+.venv/
+venv/
+env/
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# ---- Datasets and trained artifacts ----
+# DVC owns the real files; Git must only ever hold the .dvc pointers.
+# NOTE: we deliberately do NOT ignore `data/` or `models/` as directories —
+# that would also hide data/raw/train.csv.dvc and break `dvc pull`.
+*.csv
+*.tsv
+*.parquet
+*.feather
+*.arrow
+*.joblib
+*.pkl
+*.pickle
+*.h5
+*.hdf5
+*.onnx
+*.ckpt
+# ...but CI needs a small committed sample
+!tests/fixtures/*.csv
+
+# ---- Checkpoints ----
+checkpoints/
+lightning_logs/
+*.pt
+
+# ---- ML tracking / experiment leftovers ----
+mlruns/
+runs/
+wandb/
+dvc_plots/
+
+# ---- Notebooks ----
+.ipynb_checkpoints/
+
+# ---- DVC local-only credentials (never commit these) ----
+.dvc/config.local
