@@ -67,7 +67,7 @@ git config user.email "<your-email>"
 ```
 
 - [x] Uzair identity set **and verified** with `git config user.name` → `Uzair Tariq`
-- [ ] **Saad** identity set **and verified** (in his own clone)
+- [x] **Saad** identity set **and verified** (in his own clone) — `Muhammad Saad Sabir <saadsbr789@gmail.com>`, set with `git config --local` (per-clone, not global)
 
 > Identity is set **per clone** (`--local`), not globally — Saad must run it in his own clone.
 
@@ -101,7 +101,7 @@ git push -u origin chore/bootstrap
 ```
 
 - [x] **Uzair** pushed a branch → `chore/bootstrap` (`6e16d66 docs: add team roles, module plan and progress board`)
-- [ ] **Saad** pushes a branch (from his clone)
+- [x] **Saad** pushes a branch (from his clone) — `chore/saad-setup`
 - [x] Branch visible on GitHub
 
 > Note: `main`/`staging`/`dev` do not exist on the remote yet — they are created in Module 02. This
@@ -114,7 +114,7 @@ git push -u origin chore/bootstrap
 ## Checkpoint (evidence for REPORT.md)
 
 - [ ] Screenshot: repo `skyline-ml-collab` with Saad + instructor as collaborators
-- [ ] `git log --format='%an %ae'` shows **both** authors (needs Saad's first commit)
+- [x] `git log --format='%an %ae'` shows **both** authors (Saad's first commit lands on `chore/saad-setup`)
 
 ## Pitfalls
 

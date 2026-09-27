@@ -3,13 +3,13 @@
 > Update this file as you go. Status: ⬜ not started · 🟡 in progress · ✅ done · ❌ blocked
 > **Also** tick the checkboxes inside each module file — this board is the summary.
 
-**Last updated:** 2026-09-27 · **Current phase:** Module 01 (Phase 1) — 🟡 waiting on Saad
+**Last updated:** 2026-09-27 · **Current phase:** Module 01 (Phase 1) — ✅ both members pushed a branch; ready for Module 02
 
 ## Module status
 
 | # | Module | Status | Branch | PR | Checkpoint evidence |
 |---|--------|--------|--------|----|---------------------|
-| 01 | Team & repository setup | 🟡 | `chore/bootstrap` pushed | — | ✅ Uzair pushed · ⬜ Saad clone + push |
+| 01 | Team & repository setup | ✅ | `chore/bootstrap` + `chore/saad-setup` pushed | — | ✅ Uzair pushed · ✅ Saad clone + push (collaborator 📸 still pending) |
 | 02 | Scaffold & import | ⬜ | `main` | — | 3 protected branches, import in `git log` |
 | 03 | Pre-commit & secrets | ⬜ | `feat/pre-commit` | # | 📸 blocked 5 MB file + fake key |
 | 04 | DVC data versioning | ⬜ | `data/initial-dataset` | # | CSV absent from git history |
@@ -46,7 +46,7 @@
 | Local branch `master` → `main`, `origin` set, identity = Uzair Tariq | Uzair | ✅ |
 | `README.md` with team/roles committed | Uzair | ✅ |
 | `chore/bootstrap` pushed (Phase 1 checkpoint) | Uzair | ✅ |
-| **Saad: clone + `git config user.name/user.email` + push a branch** | Saad | ⬜ |
+| **Saad: clone + `git config user.name/user.email` + push a branch** | Saad | ✅ |
 | **Screenshot: collaborators list** | Uzair | ⬜ |
 | DagsHub account created + `dvc dagshub-setup` run | Uzair | ⬜ (Module 04) |
 
@@ -66,3 +66,4 @@
 | 2026-09-27 | **Task 3:** folder `ml-git-collaboration` → `skyline-ml-collab`; `uv sync --reinstall` (stale shebangs fixed); `pyproject` name → `skyline-ml-collab`; broken `[project.scripts]` removed; package → `src/ml_skyline` |
 | 2026-09-27 | **Task 4–5:** `git branch -m main`; `origin` = `git@github.com:Uzair3112/skyline-ml-collab.git` (+ repo-local rewrite to the `github-uzair3112` SSH alias, because plain `github.com` authenticates as Uzair599); local identity `Uzair Tariq <uzairtariq.pakistani@gmail.com>` |
 | 2026-09-27 | **Task 6–7:** `README.md` with team/roles; commit `6e16d66` pushed to **`chore/bootstrap`** as Uzair3112 ✅ |
+| 2026-09-27 | **Task 4/7 (Saad):** clone verified; local identity set `Muhammad Saad Sabir <saadsbr789@gmail.com>` (per-clone); SSH authenticates as `msaadsbr` with write access (no `github-uzair3112` rewrite needed); branch **`chore/saad-setup`** pushed as Saad ✅ — Phase-1 two-author checkpoint met. NB: env sanity (`uv sync` / `import ml_skyline`) not runnable yet — scaffold (`pyproject.toml`, `src/ml_skyline/`) is Module 02 and not on this branch. |
