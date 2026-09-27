@@ -109,15 +109,37 @@ git push -u origin chore/bootstrap
 >
 > ⚠️ **Phase 2 housekeeping:** because `chore/bootstrap` was the first branch pushed, GitHub made it
 > the **default branch**. In Phase 2: push `main`, then *Settings → Branches → default branch →
-> `main`*, and delete `chore/bootstrap` (its commit is already an ancestor of `main`).
+> `main`*, and delete **`chore/bootstrap`** and **`chore/saad-setup`** (both are ancestors of `main`).
 
 ## Checkpoint (evidence for REPORT.md)
 
-- [ ] Screenshot: repo `skyline-ml-collab` with Saad + instructor as collaborators
-- [x] `git log --format='%an %ae'` shows **both** authors (Saad's first commit lands on `chore/saad-setup`)
+- [ ] 📸 Screenshot: repo `skyline-ml-collab` → *Settings → Collaborators* showing
+      **Saad (Write)** and **instructor (Read)** — **the one item still manual for Uzair**
+- [x] `git log --format='%an %ae'` shows **both** authors:
+      `Uzair Tariq <uzairtariq.pakistani@gmail.com>` ·
+      `Muhammad Saad Sabir <saadsbr789@gmail.com>`
+- [x] **Write access proven empirically** — Saad pushed `chore/saad-setup` (`214269f`) himself;
+      no API token or screenshot needed to show it
+
+## Module 01 close-out
+
+| Item | Result |
+|------|--------|
+| Team / repo | `skyline` → `Uzair3112/skyline-ml-collab` (public) |
+| Members' SSH identities | Uzair → `Uzair3112` (via repo-local URL rewrite) · Saad → `msaadsbr` |
+| Local `main` | `214269f`, 3 commits, **2 authors** ✅ |
+| Branches on remote | `chore/bootstrap` (`8fc1ef3`), `chore/saad-setup` (`214269f`) — both to be deleted in Module 02 |
+| Outstanding | 📸 collaborators screenshot (Uzair, browser) |
+| Next | **Module 02** — scaffold, initial import pushed to `main`, create `staging` + `dev`, branch protection, `CONTRIBUTING.md` |
+
+> `main` is deliberately **not pushed yet**: the PDF says Phase 2 is the only time anyone pushes
+> directly to `main`, so all 3 documentation commits go up with the Phase 2 scaffold push.
 
 ## Pitfalls
 
 - Committing as the wrong person (shared laptop) → history misattributes work; marks get adjusted.
 - Creating the repo *with* a README on GitHub → divergent histories on first push.
 - Making the repo private then discovering branch protection is unavailable.
+- A member editing files on `main` locally while the other pushes to a `chore/*` branch → divergence;
+  always fast-forward `main` onto the teammate's branch first
+  (`git fetch && git switch main && git merge --ff-only origin/<branch>`).
