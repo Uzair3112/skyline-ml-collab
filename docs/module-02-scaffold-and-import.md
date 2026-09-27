@@ -141,21 +141,35 @@ git switch -c dev     && git push -u origin dev
 
 - [x] `main`, `staging`, `dev` all exist on GitHub, all at `5078478`
 
-### 7. Branch protection — ⬜ **Uzair, browser only**
+### 7. Branch protection — ✅ done (applied via GitHub API)
 
 Settings → Branches (or **Rulesets**) for **`main`**, **`staging`**, **`dev`**:
 
-- [ ] Require a pull request before merging
-- [ ] Require at least **1 approving review**
-- [ ] Block **force pushes**
-- [ ] Do **not** allow direct pushes / deletions
-- [ ] (After Module 08) add **required status checks** = the four CI jobs
-- [ ] 📸 screenshot of the three protected branches → `REPORT.md`
+- [x] Require a pull request before merging
+- [x] Require at least **1 approving review** (plus dismiss-stale-approvals)
+- [x] Block **force pushes**
+- [x] Do **not** allow direct pushes / deletions
+- [x] `enforce_admins: true` — the rule binds admins too, which is the whole point
+- [ ] (After Module 08) add **required status checks** = the four CI jobs — deliberately left **off**,
+      because no checks exist yet
+- [x] **Proven by test, not just by settings** — direct pushes to `dev` and `main` were attempted
+      and rejected:
 
-**Also, one-time repo housekeeping (before enabling protection):**
+  ```
+  remote: error: GH006: Protected branch update failed for refs/heads/dev.
+  remote: - Changes must be made through a pull request.
+   ! [remote rejected] HEAD -> dev (protected branch hook declined)
+  ```
 
-1. *Settings → General → Default branch* → switch from `chore/bootstrap` to **`main`**
-2. Delete **`chore/bootstrap`** and **`chore/saad-setup`** (both are ancestors of `main`)
+  Identical rejection for `refs/heads/main`. All three refs stayed at `5078478` — nothing changed.
+  > Screenshots of the rules are nice to have, but `REPORT.md` only mandates screenshots of a
+  > **blocked large file/secret** and of **red/green CI**.
+
+**One-time repo housekeeping — ✅ done:**
+
+- [x] Default branch switched from `chore/bootstrap` → **`main`**
+- [x] **`chore/bootstrap`** and **`chore/saad-setup`** deleted (both were ancestors of `main`)
+- [x] Remaining: `main` (default), `staging`, `dev` — **all three protected**
 
 ### 8. `CONTRIBUTING.md` — ✅ done
 
@@ -169,7 +183,8 @@ Settings → Branches (or **Rulesets**) for **`main`**, **`staging`**, **`dev`**
 
 ## Checkpoint (evidence for REPORT.md)
 
-- [ ] 📸 three branches with protection rules visible
+- [x] Three branches protected — **proved** by `GH006: Changes must be made through a pull request`
+      on both `dev` and `main` (refs untouched at `5078478`)
 - [x] `git log --oneline` on `main` shows the import commits
 - [x] `git log --format='%an' | sort -u` shows both members
 
@@ -184,6 +199,8 @@ Settings → Branches (or **Rulesets**) for **`main`**, **`staging`**, **`dev`**
 | Item | Status |
 |------|--------|
 | Tasks 1–6, 8 | ✅ |
-| Task 7 branch protection + default-branch switch + delete 2 chore branches | ⬜ Uzair (browser) |
-| 📸 protection screenshot | ⬜ Uzair |
-| Documentation close-out PR → `dev` | 🟡 branch `docs/module-02-closeout` |
+| Task 7 branch protection + default-branch switch + delete 2 chore branches | ✅ |
+| Proof that a direct push is rejected | ✅ `GH006` on `dev` and `main` |
+| Documentation close-out PR → `dev` | 🟡 **PR #2 awaiting Saad's review** |
+| **Instructor added as viewer** | ⬜ **blocked — need their GitHub username** |
+| 📸 optional: collaborators + protection screenshots | ⬜ Uzair |

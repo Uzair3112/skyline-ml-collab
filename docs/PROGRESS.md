@@ -3,14 +3,14 @@
 > Update this file as you go. Status: ⬜ not started · 🟡 in progress · ✅ done · ❌ blocked
 > **Also** tick the checkboxes inside each module file — this board is the summary.
 
-**Last updated:** 2026-09-27 · **Current phase:** Module 02 (Phase 2) — 🟡 code done, GitHub protection pending · next: Module 03
+**Last updated:** 2026-09-27 · **Current phase:** Module 02 (Phase 2) — 🟡 GitHub side done · waiting on Saad's review of PR #2 · next: Module 03
 
 ## Module status
 
 | # | Module | Status | Branch | PR | Checkpoint evidence |
 |---|--------|--------|--------|----|---------------------|
-| 01 | Team & repository setup | ✅ | `chore/bootstrap` + `chore/saad-setup` | — | ✅ 2 authors · ✅ write access · ⬜ collaborators 📸 |
-| 02 | Scaffold & import | 🟡 | `main` pushed (`5078478`) | docs PR | ✅ import in `git log` · ✅ `staging`+`dev` · ⬜ protection 📸 |
+| 01 | Team & repository setup | ✅ | *branches deleted* | — | ✅ 2 authors · ✅ Saad write=push · ⬜ instructor still missing |
+| 02 | Scaffold & import | 🟡 | `main` pushed (`5078478`) | **PR #2** open | ✅ import in `git log` · ✅ 3/3 protected · ✅ direct push rejected `GH006` · ⬜ Saad review |
 | 03 | Pre-commit & secrets | ⬜ | `feat/pre-commit` | # | 📸 blocked 5 MB file + fake key |
 | 04 | DVC data versioning | ⬜ | `data/initial-dataset` | # | CSV absent from git history |
 | 05 | Notebooks | ⬜ | `feat/eda-notebook` | # | no outputs in PR diff |
@@ -29,7 +29,7 @@
 | Saad reviewed PRs | ≥ 2 | 0 / 2 |
 | "Changes requested" reviews | ≥ 1 | 0 / 1 |
 | Experiments per member | ≥ 3 | Uzair 0/3 · Saad 0/3 |
-| Protected branches | `main`, `staging`, `dev` | 0 / 3 |
+| Protected branches | `main`, `staging`, `dev` | **3 / 3** ✅ |
 | Required CI checks on | all 3 branches | 0 / 3 |
 | Release tag | `model-v1.0` on `main` | ⬜ |
 | Independent reproduction | matches exactly | ⬜ |
@@ -41,25 +41,32 @@
 | Item | Owner | Status |
 |------|-------|--------|
 | Instructor approval of the Airline dataset (not on the PDF's list) | Uzair | ✅ (task 1 done) |
-| Repo created on GitHub, Saad + instructor added | Uzair | ✅ (task 2 done) |
+| Repo created on GitHub + Saad (write) added | Uzair | ✅ |
+| **Instructor added as viewer (read)** | Uzair | ❌ **not added yet — need their GitHub username** |
 | Local folder renamed → `skyline-ml-collab`, venv rebuilt, `pyproject` renamed | Uzair | ✅ |
 | Local branch `master` → `main`, `origin` set, identity = Uzair Tariq | Uzair | ✅ |
 | `README.md` with team/roles committed | Uzair | ✅ |
 | `chore/bootstrap` pushed (Phase 1 checkpoint) | Uzair | ✅ |
 | **Saad: clone + `git config user.name/user.email` + push a branch** | Saad | ✅ |
-| **📸 Screenshot: Settings → Collaborators** (Saad = Write, instructor = Read) | Uzair | ⬜ **only Module 01 item left** |
+| 📸 Optional screenshots: collaborators page, protection rules | Uzair | ⬜ not required by `REPORT.md` |
 | DagsHub account created + `dvc dagshub-setup` run | Uzair | ⬜ (Module 04) |
 
-### ⚠️ Open in Module 02 (all GitHub-UI, owner Uzair)
+### ⚠️ Open in Module 02
 
-1. **Branch protection** on `main`, `staging`, `dev`: PR required, ≥1 approval, no force-push.
-   Then 📸 screenshot for `REPORT.md`.
-2. **Default branch** `chore/bootstrap` → `main`, then delete **`chore/bootstrap`** and
-   **`chore/saad-setup`**.
-3. **Collaborators screenshot** (carried over from Module 01).
-4. Saad re-runs his env check from `main`: `uv sync` then `python -m ml_skyline.prepare && …`.
-5. Module 02 documentation close-out rides on branch **`docs/module-02-closeout`** → PR → `dev`
-   (first real PR; Saad reviews). *No direct pushes to `dev` — the rule applies from now on.*
+| # | Item | Owner | Status |
+|---|------|-------|--------|
+| 1 | Branch protection ×3 (PR required, 1 approval, no force-push, no deletions, `enforce_admins`) | Uzair | ✅ |
+| 2 | Direct-push rejection proven (`GH006` on `dev` and `main`, refs untouched) | Uzair | ✅ |
+| 3 | Default branch → `main`; delete `chore/bootstrap` + `chore/saad-setup` | Uzair | ✅ |
+| 4 | Retarget PR #2 base `chore/bootstrap` → `dev` | Uzair | ✅ |
+| 5 | Request `msaadsbr` as reviewer on PR #2 | Uzair | ✅ |
+| 6 | Close stale PR #1 (adds 0 commits to `dev`) | Uzair | ✅ |
+| 7 | **Review + squash-merge PR #2** | **Saad** | ⬜ |
+| 8 | Saad's env check on `dev` (`uv sync` + 3 stages + `pytest`) | Saad | ⬜ |
+| 9 | **Add instructor as a read-only collaborator** | Uzair | ❌ need their GitHub username |
+| 10 | 📸 optional screenshots (collaborators / protection) | Uzair | ⬜ |
+
+> **No direct pushes to `dev`/`staging`/`main` from now on** — proven above.
 
 ### ⚠️ Data note found in Phase 2 — matters for Modules 05/06/07
 
@@ -88,3 +95,6 @@ refactor scores 93 %.
 | 2026-09-27 | **M02 task 3:** starter refactored into `src/ml_skyline/{common,prepare,pipeline,train,evaluate}.py` + 17 tests; fixed the starter's tab-corrupted CSV and its `remainder='drop'`/train-as-test leakage; **93.0 % accuracy** vs 78 % |
 | 2026-09-27 | **M02 tasks 4–6:** `joblib`/`pyyaml` made explicit + ruff/pytest config; 5 small commits; **`main` pushed once** (`5078478`); `staging` and `dev` created and pushed at the same SHA |
 | 2026-09-27 | **M02 task 8:** `CONTRIBUTING.md` — branch rules, Conventional Commits, **squash into `dev`** decision, DVC and review rules |
+| 2026-09-27 | **M02 GitHub side (Uzair, via API with a 7-day `repo` token):** retargeted PR #2 base → `dev`; requested `msaadsbr` as reviewer; closed stale PR #1 (added 0 commits); **branch protection ×3** (`PR required`, `1 approval`, `dismiss stale`, `no force-push`, `no deletions`, `enforce_admins`); default branch → `main`; deleted `chore/bootstrap` + `chore/saad-setup` |
+| 2026-09-27 | **Protection proven:** direct pushes to `dev` and `main` rejected with `GH006: Protected branch update failed … Changes must be made through a pull request`; all refs stayed at `5078478` |
+| 2026-09-27 | **Blocker found:** instructor is **not** a collaborator (`GET /collaborators` returns only `Uzair3112` and `msaadsbr`) — need their GitHub username to satisfy Phase 1 task 2 |
