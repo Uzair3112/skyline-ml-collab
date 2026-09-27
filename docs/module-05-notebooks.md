@@ -52,7 +52,7 @@ Pick something genuinely reusable from the EDA, e.g. the cleaning/feature step:
 
 ```python
 # src/ml_skyline/features.py
-def build_features(df): ...      # e.g. fill Arrival Delay NaN, drop id/Unnamed: 0, encode target
+def build_features(df): ...  # e.g. fill Arrival Delay NaN, drop id/Unnamed: 0, encode target
 ```
 
 - [ ] Notebook imports it: `from ml_skyline.features import build_features`
@@ -62,13 +62,19 @@ def build_features(df): ...      # e.g. fill Arrival Delay NaN, drop id/Unnamed:
 import pandas as pd
 from ml_skyline.features import build_features
 
+
 def test_build_features_fills_arrival_delay_nan():
-    df = pd.DataFrame({"Arrival Delay in Minutes": [None, 12.0], "satisfaction": ["satisfied", "neutral or dissatisfied"]})
+    df = pd.DataFrame(
+        {
+            "Arrival Delay in Minutes": [None, 12.0],
+            "satisfaction": ["satisfied", "neutral or dissatisfied"],
+        }
+    )
     out = build_features(df)
     assert out["Arrival Delay in Minutes"].isna().sum() == 0
 
-def test_build_features_drops_id_columns():
-    ...
+
+def test_build_features_drops_id_columns(): ...
 ```
 
 - [ ] `uv run pytest tests/ -q` passes locally
