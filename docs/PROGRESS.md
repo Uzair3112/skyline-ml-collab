@@ -3,14 +3,14 @@
 > Update this file as you go. Status: ⬜ not started · 🟡 in progress · ✅ done · ❌ blocked
 > **Also** tick the checkboxes inside each module file — this board is the summary.
 
-**Last updated:** 2026-09-27 · **Current phase:** Module 01 (Phase 1) — ✅ **complete** (one 📸 outstanding) · next: Module 02
+**Last updated:** 2026-09-27 · **Current phase:** Module 02 (Phase 2) — 🟡 code done, GitHub protection pending · next: Module 03
 
 ## Module status
 
 | # | Module | Status | Branch | PR | Checkpoint evidence |
 |---|--------|--------|--------|----|---------------------|
-| 01 | Team & repository setup | ✅ | `chore/bootstrap` + `chore/saad-setup` pushed | — | ✅ 2 authors on `main` · ✅ Saad write access proven · ⬜ collaborators 📸 |
-| 02 | Scaffold & import | ⬜ | `main` | — | 3 protected branches, import in `git log` |
+| 01 | Team & repository setup | ✅ | `chore/bootstrap` + `chore/saad-setup` | — | ✅ 2 authors · ✅ write access · ⬜ collaborators 📸 |
+| 02 | Scaffold & import | 🟡 | `main` pushed (`5078478`) | docs PR | ✅ import in `git log` · ✅ `staging`+`dev` · ⬜ protection 📸 |
 | 03 | Pre-commit & secrets | ⬜ | `feat/pre-commit` | # | 📸 blocked 5 MB file + fake key |
 | 04 | DVC data versioning | ⬜ | `data/initial-dataset` | # | CSV absent from git history |
 | 05 | Notebooks | ⬜ | `feat/eda-notebook` | # | no outputs in PR diff |
@@ -50,17 +50,28 @@
 | **📸 Screenshot: Settings → Collaborators** (Saad = Write, instructor = Read) | Uzair | ⬜ **only Module 01 item left** |
 | DagsHub account created + `dvc dagshub-setup` run | Uzair | ⬜ (Module 04) |
 
-### ⚠️ Carry into Module 02
+### ⚠️ Open in Module 02 (all GitHub-UI, owner Uzair)
 
-1. `chore/bootstrap` is currently GitHub's **default branch** (it was pushed first) → push `main`,
-   switch the default branch to `main`, then delete **`chore/bootstrap`** and **`chore/saad-setup`**
-   (both are ancestors of local `main` @ `214269f`).
-2. Still untracked and belonging to the Phase 2 initial import:
-   `.gitignore`, `.python-version`, `pyproject.toml`, `uv.lock`, `src/ml_skyline/`.
-3. **`main` has never been pushed** — deliberately. The PDF makes Phase 2 the only direct push to
-   `main`, so these 3 doc commits go up together with the scaffold commits.
-4. Saad's env check (`uv sync`, `import ml_skyline`) was deferred because the scaffold isn't on his
-   branch yet — **re-run it after the Phase 2 push**, from `main`.
+1. **Branch protection** on `main`, `staging`, `dev`: PR required, ≥1 approval, no force-push.
+   Then 📸 screenshot for `REPORT.md`.
+2. **Default branch** `chore/bootstrap` → `main`, then delete **`chore/bootstrap`** and
+   **`chore/saad-setup`**.
+3. **Collaborators screenshot** (carried over from Module 01).
+4. Saad re-runs his env check from `main`: `uv sync` then `python -m ml_skyline.prepare && …`.
+5. Module 02 documentation close-out rides on branch **`docs/module-02-closeout`** → PR → `dev`
+   (first real PR; Saad reviews). *No direct pushes to `dev` — the rule applies from now on.*
+
+### ⚠️ Data note found in Phase 2 — matters for Modules 05/06/07
+
+The published `train.csv` is **tab-corrupted** (headers `Customer\tType`, labels
+`satisfied\t\t\t`). Repaired in code by `ml_skyline.prepare.normalise_frame`, not by rewriting the
+raw file — the raw bytes stay identical to the source repo. A good candidate for the Module 07
+`data/<change>` PR: fix the source file itself and show `git checkout` + `dvc checkout` moving
+between the broken and fixed versions.
+
+The starter also had a **leakage bug** (`remainder='drop'` discarded every numeric column, and
+`y_test`/`X_test` were taken from the training frame), which is why it reported 78 % while the
+refactor scores 93 %.
 
 ## Log
 
@@ -71,5 +82,9 @@
 | 2026-09-27 | **Task 3:** folder `ml-git-collaboration` → `skyline-ml-collab`; `uv sync --reinstall` (stale shebangs fixed); `pyproject` name → `skyline-ml-collab`; broken `[project.scripts]` removed; package → `src/ml_skyline` |
 | 2026-09-27 | **Task 4–5:** `git branch -m main`; `origin` = `git@github.com:Uzair3112/skyline-ml-collab.git` (+ repo-local rewrite to the `github-uzair3112` SSH alias, because plain `github.com` authenticates as Uzair599); local identity `Uzair Tariq <uzairtariq.pakistani@gmail.com>` |
 | 2026-09-27 | **Task 6–7:** `README.md` with team/roles; commit `6e16d66` pushed to **`chore/bootstrap`** as Uzair3112 ✅ |
-| 2026-09-27 | **Task 4/7 (Saad):** clone verified; local identity set `Muhammad Saad Sabir <saadsbr789@gmail.com>` (per-clone); SSH authenticates as `msaadsbr` with write access (no `github-uzair3112` rewrite needed); branch **`chore/saad-setup`** pushed as Saad ✅ — Phase-1 two-author checkpoint met. NB: env sanity (`uv sync` / `import ml_skyline`) not runnable yet — scaffold (`pyproject.toml`, `src/ml_skyline/`) is Module 02 and not on this branch. |
-| 2026-09-27 | **Module 01 close-out (Uzair):** `main` fast-forwarded onto `origin/chore/saad-setup` → `214269f`; `git log --format='%an %ae' \| sort -u` returns **both authors** ✅; module/progress docs marked complete. Outstanding: collaborators 📸. `main` not pushed yet — Phase 2 does that. |
+| 2026-09-27 | **Task 4/7 (Saad):** clone verified; local identity `Muhammad Saad Sabir <saadsbr789@gmail.com>`; SSH as `msaadsbr` with write access; branch **`chore/saad-setup`** pushed ✅ — Phase-1 two-author checkpoint met |
+| 2026-09-27 | **Module 01 close-out (Uzair):** `main` fast-forwarded onto Saad's branch → `214269f`; both authors confirmed; `main` deliberately not pushed (Phase 2 owns that) |
+| 2026-09-27 | **M02 tasks 1–2:** skeleton created; `.gitignore` rewritten — *correction*: ignore by extension, **not** `data/` wholesale, or DVC pointers would be uncommittable |
+| 2026-09-27 | **M02 task 3:** starter refactored into `src/ml_skyline/{common,prepare,pipeline,train,evaluate}.py` + 17 tests; fixed the starter's tab-corrupted CSV and its `remainder='drop'`/train-as-test leakage; **93.0 % accuracy** vs 78 % |
+| 2026-09-27 | **M02 tasks 4–6:** `joblib`/`pyyaml` made explicit + ruff/pytest config; 5 small commits; **`main` pushed once** (`5078478`); `staging` and `dev` created and pushed at the same SHA |
+| 2026-09-27 | **M02 task 8:** `CONTRIBUTING.md` — branch rules, Conventional Commits, **squash into `dev`** decision, DVC and review rules |

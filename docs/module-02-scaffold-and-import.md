@@ -8,168 +8,182 @@
 Create the standard layout, import the starter code as runnable CLI code with a pinned
 environment, then create and protect `staging` and `dev`.
 
-> **This is the only time anyone pushes directly to `main`.**
+> **This is the only time anyone pushes directly to `main`.** ✅ done — push `5078478`.
 
-## Final layout to create
+## Final layout
 
 ```
 .
-├── configs/            # params.yaml (or at root — pick one, we use root params.yaml + configs/)
-├── data/               # git-ignored, DVC-tracked
-├── models/             # git-ignored, DVC-tracked
-├── notebooks/
-├── src/                # reusable, tested code
+├── configs/            # .gitkeep now; extra configs later
+├── data/               # contents git-ignored by extension, tracked by DVC (M04)
+├── models/             # ditto
+├── notebooks/          # .gitkeep now; 01-eda.ipynb in M05
+├── src/ml_skyline/      # reusable, tested code
 ├── tests/
-├── .github/workflows/
-├── docs/               # module plans (this folder)
+├── .github/workflows/   # ci.yml in M08
+├── docs/                # this folder
 ├── .gitignore
-├── .pre-commit-config.yaml   # added in Module 03
-├── CONTRIBUTING.md
-├── README.md
-└── pyproject.toml + uv.lock
+├── CONTRIBUTING.md      ✅
+├── README.md            ✅
+├── params.yaml          ✅
+├── metrics.json         ✅
+└── pyproject.toml + uv.lock   ✅
 ```
 
 ## Tasks
 
-### 1. Directory skeleton
+### 1. Directory skeleton — ✅ done
 
 ```bash
 mkdir -p configs data/raw data/processed models notebooks src/ml_skyline tests .github/workflows
-touch data/raw/.gitkeep models/.gitkeep tests/__init__.py
+touch configs/.gitkeep data/raw/.gitkeep data/processed/.gitkeep models/.gitkeep \
+      notebooks/.gitkeep .github/workflows/.gitkeep tests/__init__.py
 ```
 
-Package name under `src/`: **`ml_skyline`** (importable, valid identifier — not the repo name).
+Package name under `src/`: **`ml_skyline`** (importable, valid identifier — not the repo name),
+wired up via `[tool.uv.build-backend] module-name = "ml_skyline"`.
 
-### 2. `.gitignore` (must satisfy the PDF)
+### 2. `.gitignore` — ✅ done (plan corrected)
 
 Required exclusions: **datasets, checkpoints, `.env`, `__pycache__/`, `.venv/`, `mlruns/`**.
 
+> ⚠️ **Correction to the original plan.** The draft ignored `data/` and `models/` as *directories*.
+> That is wrong for DVC: `dvc add data/raw/train.csv` must produce a **committable**
+> `data/raw/train.csv.dvc`, and if `data/` is ignored the pointer is ignored too — teammates would
+> get broken pointers and `dvc pull` would be impossible. So we ignore by **file extension**
+> instead, which excludes every dataset file while leaving `*.dvc` and DVC's own `.gitignore`
+> committable.
+
 ```gitignore
 # Python
-__pycache__/
-*.py[oc]
-build/
-dist/
-wheels/
-*.egg-info
-.pytest_cache/
-.ruff_cache/
-
+__pycache__ / *.py[oc] / build / dist / wheels / *.egg-info / .pytest_cache / .ruff_cache
 # Environments & secrets
-.venv/
-env/
-.env
-.env.*
-
-# Data & models (DVC owns these)
-data/
-models/
-*.csv
-*.parquet
-*.joblib
-*.pkl
-*.h5
-
-# ML tracking / experiment leftovers
-mlruns/
-runs/
-wandb/
-.ipynb_checkpoints/
-
+.venv/ venv/ env/ .env .env.* !.env.example *.pem *.key
+# Datasets and trained artifacts — DVC owns the real files
+*.csv *.tsv *.parquet *.feather *.arrow *.joblib *.pkl *.pickle *.h5 *.onnx *.ckpt
+!tests/fixtures/*.csv          # CI needs a small committed sample
+# Checkpoints
+checkpoints/ lightning_logs/ *.pt
+# ML tracking / notebooks
+mlruns/ runs/ wandb/ dvc_plots/ .ipynb_checkpoints/
 # DVC local-only credentials
 .dvc/config.local
 ```
 
-- [ ] `.env`, `.venv/`, `__pycache__/`, `mlruns/` all covered
-- [ ] `data/` and `models/` ignored so no CSV can ever be committed by accident
+- [x] `.env`, `.venv/`, `__pycache__/`, `mlruns/`, checkpoints all covered
+- [x] every CSV/model file excluded → verified with `git status --ignored`:
+      `data/raw/{train,test}.csv`, `data/processed/{train,test}.csv`, `models/model.pkl` all `!!`
+- [x] `git status -uall` shows the four `.gitkeep` pointers as tracked → DVC pointers will be too
 
-### 3. Import starter code → `src/`
+### 3. Import starter code → `src/` — ✅ done
 
 Source: <https://github.com/vrunm/Airline_Passenger_Satisfaction>
 (`airline-passenger-satisfaction-eda-notebook.ipynb`, `-ml-notebook.ipynb`, `train.csv`, `test.csv`)
 
-- [ ] Refactor the ML notebook's logic into `src/ml_skyline/{prepare,train,evaluate}.py`
-- [ ] Runnable from CLI: `python -m ml_skyline.train` **or** `python src/train.py`
-- [ ] **Remove every hardcoded absolute path** — use `pathlib.Path(__file__).resolve().parents[1]`
-      and read paths from `params.yaml`
-- [ ] Keep the original notebooks as-is for now (Module 05 rewrites them properly)
-- [ ] `tests/` gets at least one smoke test so `pytest` is non-empty from day one
+- [x] Refactored into `src/ml_skyline/`:
+  - `common.py` — `REPO_ROOT`, `load_params`, `set_seed`, `TARGET_MAP`, `normalise_text`
+  - `prepare.py` — **stage 1**: repair corrupted CSV, drop ids, encode target, seeded stratified split
+  - `pipeline.py` — preprocessing + estimator, both parameter driven
+  - `train.py` — **stage 2**: fit on the processed training split, save `models/model.pkl`
+  - `evaluate.py` — **stage 3**: score the holdout, write `metrics.json` (+ `commit_sha`, `seed`)
+- [x] Runnable from the CLI, no hardcoded paths anywhere:
 
-### 4. Pin the environment
+  ```bash
+  python -m ml_skyline.prepare && python -m ml_skyline.train && python -m ml_skyline.evaluate
+  ```
 
-Already done: `uv.lock` exists. Verify:
+- [x] Paths come from `params.yaml` and `REPO_ROOT = Path(__file__).resolve().parents[2]`
+- [x] `tests/` has 17 tests, all green; includes
+      `test_no_hardcoded_absolute_paths_in_source`
+- [x] Starter notebooks deliberately **not** imported — they carry outputs and their logic is what
+      `src/` now is. Credit the source link in `README.md` / `REPORT.md`. Module 05 writes a clean
+      notebook.
 
-```bash
-uv sync
-uv lock --check
+**Two starter-code defects we fixed (put these in REPORT.md):**
+
+| # | Defect in the starter | What we do |
+|---|------------------------|------------|
+| 1 | `train.csv` is **tab-corrupted**: headers like `Customer\tType` and labels like `satisfied\t\t\t` | `normalise_frame()` collapses all whitespace runs; after repair the columns match the clean `test.csv` exactly |
+| 2 | `ColumnTransformer` listed only the 4 categorical columns with default `remainder='drop'`, so **every numeric feature was silently discarded**; and `y_test`/`X_test` were assigned from the *training* frame, so it scored on its own training data | explicit numeric + categorical transformers, proper seeded holdout split, `fit` only on the training split |
+
+Result: **93.0 % accuracy / F1 0.919 / ROC-AUC 0.981** vs the starter's reported 78 %.
+
+### 4. Pin the environment — ✅ done
+
+- [x] `uv sync` + `uv lock --check` both pass
+- [x] `uv.lock` committed alongside `pyproject.toml`
+- [x] deps: `dvc`, `jupyter`, `jupytext`, `pandas`, `pre-commit`, `pytest`, `ruff`, `scikit-learn`
+      — plus **`joblib`** and **`pyyaml`** made explicit (they were only transitive before)
+- [x] `[tool.ruff]` and `[tool.pytest.ini_options]` added so local, pre-commit and CI agree
+
+### 5. Initial import commits → `main` — ✅ done
+
+```
+819504f chore: scaffold project layout and gitignore
+0d5a343 chore: pin environment with uv.lock
+e55d526 feat: import airline satisfaction starter code as prepare/train/evaluate CLI
+4d0ee14 chore: record baseline metrics from the initial import
+5078478 docs: add CONTRIBUTING with branch, commit and merge rules
 ```
 
-- [ ] `uv.lock` committed alongside `pyproject.toml`
-- [ ] dependencies include: `dvc`, `jupyter`, `jupytext`, `pandas`, `pre-commit`, `pytest`, `ruff`,
-      `scikit-learn` (already present)
+- [x] `git log` on `main` shows the initial import **(checkpoint)**
+- [x] pushed **once** to `origin/main` — the only direct push to `main` in the whole project
 
-### 5. Initial import commits → `main`
+Verified before pushing: `ruff check` clean · `ruff format --check` clean · `pytest` 17/17 ·
+full pipeline re-run produced **byte-identical** `metrics.json` (minus `run_at`).
 
-Small, well-described commits. Suggested sequence:
-
-```
-chore: scaffold project layout
-chore: pin environment with uv.lock
-feat: import airline satisfaction starter code
-docs: add README and CONTRIBUTING
-chore: expand .gitignore for data, models and secrets
-```
-
-```bash
-git add -A
-git commit -m "chore: scaffold project layout"
-git push -u origin main          # ← ONLY direct push to main in the whole project
-```
-
-- [ ] `git log --oneline` on `main` shows the initial import (checkpoint)
-
-### 6. Create the long-lived branches
+### 6. Create the long-lived branches — ✅ done
 
 ```bash
 git switch -c staging && git push -u origin staging
 git switch -c dev     && git push -u origin dev
-git switch main
 ```
 
-- [ ] `main`, `staging`, `dev` all exist on GitHub
+- [x] `main`, `staging`, `dev` all exist on GitHub, all at `5078478`
 
-### 7. Branch protection (Uzair + Saad)
+### 7. Branch protection — ⬜ **Uzair, browser only**
 
-Settings → Branches (or **Rulesets**) for `main`, `staging`, `dev`:
+Settings → Branches (or **Rulesets**) for **`main`**, **`staging`**, **`dev`**:
 
 - [ ] Require a pull request before merging
 - [ ] Require at least **1 approving review**
 - [ ] Block **force pushes**
 - [ ] Do **not** allow direct pushes / deletions
 - [ ] (After Module 08) add **required status checks** = the four CI jobs
+- [ ] 📸 screenshot of the three protected branches → `REPORT.md`
 
-### 8. `CONTRIBUTING.md`
+**Also, one-time repo housekeeping (before enabling protection):**
 
-Must state:
+1. *Settings → General → Default branch* → switch from `chore/bootstrap` to **`main`**
+2. Delete **`chore/bootstrap`** and **`chore/saad-setup`** (both are ancestors of `main`)
 
-- [ ] Branch naming rules → `feat/`, `data/`, `exp/`, `fix/` (table from `docs/00-overview.md`)
-- [ ] Commit convention → **Conventional Commits**
-      (`feat:`, `fix:`, `data:`, `exp:`, `chore:`, `ci:`, `docs:`, `test:`)
-- [ ] Merge strategy decision → **squash-merge PRs into `dev`**, rebase/merge-commit into
-      `staging`/`main`. Written down once, as the PDF requires.
-- [ ] `dvc push` before `git push`
-- [ ] Never run experiments on uncommitted code
-- [ ] Reviewer must check out the branch for any PR touching the pipeline
+### 8. `CONTRIBUTING.md` — ✅ done
+
+- [x] Branch naming rules (`feat/`, `data/`, `exp/`, `fix/` + the three permanent branches)
+- [x] Conventional Commits with a type table
+- [x] **Merge strategy decided once:** *squash-merge PRs into `dev`*; rebase/merge-commit into
+      `staging`/`main`
+- [x] `dvc push` before `git push`
+- [x] never run experiments on uncommitted code
+- [x] reviewer must check out the branch for any pipeline-changing PR
 
 ## Checkpoint (evidence for REPORT.md)
 
-- [ ] Screenshot: three branches with protection rules visible
-- [ ] `git log --oneline` on `main` shows the import commits
-- [ ] `git log --format='%an' | sort -u` shows both members (once they commit)
+- [ ] 📸 three branches with protection rules visible
+- [x] `git log --oneline` on `main` shows the import commits
+- [x] `git log --format='%an' | sort -u` shows both members
 
-## Pitfalls
+## Pitfalls (avoided)
 
-- Pushing the CSV "just for now" → it lands in history and needs `git filter-repo` to remove.
-- Skipping `uv.lock` → Phase 9 `uv sync` diverges.
-- Creating `dev` from `main` *before* the import → `dev` misses the scaffold.
-  (PDF says `dev` is created from `staging`, `staging` from `main`, after the import.)
+- Pushing the CSV "just for now" → `.gitignore` blocks it by extension from the first commit.
+- Skipping `uv.lock` → `uv.lock` committed and `uv lock --check` enforced.
+- Creating `dev` from `main` *before* the import → created **after** the import, from `main`.
+
+## Status
+
+| Item | Status |
+|------|--------|
+| Tasks 1–6, 8 | ✅ |
+| Task 7 branch protection + default-branch switch + delete 2 chore branches | ⬜ Uzair (browser) |
+| 📸 protection screenshot | ⬜ Uzair |
+| Documentation close-out PR → `dev` | 🟡 branch `docs/module-02-closeout` |
