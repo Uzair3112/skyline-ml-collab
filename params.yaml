@@ -1,0 +1,22 @@
+# All tunable values live here — code must not hardcode any of them.
+# Every key referenced by dvc.yaml stages appears under `params:` (Module 06).
+
+seed: 42
+
+split:
+  test_size: 0.2
+
+data:
+  raw_train: data/raw/train.csv       # pool we split ourselves
+  raw_test: data/raw/test.csv         # shipped holdout, DVC-tracked, not used by the pipeline
+  processed_dir: data/processed
+  target: satisfaction
+
+train:
+  model: random_forest
+  n_estimators: 100
+  max_depth: 6
+
+paths:
+  model: models/model.pkl
+  metrics: metrics.json
