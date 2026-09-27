@@ -1,0 +1,41 @@
+[project]
+name = "skyline-ml-collab"
+version = "0.1.0"
+description = "Airline passenger satisfaction: reproducible ML pipeline under Git + DVC"
+readme = "README.md"
+authors = [
+    { name = "Uzair3112", email = "uzairtariq.pakistani@gmail.com" }
+]
+requires-python = ">=3.13"
+dependencies = [
+    "dvc>=3.67.1",
+    "joblib>=1.5",
+    "jupyter>=1.1.1",
+    "jupytext>=1.19.5",
+    "pandas>=3.0.6",
+    "pre-commit>=4.6.2",
+    "pytest>=9.1.1",
+    "pyyaml>=6.0",
+    "ruff>=0.16.9",
+    "scikit-learn>=1.9.1",
+]
+
+[tool.ruff]
+line-length = 100
+src = ["src", "tests"]
+target-version = "py313"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.uv.build-backend]
+module-name = "ml_skyline"
+module-root = "src"
+
+[build-system]
+requires = ["uv_build>=0.12.19,<0.13.0"]
+build-backend = "uv_build"
