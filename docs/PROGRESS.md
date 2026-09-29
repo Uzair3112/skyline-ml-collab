@@ -3,7 +3,7 @@
 > Update this file as you go. Status: ⬜ not started · 🟡 in progress · ✅ done · ❌ blocked
 > **Also** tick the checkboxes inside each module file — this board is the summary.
 
-**Last updated:** 2026-09-30 · **Current phase:** Modules 01–07 ✅ DONE → next: **Module 08**
+**Last updated:** 2026-09-30 · **Current phase:** Modules 01–08 ✅ DONE → next: **Module 09**
 
 ## Module status
 
@@ -16,21 +16,21 @@
 | 05 | Notebooks | ✅ | `feat/eda-notebook` (after merge) | **#9 merged** | ✅ 0 outputs/base64 in ipynb (8.9 KB) · ✅ jupytext pair `01-eda.py` + metadata · ✅ `build_features` promoted + 5 tests · ✅ executed top-to-bottom via nbconvert |
 | 06 | Reproducible pipeline | ✅ | `feat/dvc-pipeline` (after merge) | **#11 merged** | ✅ `dvc.yaml` 3 stages + `dvc.lock` + `params.yaml` · ✅ `run_at` removed (deterministic) · ✅ fresh-clone `dvc pull && dvc repro` identical metrics (`docs/evidence/module-06-dvc-repro-verification.txt`) · ✅ `dvc push` before `git push` |
 | 07 | Experiments & PRs | ✅ | `exp/*` (kept), others deleted | **#12–#16 merged** | ✅ 6 experiments (`dvc exp show` evidence) · ✅ conflict reproduced+resolved by rebase (#12→#13) · ✅ data update + version-switch demo (#14) · ✅ winner promoted (#15) · ✅ `exp/uzair-model-sweep` abandoned unmerged · ⬜ Saad's changes-requested review + his own 3 exps (account, pending) |
-| 08 | CI | ⬜ | `feat/ci` | # | 📸 red + green checks |
+| 08 | CI | ✅ | `feat/ci`, `proof/red-gate` (deleted) | **#18 merged** (`e00e790`) | ✅ 4-job PR workflow (`uv sync --frozen`) · ✅ fixture-based data-checks (no DVC secrets) · ✅ smoke 12 s · ✅ 33 tests · ✅ red→green on #18 · ✅ required checks ×3 (strict) · ✅ failing-check merge → **405** (#19) · text evidence `docs/evidence/module-08-*.txt` · ⬜ 📸 PNG red/green (pending Uzair) |
 | 09 | Release & report | ⬜ | `staging` | # | `model-v1.0` + independent reproduction |
 
 ## Rules scoreboard
 
 | Requirement | Target | Status |
 |-------------|--------|--------|
-| Uzair authored merged PRs | ≥ 2 | **14 / 2** ✅ (PR #2, #4, #5, #6, #7, #8, #9, #11, #12, #13, #14, #15, #16, #17) |
+| Uzair authored merged PRs | ≥ 2 | **16 / 2** ✅ (PR #2, #4, #5, #6, #7, #8, #9, #11, #12, #13, #14, #15, #16, #17, #18, #20) |
 | Uzair reviewed PRs | ≥ 2 | **2 / 2** ✅ (PR #3, #10) |
 | Saad authored merged PRs | ≥ 2 | **2 / 2** ✅ (PR #3, #10) |
 | Saad reviewed PRs | ≥ 2 | **2 / 2** ✅ (PR #2, PR #4) |
 | "Changes requested" reviews | ≥ 1 | 0 / 1 — **still pending Saad** (needs his account on a Uzair PR; M07 PRs were dual-roles, can't self-review → first action when he is available) |
 | Experiments per member | ≥ 3 | Uzair **3 / 3** ✅ (`exp/uzair-model-sweep`) · Saad 3 run on `exp/saad-depth-sweep` **by Uzair** (deviation recorded; his own runs pending his clone) |
 | Protected branches | `main`, `staging`, `dev` | **3 / 3** ✅ |
-| Required CI checks on | all 3 branches | 0 / 3 |
+| Required CI checks on | all 3 branches | **3 / 3** ✅ (`lint, tests, data-checks, smoke-train`, strict — failing PR merge proven 405) |
 | Release tag | `model-v1.0` on `main` | ⬜ |
 | Independent reproduction | matches exactly | ⬜ |
 | `REPORT.md` | complete | ✅ **created** |
@@ -199,6 +199,8 @@ refactor scores 93 %.
 | 2026-09-30 | **M07 experiments:** 6 runs (3 on `exp/uzair-model-sweep`: logreg/test_size 0.3/seed 7 · 3 on `exp/saad-depth-sweep`: depth 4/24/trees 300, run by Uzair); `dvc exp run` applies results to workspace → restored baseline between runs; winner **`straw-froe` depth 24 (f1 0.95615)**; `dvc exp show -a --md` evidence committed on the saad branch (`dfbed05`); both `exp/*` branches pushed and **kept unmerged** |
 | 2026-09-30 | **PR #15 merged** (`f97069b`) — winner promoted (`dvc exp apply straw-froe`), dev baseline f1 0.94756 → **0.95615**; pipeline up-to-date after merge; promote branch deleted |
 | 2026-09-30 | **M07 close-out (Uzair):** REPORT/PROGRESS/module-07/docs README + conflict evidence synced → PR #16 (`313cf20`) |
-| 2026-09-30 | **M07 evidence gap fixed:** `module-07-exp-show.md` existed only on `exp/saad-depth-sweep`, not on `dev` (REPORT referenced it) → cherry-picked onto dev → PR #17 |
-
-(End of file - total 176 lines)
+| 2026-09-30 | **M07 evidence gap fixed:** `module-07-exp-show.md` existed only on `exp/saad-depth-sweep`, not on `dev` (REPORT referenced it) → cherry-picked onto dev → PR #17 (`f9a2c7e`) |
+| 2026-09-30 | **M08 build (Uzair):** `feat/ci` — `.github/workflows/ci.yml` (4 jobs on `pull_request`, `uv sync --frozen`, concurrency cancel); `ml_skyline.data_checks` (schema/labels/0..5 ranges/1% nulls) against committed **69 KB fixture** `tests/fixtures/sample.csv` (500-row raw slice, no DVC secrets needed); `ml_skyline.smoke --rows 300` (12 s, NaN/exception → exit 1, `--report` for CML); +11 tests → **33 total**; local pre-flight identical to CI commands |
+| 2026-09-30 | **PR #18 CI run:** all 4 checks green on first push (`89dfeb4`) → red proof `c60fdfd` (broken test → `tests` FAILURE, others green) → evidence captured → green restore `9495a97` → **PR #18 merged** (`e00e790`) |
+| 2026-09-30 | **Required status checks enabled ×3** (`lint, tests, data-checks, smoke-train`, strict) on `main`/`staging`/`dev`; **merge-block proof:** PR #19 (red `tests`) `PUT /merge` → **HTTP 405** → PR #19 closed, branch deleted; merge-script restore payload updated to keep `required_status_checks` |
+| 2026-09-30 | **M08 close-out (Uzair):** REPORT/PROGRESS/module-08/docs README + red/green/405 evidence synced → PR #20 (this PR) — 📸 PNG screenshots of the check pages still to be captured by Uzair |

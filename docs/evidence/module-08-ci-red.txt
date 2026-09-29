@@ -1,0 +1,16 @@
+﻿=== Module 08 checkpoint A: deliberately broken test -> RED check ===
+captured (UTC): 2026-09-29T20:56:43.2397605Z
+PR: #18   commit: c60fdfd (test: deliberately break CI to prove the gate)
+run: https://github.com/Uzair3112/skyline-ml-collab/actions/runs/36629822692
+
+check-runs:
+  data-checks   completed / success   https://github.com/Uzair3112/skyline-ml-collab/actions/runs/36629822692/job/109615909979
+  lint          completed / success   https://github.com/Uzair3112/skyline-ml-collab/actions/runs/36629822692/job/109615909609
+  smoke-train   completed / success   https://github.com/Uzair3112/skyline-ml-collab/actions/runs/36629822692/job/109615909844
+  tests         completed / failure   https://github.com/Uzair3112/skyline-ml-collab/actions/runs/36629822692/job/109615909854
+
+failed job log excerpt (tests job 109615909854):
+  2026-09-29T20:56:12.4737042Z FAILED tests/test_ci_gate.py::test_broken - assert 1 == 2
+
+Result: lint/data-checks/smoke-train stayed green; ONLY tests failed - exactly the
+red signal the assignment requires. Proof that the gate runs on every PR commit.

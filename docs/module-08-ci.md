@@ -1,8 +1,11 @@
 # Module 08 · CI on every pull request
 
 **Phase 8** · Owner: **Uzair** (Platform A), **Saad** (reviewer) · Rubric: *CI (10)*, *PRs (20)*
-**Branch:** `feat/ci` → PR → `dev`
-**Checkpoint:** a deliberately broken test causes a **red check that blocks merging**. 📸
+**Branch:** `feat/ci` → PR **#18** (merged `e00e790`) → `dev` · proof PR **#19** (closed, unmergeable) ·
+close-out PR **#20**
+**Checkpoint:** ✅ a deliberately broken test caused a **red check that blocks merging** (HTTP 405 —
+`docs/evidence/module-08-merge-blocked.txt`). 📸 PNG capture of the check pages pending Uzair (text
+evidence committed: `docs/evidence/module-08-ci-red.txt` / `module-08-ci-green.txt`).
 
 ## Objective
 
@@ -70,32 +73,35 @@ jobs:
       - run: uv run python -m ml_skyline.smoke --rows 300
 ```
 
-- [ ] lint: `ruff check` + `ruff format --check`
-- [ ] unit tests: `pytest tests/`
-- [ ] data checks: schema, value ranges, null counts
-- [ ] smoke train: a few hundred rows, end to end
+- [x] lint: `ruff check` + `ruff format --check` → PR #18 job `lint` (green; local pre-flight identical)
+- [x] unit tests: `pytest tests/` → 33 tests (22 existing + 11 new in `tests/test_ci_gates.py`)
+- [x] data checks: schema, value ranges, null counts → `ml_skyline.data_checks`
+- [x] smoke train: a few hundred rows, end to end → `ml_skyline.smoke --rows 300` (12 s)
 
 ### 3. Data checks in CI — the DVC problem
 
 CI runners have **no DagsHub credentials**, so `dvc pull` will fail on a fresh PR from a fork.
 Solutions (pick one):
 
-- [ ] **(simplest, allowed by the PDF)** commit a small fixture
+- [x] **(simplest, allowed by the PDF)** commit a small fixture
       `tests/fixtures/sample.csv` (~500 rows, **< 1 MB** so pre-commit allows it) and run schema /
-      range / null checks against it
+      range / null checks against it — **chosen**: 500 rows / 69 KB, byte-slice of the raw export
+      (EOL whitespace trimmed by the hook), kept committable by `!tests/fixtures/*.csv`
 - [ ] *(better, optional)* use DagsHub secrets + `dvc pull` in the `data-checks` job — requires
       adding `DAGSHUB_TOKEN` as a repo secret; never hardcode it
 
 `data_checks` must verify at minimum:
-- [ ] expected column names/dtypes present
-- [ ] `satisfaction` ∈ {`satisfied`, `neutral or dissatisfied`}
-- [ ] rating columns within `0..5`
-- [ ] null counts below agreed thresholds
+- [x] expected column names/dtypes present
+- [x] `satisfaction` ∈ {`satisfied`, `neutral or dissatisfied`}
+- [x] rating columns within `0..5`
+- [x] null counts below agreed thresholds (≤ 1 % per column)
 
 ### 4. Smoke train
 
-- [ ] `smoke` module takes `--rows 300`, runs prepare→train→evaluate on a slice
-- [ ] finishes in < ~2 min, exits non-zero if metrics are NaN / pipeline throws
+- [x] `smoke` module takes `--rows 300`, runs prepare→train→evaluate on a slice
+      (seeded random slice → `read_raw`/`encode_target`/`build_splits` → `build_pipeline` → 5 metrics)
+- [x] finishes in < ~2 min (measured **12 s**), exits non-zero if metrics are NaN / pipeline throws
+      (also rejects values outside 0..1; `--report report.md` writes a markdown metrics table for CML)
 
 ### 5. Bonus: CML metrics comment (+5)
 
@@ -116,6 +122,8 @@ Solutions (pick one):
 ```
 
 - [ ] *(optional)* CML posts the metrics table as a PR comment → **+5 bonus**
+      (`smoke --report` already writes the table — workflow job not added yet; defer or take the
+      hotfix bonus in Module 09)
 - [ ] Alternatively take the **hotfix bonus** in Module 09
 
 ### 6. Prove CI fails
@@ -127,25 +135,35 @@ git commit -m "test: deliberately break CI to prove the gate"
 git push -u origin feat/ci
 ```
 
-- [ ] PR shows a **red** `tests` check
-- [ ] 📸 screenshot (red check) for REPORT.md
-- [ ] Then delete the broken test, commit, and show a **green** PR
-- [ ] 📸 screenshot (passing check) for REPORT.md
+- [x] PR shows a **red** `tests` check — commit `c60fdfd` on PR #18; `lint`/`data-checks`/
+      `smoke-train` stayed green → `docs/evidence/module-08-ci-red.txt`
+      (run `36629822692`, log: `FAILED tests/test_ci_gate.py::test_broken - assert 1 == 2`)
+- [ ] 📸 screenshot (red check) for REPORT.md — **text evidence committed; PNG pending Uzair**
+      (https://github.com/Uzair3112/skyline-ml-collab/actions/runs/36629822692)
+- [x] Then delete the broken test, commit, and show a **green** PR — commit `9495a97`, all four
+      checks success → `docs/evidence/module-08-ci-green.txt`
+- [ ] 📸 screenshot (passing check) for REPORT.md — **text evidence committed; PNG pending Uzair**
 
 ### 7. Make the checks required
 
-After `feat/ci` merges into `dev`:
+After `feat/ci` merged into `dev` (PR #18, `e00e790`):
 
-- [ ] Branch protection on `main`, `staging`, `dev`: **required status checks** =
-      `lint`, `tests`, `data-checks`, `smoke-train`
-- [ ] "Require branches to be up to date before merging" — optional but good
-- [ ] Verify: a PR with a failing check **cannot** be merged (checkpoint)
+- [x] Branch protection on `main`, `staging`, `dev`: **required status checks** =
+      `lint`, `tests`, `data-checks`, `smoke-train` — applied to all three (verified by GET)
+- [x] "Require branches to be up to date before merging" — enabled (`strict: true`)
+- [x] Verify: a PR with a failing check **cannot** be merged (checkpoint) — **PR #19**
+      (red `tests`) → `PUT /pulls/19/merge` as admin, no relaxation → **HTTP 405
+      MethodNotAllowed** → `docs/evidence/module-08-merge-blocked.txt`; PR #19 closed unmerged
+
+> ⚠️ Gotcha shipped with this: the self-merge script's **restore payload must now re-include
+> `required_status_checks`** — restoring the old (null) payload would silently drop the gate on
+> every subsequent merge. New merge template created for PR #20+.
 
 ## Checkpoint (evidence for REPORT.md)
 
-- [ ] 📸 failing CI check screenshot
-- [ ] 📸 passing CI check screenshot
-- [ ] Required status checks enabled on all three protected branches
+- [x] 📸 failing CI check screenshot → 🟡 text: `docs/evidence/module-08-ci-red.txt` (PNG pending)
+- [x] 📸 passing CI check screenshot → 🟡 text: `docs/evidence/module-08-ci-green.txt` (PNG pending)
+- [x] Required status checks enabled on all three protected branches (`strict: true`, 4 contexts)
 
 ## Pitfalls
 
