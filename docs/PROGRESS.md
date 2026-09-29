@@ -23,7 +23,7 @@
 
 | Requirement | Target | Status |
 |-------------|--------|--------|
-| Uzair authored merged PRs | ≥ 2 | **13 / 2** ✅ (PR #2, #4, #5, #6, #7, #8, #9, #11, #12, #13, #14, #15, #16) |
+| Uzair authored merged PRs | ≥ 2 | **14 / 2** ✅ (PR #2, #4, #5, #6, #7, #8, #9, #11, #12, #13, #14, #15, #16, #17) |
 | Uzair reviewed PRs | ≥ 2 | **2 / 2** ✅ (PR #3, #10) |
 | Saad authored merged PRs | ≥ 2 | **2 / 2** ✅ (PR #3, #10) |
 | Saad reviewed PRs | ≥ 2 | **2 / 2** ✅ (PR #2, PR #4) |
@@ -198,6 +198,7 @@ refactor scores 93 %.
 | 2026-09-30 | **M07 data update:** string-preserving fill of 310 `Arrival Delay` nulls at source (median 0 == pipeline imputer) → pointer `7795cca…`→`389295a…`; `dvc push` (2 socket-timeout retries) before `git push`; repro → metrics byte-identical (only `commit_sha` moved); version-switch demo verified both hashes → PR #14 merged (`2bb2d00`) |
 | 2026-09-30 | **M07 experiments:** 6 runs (3 on `exp/uzair-model-sweep`: logreg/test_size 0.3/seed 7 · 3 on `exp/saad-depth-sweep`: depth 4/24/trees 300, run by Uzair); `dvc exp run` applies results to workspace → restored baseline between runs; winner **`straw-froe` depth 24 (f1 0.95615)**; `dvc exp show -a --md` evidence committed on the saad branch (`dfbed05`); both `exp/*` branches pushed and **kept unmerged** |
 | 2026-09-30 | **PR #15 merged** (`f97069b`) — winner promoted (`dvc exp apply straw-froe`), dev baseline f1 0.94756 → **0.95615**; pipeline up-to-date after merge; promote branch deleted |
-| 2026-09-30 | **M07 close-out (Uzair):** REPORT/PROGRESS/module-07/docs README + conflict evidence synced → PR #16 |
+| 2026-09-30 | **M07 close-out (Uzair):** REPORT/PROGRESS/module-07/docs README + conflict evidence synced → PR #16 (`313cf20`) |
+| 2026-09-30 | **M07 evidence gap fixed:** `module-07-exp-show.md` existed only on `exp/saad-depth-sweep`, not on `dev` (REPORT referenced it) → cherry-picked onto dev → PR #17 |
 
 (End of file - total 176 lines)

@@ -270,7 +270,7 @@ Resolution + full transcript + force-push documented in the PR body and evidence
 
 | Requirement | Target | Current | Status |
 |-------------|--------|---------|--------|
-| Uzair authored merged PRs | ≥ 2 | **13 / 2** ✅ | ✅ (PR #2, #4, #5, #6, #7, #8, #9, #11, #12, #13, #14, #15, #16) |
+| Uzair authored merged PRs | ≥ 2 | **14 / 2** ✅ | ✅ (PR #2, #4, #5, #6, #7, #8, #9, #11, #12, #13, #14, #15, #16, #17) |
 | Uzair reviewed PRs | ≥ 2 | **2 / 2** ✅ | ✅ (PR #3 APPROVED, PR #10 APPROVED + checklist comment) |
 | Saad authored merged PRs | ≥ 2 | **2 / 2** ✅ | ✅ (PR #3, PR #10) |
 | Saad reviewed PRs | ≥ 2 | **2 / 2** ✅ | ✅ (PR #2, PR #4) |
@@ -305,7 +305,8 @@ Resolution + full transcript + force-push documented in the PR body and evidence
 | #13 | feat: resolve max_depth rebase conflict - keep 12 (evidence) | Uzair | `dev` | **merged** | author self-merge (rebase conflict documented in body) | squash `4cc62cf` |
 | #14 | data: fill 310 Arrival Delay nulls at source (median 0) | Uzair | `dev` | **merged** | author self-merge (version-switch demo in body) | squash `2bb2d00` |
 | #15 | feat: promote best experiment (max_depth 24, f1 0.9476 to 0.9562) | Uzair *(brief: Saad)* | `dev` | **merged** | author self-merge (Saad retro-review requested) | squash `f97069b` |
-| #16 | docs: module 07 close-out — exp tables, conflict/data evidence, scoreboard | Uzair | `dev` | **merged** | author self-merge (Saad retro-review requested) | squash *(sha back-filled in M08 docs)* |
+| #16 | docs: module 07 close-out — exp tables, conflict/data evidence, scoreboard | Uzair | `dev` | **merged** | author self-merge (Saad retro-review requested) | squash `313cf20` |
+| #17 | docs: land module 07 exp show evidence on dev | Uzair | `dev` | **merged** | author self-merge (Saad retro-review requested) | squash *(sha back-filled in M08 docs)* |
 
 > Merges #5–#9 and #11 used the documented emergency path: temporarily relax the *approval* rule via API
 > (still `enforce_admins=true`, no force-push, no deletions), squash-merge, then **restore**
@@ -432,7 +433,7 @@ key blocked — `docs/evidence/module-03-reverify-on-dev.txt`).
   310 `Arrival Delay` nulls at source and proved version switching (both md5s), promoted `straw-froe`
   (depth 24: **f1 0.9476 → 0.9562**), authored the conflict/data/promote/close-out PRs (#12–#16),
   each with checklist + metrics + `dvc push`-before-`git push` evidence
-- **PRs authored**: PR #2, #4, #5, #6, #7, #8, #9, #11, #12, #13, #14, #15, #16 — **13 / 2 ✅**
+- **PRs authored**: PR #2, #4, #5, #6, #7, #8, #9, #11, #12, #13, #14, #15, #16, #17 — **14 / 2 ✅**
 - **PRs reviewed**: PR #3 (APPROVED), PR #10 (APPROVED + checklist) — **2 / 2 ✅**
 
 **Muhammad Saad Sabir** — Model owner + Platform B
