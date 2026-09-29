@@ -1,0 +1,59 @@
+=== Module 07 / 7.5 - deliberate rebase conflict: reproduced and resolved ===
+repo: Uzair3112/skyline-ml-collab   date: 2026-09-30
+choreography (both roles played by Uzair per team decision):
+  round A "fix/conflict-a"  : train.max_depth 6 -> 10, dvc repro, PR #12 merged as c92949c
+  round B "fix/conflict-b"  : created from dev BEFORE #12 merged, train.max_depth 6 -> 8,
+                              PR #13 opened, then rebased after #12 landed
+
+--- rebase transcript (verbatim) ---
+$ git fetch
+   9b3dfe0..c92949c  dev        -> origin/dev
+$ git switch fix/conflict-b
+$ git rebase origin/dev
+Auto-merging params.yaml
+CONFLICT (content): Merge conflict in params.yaml
+Rebasing (1/1)
+error: could not apply 2e1ac35... feat: raise train.max_depth 6 to 8 (conflict round B, pre-merge)
+hint: Resolve all conflicts manually, mark them as resolved with
+      "git add/rm <conflicted files>", then run "git rebase --continue".
+Could not apply 2e1ac35... feat: raise train.max_depth 6 to 8 (conflict round B, pre-merge)
+
+$ git status --short
+UU params.yaml
+
+--- conflicted region in params.yaml (verbatim) ---
+train:
+  model: random_forest
+  n_estimators: 100
+<<<<<<< HEAD
+  max_depth: 10
+=======
+  max_depth: 8
+>>>>>>> 2e1ac35 (feat: raise train.max_depth 6 to 8 (conflict round B, pre-merge))
+
+paths:
+  model: models/model.pkl
+  metrics: metrics.json
+
+--- resolution (evidence-based, all values from full dvc repro runs) ---
+candidate  accuracy              f1                    roc_auc
+6          0.929935999230066     0.9186137506987143    0.981106463724863   (old baseline)
+8          0.937298493816467     0.9272838886098554    0.987540379891606   (round B)
+10         0.9480294499783456    0.9398395721925134    0.990720268065145   (round A, on dev)
+12         0.9547663731293008    0.9475622001561977    0.992485968883531   (KEPT - beats both)
+
+$ # hand-edited params.yaml to "max_depth: 12" (removed conflict markers)
+$ git add params.yaml
+$ git rebase --continue
+[detached HEAD 34cc858] feat: resolve max_depth rebase conflict - keep 12 (beats both proposals)
+Successfully rebased and updated refs/heads/fix/conflict-b.
+$ dvc repro -f          # rerun at final resolution commit (commit_sha 34cc858 matches)
+$ dvc push              # depth-12 model version before git push
+$ git add dvc.lock metrics.json
+$ git commit -m "chore: refresh dvc.lock and metrics.json for resolved max_depth=12"
+$ git push -f origin fix/conflict-b     # rebase rewrote history (feature branch, no protection)
+   + 2e1ac35...f777358 fix/conflict-b -> fix/conflict-b (forced update)
+
+PR #13 merged as 4cc62cffe7ac0598ae15b6256a9501c1377ea26a5
+protection on dev verified after every merge: approvals=1, dismiss=True, enforce=True
+=== end ===
