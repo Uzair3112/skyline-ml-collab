@@ -27,7 +27,7 @@
 | 01 | Team & repository setup | ✅ **DONE** | `chore/bootstrap`, `chore/saad-setup` (deleted) | — | 2 authors on `main` (`214269f`), Saad write access proven, both identities set per-clone |
 | 02 | Scaffold & import | ✅ **DONE** | `main` pushed (`5078478`) | **#2 merged** (`a0edadd`) | 17 tests pass, 93% acc, branch protection ×3 proven (GH006), default branch → `main`, `CONTRIBUTING.md` |
 | 03 | Pre-commit & secrets | ✅ **DONE** | `feat/pre-commit` (deleted) | **#3 merged** (`a6b7435`) | `.pre-commit-config.yaml` + `.gitleaks.toml` + PR template; evidence `docs/evidence/module-03-guard-rails.txt` + `module-03-reverify-on-dev.txt` (5 MB + fake key blocked on `dev`) |
-| 04 | DVC data versioning | ✅ **DONE** | `data/initial-dataset` (deleted after merge) | **#7 merged** (squash) | Pointers only: `train.csv.dvc` md5 `7795cca…`, `test.csv.dvc` md5 `e70c499…`; `dvc push` before `git push`; fresh GitHub clone → `dvc pull` → 2 files, md5 pointer = clone = local; `git rev-list --objects --all` → 0 `*.csv` — evidence `docs/evidence/module-04-dvc-pull-verification.txt` |
+| 04 | DVC data versioning | ✅ **DONE** | `data/initial-dataset` (deleted after merge) | **#7 merged** (`616a8fd`) | Pointers only: `train.csv.dvc` md5 `7795cca…`, `test.csv.dvc` md5 `e70c499…`; `dvc push` before `git push`; fresh GitHub clone → `dvc pull` → 2 files, md5 pointer = clone = local; `git rev-list --objects --all` → 0 `*.csv` — evidence `docs/evidence/module-04-dvc-pull-verification.txt`; DagsHub git mirror → dataset visible on dagshub.com |
 | 05 | Notebooks | ⬜ NOT STARTED | `feat/eda-notebook` | — | — |
 | 06 | Reproducible pipeline | ⬜ NOT STARTED | `feat/dvc-pipeline` | — | — |
 | 07 | Experiments & PRs | ⬜ NOT STARTED | `exp/*` | — | — |
@@ -111,8 +111,9 @@
 | **Checkpoint**: CSV absent from git history | ✅ | `git rev-list --objects --all` → **0** `*.csv` objects; `git log --all -- '*.csv'` empty |
 | Reviewer verification: clean clone from GitHub → `dvc pull` | ✅ | 2 files added; **md5 pointer = clone = local** for both CSVs (three-way match) |
 | Evidence file | ✅ | `docs/evidence/module-04-dvc-pull-verification.txt` |
-| **PR #7** `data/initial-dataset` → `dev` with hashes in the body | ✅ | opened, squash-merged, branch deleted |
-| Saad re-runs `dvc pull` md5 check in his own clone | ⬜ | pending (same recipe in the PR body) |
+| **PR #7** `data/initial-dataset` → `dev` with hashes in the body | ✅ | opened, squash-merged as `616a8fd`, branch deleted, protection re-verified |
+| DagsHub **git mirror** (UI needs git pointers, not just storage) | ✅ | `dagshub` remote; `dev`/`main`/`staging` pushed; default branch on DagsHub = `dev`; `train.csv.dvc` served publicly with matching md5 |
+| Saad re-runs `dvc pull` md5 check in his own clone | ⬜ | pending (same recipe in the PR body) — not blocking |
 
 ---
 
@@ -145,7 +146,7 @@
 | #4 | docs: update PROGRESS.md — M02/M03 complete | Uzair | `dev` | **merged** | `msaadsbr` APPROVED 2026-09-29 | merge `c63b5f2` |
 | #5 | docs: module 01-03 close-out — sync trackers, add dev re-verification evidence | Uzair | `dev` | **merged** | author self-merge (Saad retro-approval requested) | squash `f5a3d8b` |
 | #6 | docs: add module 01 evidence screenshots | Uzair | `dev` | **merged** | author self-merge (Saad retro-approval requested) | squash `922ac9a` |
-| #7 | data: track initial dataset with DVC | Uzair | `dev` | **merged** | author self-merge (Saad retro-approval requested) | squash |
+| #7 | data: track initial dataset with DVC | Uzair | `dev` | **merged** | author self-merge (Saad retro-approval requested) | squash `616a8fd` |
 
 > Merges #5–#7 used the documented emergency path: temporarily relax the *approval* rule via API
 > (still `enforce_admins=true`, no force-push, no deletions), squash-merge, then **restore**
@@ -341,6 +342,7 @@ md5sum data/raw/*.csv # must match the md5 in the *.csv.dvc pointer
 | PRs #5–#7 merged by the author after temporarily relaxing only the *approval* rule (protection restored + verified after each merge) | 03, 04 | ⚠️ documented deviation — see §5 |
 | DagsHub token stored in `.dvc/config.local` (git-ignored) — was present in a chat transcript during setup, so should be **rotated** after submission | 04 | ⚠️ rotate token |
 | `dvc dagshub-setup` / `dagshub://` do **not** exist in DVC 3.67 — docs corrected to the HTTPS recipe | 04 | ✅ fixed in PR #7 |
+| DagsHub repo was storage-only → web UI showed no dataset; fixed by mirroring git code (`dagshub` remote, default branch `dev`). **Must re-push after each GitHub merge** or the DagsHub page goes stale | 04 | ⚠️ sync rule documented |
 | CI screenshots (red/green) | 08 | ⬜ pending |
 | Network downloads for pre-commit hooks slow/flaky | 03 | ⚠️ known (envs now cached) |
 
