@@ -3,7 +3,7 @@
 > Update this file as you go. Status: ⬜ not started · 🟡 in progress · ✅ done · ❌ blocked
 > **Also** tick the checkboxes inside each module file — this board is the summary.
 
-**Last updated:** 2026-09-30 · **Current phase:** Modules 01–06 ✅ DONE → next: **Module 07**
+**Last updated:** 2026-09-30 · **Current phase:** Modules 01–07 ✅ DONE → next: **Module 08**
 
 ## Module status
 
@@ -15,7 +15,7 @@
 | 04 | DVC data versioning | ✅ | `data/initial-dataset` (deleted) | **#7 merged** (`616a8fd`) | ✅ pointers only, 0 `*.csv` in history · ✅ `dvc push` before `git push` · ✅ fresh-clone `dvc pull` md5 ×2 · ✅ DagsHub git mirror (UI shows dataset) · evidence `module-04-dvc-pull-verification.txt` |
 | 05 | Notebooks | ✅ | `feat/eda-notebook` (after merge) | **#9 merged** | ✅ 0 outputs/base64 in ipynb (8.9 KB) · ✅ jupytext pair `01-eda.py` + metadata · ✅ `build_features` promoted + 5 tests · ✅ executed top-to-bottom via nbconvert |
 | 06 | Reproducible pipeline | ✅ | `feat/dvc-pipeline` (after merge) | **#11 merged** | ✅ `dvc.yaml` 3 stages + `dvc.lock` + `params.yaml` · ✅ `run_at` removed (deterministic) · ✅ fresh-clone `dvc pull && dvc repro` identical metrics (`docs/evidence/module-06-dvc-repro-verification.txt`) · ✅ `dvc push` before `git push` |
-| 07 | Experiments & PRs | ⬜ | `exp/*` | # | ≥3 exp each, changes-requested, conflict PR |
+| 07 | Experiments & PRs | ✅ | `exp/*` (kept), others deleted | **#12–#16 merged** | ✅ 6 experiments (`dvc exp show` evidence) · ✅ conflict reproduced+resolved by rebase (#12→#13) · ✅ data update + version-switch demo (#14) · ✅ winner promoted (#15) · ✅ `exp/uzair-model-sweep` abandoned unmerged · ⬜ Saad's changes-requested review + his own 3 exps (account, pending) |
 | 08 | CI | ⬜ | `feat/ci` | # | 📸 red + green checks |
 | 09 | Release & report | ⬜ | `staging` | # | `model-v1.0` + independent reproduction |
 
@@ -23,12 +23,12 @@
 
 | Requirement | Target | Status |
 |-------------|--------|--------|
-| Uzair authored merged PRs | ≥ 2 | **8 / 2** ✅ (PR #2, #4, #5, #6, #7, #8, #9, #11) |
+| Uzair authored merged PRs | ≥ 2 | **13 / 2** ✅ (PR #2, #4, #5, #6, #7, #8, #9, #11, #12, #13, #14, #15, #16) |
 | Uzair reviewed PRs | ≥ 2 | **2 / 2** ✅ (PR #3, #10) |
 | Saad authored merged PRs | ≥ 2 | **2 / 2** ✅ (PR #3, #10) |
 | Saad reviewed PRs | ≥ 2 | **2 / 2** ✅ (PR #2, PR #4) |
-| "Changes requested" reviews | ≥ 1 | 0 / 1 — **planned: Saad requests changes on a Uzair-authored PR in M07** (author can't review own PR) |
-| Experiments per member | ≥ 3 | Uzair 0/3 · Saad 0/3 |
+| "Changes requested" reviews | ≥ 1 | 0 / 1 — **still pending Saad** (needs his account on a Uzair PR; M07 PRs were dual-roles, can't self-review → first action when he is available) |
+| Experiments per member | ≥ 3 | Uzair **3 / 3** ✅ (`exp/uzair-model-sweep`) · Saad 3 run on `exp/saad-depth-sweep` **by Uzair** (deviation recorded; his own runs pending his clone) |
 | Protected branches | `main`, `staging`, `dev` | **3 / 3** ✅ |
 | Required CI checks on | all 3 branches | 0 / 3 |
 | Release tag | `model-v1.0` on `main` | ⬜ |
@@ -56,7 +56,7 @@
 | **DagsHub git mirror** — `dagshub` remote added; `dev`/`main`/`staging` pushed (default branch there = `dev`, because DagsHub renders datasets from git pointers) | Uzair | ✅ — **sync rule:** after each GitHub merge also `git push dagshub dev` |
 | Saad retro-reviews PR #9 (M05 notebook; authored by Uzair while Saad was unavailable) | Saad | ⬜ pending |
 | Saad authored 2nd merged PR | Saad | ✅ **PR #10** (opened `dev` → `main` instead of M06; title corrected + approved + rebase-merged by Uzair 2026-09-29) |
-| **"Changes requested" review (≥1)** | Saad | ⬜ pending — needs Saad's account on a Uzair-authored PR; **scheduled for Module 07** (Uzair cannot review his own PRs) |
+| **"Changes requested" review (≥1)** | Saad | ⬜ pending — needs Saad's account on a Uzair-authored PR; M07 ran out of time with him offline → **first action when available** (before M08 review cycles) |
 | **M06 executed by Uzair** (Saad's attempt produced wrong PR #10; team decision: don't loop Saad back) | Uzair | ✅ PR #11 |
 
 ### ⚠️ Open in Module 02 — **ALL DONE ✅**
@@ -131,6 +131,18 @@
 | 7 | PR #11 → `dev`, squash-merge, branch cleanup, DagsHub mirror sync | Uzair | ✅ |
 | 8 | **Saad's "changes requested" review (rubric ≥1)** | Saad | ⬜ **moved to Module 07** — needs his account on a Uzair PR |
 
+### ⚠️ Open in Module 07 — **DONE ✅** (dual-role execution; Saad's account items pending)
+
+| # | Item | Owner | Status |
+|---|------|-------|--------|
+| 1 | 7.5 conflict choreography: round A `6→10` PR #12 merged (`c92949c`), round B rebased into it → **CONFLICT** → resolved keeping **12** (evidence beats both) → PR #13 merged (`4cc62cf`) | Uzair | ✅ evidence `module-07-conflict-rebase.txt` |
+| 2 | 7.4 data update: fill **310 `Arrival Delay` nulls at source** (median 0), pointer `7795cca…` → `389295a…`, version-switch demo (`checkout`+`dvc checkout` ×2, hashes verified) → PR #14 merged (`2bb2d00`) | Uzair | ✅ evidence `module-07-data-version-switch.txt` |
+| 3 | 7.1 experiments ≥3 each: 6 runs — `minus-skis`/`dural-raja`/`flamy-code` (Uzair) + `fuggy-ices`/`straw-froe`/`blank-axon` (Saad's dimension, run by Uzair) | Uzair | ✅ evidence `module-07-exp-show.md`; **Saad's own 3 runs pending his clone** |
+| 4 | 7.2 promote winner `straw-froe` (depth 24, f1 0.9476→0.9562) → PR #15 merged (`f97069b`) | Uzair | ✅ (brief says author=Saad → deviation recorded) |
+| 5 | 7.6 abandoned branch: `exp/uzair-model-sweep` (and `exp/saad-depth-sweep`) **kept unmerged** — logreg −0.09 f1, other runs non-comparable splits | Uzair | ✅ rationale in REPORT §M07 |
+| 6 | 7.3 reviews: every PR asks `@msaadsbr` for retro-review; **changes-requested still owed** | Saad | ⬜ pending (account) |
+| 7 | Close-out: REPORT/PROGRESS/module-07/docs README synced → PR #16 | Uzair | ✅ (this PR) |
+
 ### ⚠️ Data note (from Module 02 — matters for Modules 05/06/07)
 
 The published `train.csv` is **tab-corrupted** (headers `Customer\tType`, labels
@@ -181,5 +193,11 @@ refactor scores 93 %.
 | 2026-09-29 | **Saad's M06 attempt → wrong PR #10** (`dev` → `main`, M05-styled title, no `feat/dvc-pipeline` branch, no `dvc.yaml` anywhere) |
 | 2026-09-29 | **PR #10 handled per team decision (no re-looping Saad):** title corrected → Uzair submitted the full review checklist + **APPROVED** (his 2nd review, Saad authored it → his 2nd PR) → **rebase-merged** into `main` (`86299fe`, CONTRIBUTING §3) → local `main` + DagsHub mirror synced; protection re-verified ×3 |
 | 2026-09-30 | **M06 (Uzair):** `feat/dvc-pipeline` — `run_at` removed (determinism); `dvc.yaml` wired (3 stages); two DVC gotchas solved live: `- seed:`-style params entries mean "file named seed" → colon-free keys; metrics need `cache: false` to stay git-tracked; commits `050ee1c` (code) + `9e6ff42` (lock+metrics, `commit_sha` matches code commit); `dvc push` 3 files; fresh-clone checkpoint PASS → evidence `docs/evidence/module-06-dvc-repro-verification.txt`; PR #11 opened |
+| 2026-09-30 | **PR #11 merged** (`9b3dfe0`) — M06 done; branch deleted; DagsHub `dev` synced; `dvc repro` up-to-date on post-merge `dev` |
+| 2026-09-30 | **M07 conflict choreography (Uzair dual-role):** round A `max_depth 6→10` → PR #12 merged (`c92949c`); round B branched *before* the merge (`6→8`) → PR #13 opened → `git rebase origin/dev` reproduced the conflict on `params.yaml` → resolved keeping **12** after running all three candidates (8: f1 0.9273 < 10: 0.9398 < **12: 0.9476**) → `dvc repro -f` at resolution commit → force-push → PR #13 merged (`4cc62cf`) |
+| 2026-09-30 | **M07 data update:** string-preserving fill of 310 `Arrival Delay` nulls at source (median 0 == pipeline imputer) → pointer `7795cca…`→`389295a…`; `dvc push` (2 socket-timeout retries) before `git push`; repro → metrics byte-identical (only `commit_sha` moved); version-switch demo verified both hashes → PR #14 merged (`2bb2d00`) |
+| 2026-09-30 | **M07 experiments:** 6 runs (3 on `exp/uzair-model-sweep`: logreg/test_size 0.3/seed 7 · 3 on `exp/saad-depth-sweep`: depth 4/24/trees 300, run by Uzair); `dvc exp run` applies results to workspace → restored baseline between runs; winner **`straw-froe` depth 24 (f1 0.95615)**; `dvc exp show -a --md` evidence committed on the saad branch (`dfbed05`); both `exp/*` branches pushed and **kept unmerged** |
+| 2026-09-30 | **PR #15 merged** (`f97069b`) — winner promoted (`dvc exp apply straw-froe`), dev baseline f1 0.94756 → **0.95615**; pipeline up-to-date after merge; promote branch deleted |
+| 2026-09-30 | **M07 close-out (Uzair):** REPORT/PROGRESS/module-07/docs README + conflict evidence synced → PR #16 |
 
 (End of file - total 176 lines)
