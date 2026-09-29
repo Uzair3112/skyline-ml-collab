@@ -1,0 +1,291 @@
+# REPORT.md — Team Skyline MLOps Assignment-01
+
+> Generated from repository state as of 2026-09-29. Grading is done from the repository alone — every bullet must be visible or linked here.
+
+---
+
+## 1. Team, roles, dataset, starter code
+
+| | |
+|---|---|
+| Team | `skyline` |
+| Members | **Uzair Tariq** — Data owner + Platform (pre-commit, env, releases) — GitHub: `Uzair3112` |
+| | **Muhammad Saad Sabir** — Model owner + Platform (CI, protection, releases) — GitHub: `msaadsbr` |
+| Dataset | [Airline Passenger Satisfaction](https://github.com/vrunm/Airline_Passenger_Satisfaction) — binary classification, ~104 k rows — **instructor approval granted** (not on PDF's approved list) |
+| Starter code | Same repo — `airline-passenger-satisfaction-eda-notebook.ipynb`, `-ml-notebook.ipynb` (credited with link) |
+| DVC remote | DagsHub `dagshub://Uzair3112/skyline-ml-collab/data` (to be configured in Module 04) |
+| Repository | `https://github.com/Uzair3112/skyline-ml-collab` (public) |
+| Package | `skyline-ml-collab` → `src/ml_skyline/` (wired via `[tool.uv.build-backend] module-name = "ml_skyline"`) |
+| Python | 3.13, uv 0.12.19 |
+
+---
+
+## 2. Module completion status
+
+| # | Module | Status | Branch | PR | Key Evidence |
+|---|--------|--------|--------|----|--------------|
+| 01 | Team & repository setup | ✅ **DONE** | `chore/bootstrap`, `chore/saad-setup` (deleted) | — | 2 authors on `main` (`214269f`), Saad write access proven, both identities set per-clone |
+| 02 | Scaffold & import | 🟡 **CODE DONE** — PR review pending | `main` pushed (`5078478`) | **#2** open (`docs/module-02-closeout → dev`) | 17 tests pass, 93% acc, branch protection ×3 proven (GH006), default branch → `main`, `CONTRIBUTING.md` |
+| 03 | Pre-commit & secrets | 🟡 **CODE DONE** — PR review pending | `feat/pre-commit` (PR #3) | **#3** open (`claude/lucid-mendel-7k6uqi → dev`) | `.pre-commit-config.yaml` + `.gitleaks.toml` + PR template; evidence file `docs/evidence/module-03-guard-rails.txt` shows 5MB + fake key blocked |
+| 04 | DVC data versioning | ⬜ NOT STARTED | `data/initial-dataset` | — | — |
+| 05 | Notebooks | ⬜ NOT STARTED | `feat/eda-notebook` | — | — |
+| 06 | Reproducible pipeline | ⬜ NOT STARTED | `feat/dvc-pipeline` | — | — |
+| 07 | Experiments & PRs | ⬜ NOT STARTED | `exp/*` | — | — |
+| 08 | CI | ⬜ NOT STARTED | `feat/ci` | — | — |
+| 09 | Release & report | ⬜ NOT STARTED | `staging` | — | — |
+
+---
+
+## 3. Detailed module checklists
+
+### Module 01 — Team & Repository Setup ✅ COMPLETE
+
+| Task | Status | Evidence |
+|------|--------|----------|
+| Team name `skyline`, repo `skyline-ml-collab` created | ✅ | `github.com/Uzair3112/skyline-ml-collab` |
+| Dataset approved by instructor | ✅ | Task 1 granted |
+| Collaborators: Saad (Write), instructor (Read) | ⚠️ **SKIPPED** (user decision) | Only Uzair3112 + msaadsbr currently |
+| Local folder renamed `ml-git-collaboration` → `skyline-ml-collab` | ✅ | `assignment-01/skyline-ml-collab` |
+| `uv sync --reinstall`, `pyproject.toml` renamed, package → `src/ml_skyline` | ✅ | `import ml_skyline` works |
+| Local branch `master` → `main`, origin set, SSH rewrite for Uzair | ✅ | `git@github-uzair3112:` insteadOf `git@github.com:` |
+| Identity: Uzair Tariq <uzairtariq.pakistani@gmail.com> | ✅ | `git config user.name/email` |
+| Identity: Saad — Muhammad Saad Sabir <saadsbr789@gmail.com> (per-clone) | ✅ | `git config --local` |
+| README.md with team/roles committed | ✅ | `README.md` |
+| Uzair pushed `chore/bootstrap` (`6e16d66`) | ✅ | On GitHub |
+| Saad pushed `chore/saad-setup` (`214269f`) | ✅ | On GitHub |
+| `main` fast-forwarded onto Saad's branch | ✅ | `214269f` has 2 authors |
+| **Checkpoint**: `git log --format='%an %ae'` shows both authors | ✅ | Verified |
+
+### Module 02 — Scaffold & Import 🟡 CODE COMPLETE — AWAITING PR #2 REVIEW
+
+| Task | Status | Evidence |
+|------|--------|----------|
+| Directory skeleton (`configs/`, `data/`, `models/`, `notebooks/`, `src/ml_skyline/`, `tests/`, `.github/workflows/`) | ✅ | `.gitkeep` in each |
+| `.gitignore` — extension-based (not `data/` dir) | ✅ | `*.csv`, `*.pkl`, `*.joblib`, `!tests/fixtures/*.csv` |
+| Starter code refactored into `src/ml_skyline/{common,prepare,pipeline,train,evaluate}.py` | ✅ | Runnable CLI modules |
+| Fixed tab-corrupted CSV headers (`Customer\tType`, `satisfied\t\t\t`) | ✅ | `normalise_frame()` in `prepare.py` |
+| Fixed `remainder='drop'` leakage + train-as-test bug | ✅ | 93% vs starter 78% |
+| 17 tests pass, ruff check/format clean | ✅ | `pytest -q` → 17 passed |
+| `joblib`, `pyyaml` explicit in `pyproject.toml` | ✅ | `uv lock --check` ✅ |
+| Initial import commits (5) pushed **once** to `main` (`5078478`) | ✅ | Only direct push to `main` |
+| `staging` + `dev` created from `main` at same SHA | ✅ | All 3 at `5078478` |
+| Branch protection ×3 (PR required, 1 approval, dismiss stale, no force-push, no deletions, enforce_admins) | ✅ | Applied via API |
+| **Direct push rejected: GH006 on `dev` and `main`** | ✅ | Tested, refs untouched |
+| Default branch → `main`, `chore/bootstrap` + `chore/saad-setup` deleted | ✅ | Verified |
+| `CONTRIBUTING.md` with branch rules, Conventional Commits, squash into `dev` | ✅ | Committed |
+| **PR #2**: docs close-out retargeted to `dev`, Saad requested as reviewer | 🟡 | `open`, `mergeable=true`, needs Saad approval |
+
+### Module 03 — Pre-commit & Secrets 🟡 CODE COMPLETE — AWAITING PR #3 REVIEW
+
+| Task | Status | Evidence |
+|------|--------|----------|
+| `.pre-commit-config.yaml` with pinned revs | ✅ | ruff v0.16.9, nbstripout 0.8.1, pre-commit-hooks v6.0.0, gitleaks v8.28.0 |
+| `ruff-check` + `ruff-format` hooks | ✅ | In config |
+| `nbstripout` for `.ipynb` | ✅ | In config |
+| `check-added-large-files --maxkb=1024` (1 MB limit) | ✅ | In config |
+| `end-of-file-fixer`, `trailing-whitespace`, `check-yaml`, `check-merge-conflict`, `detect-private-key` | ✅ | In config |
+| `gitleaks` secret scanner | ✅ | In config |
+| `.gitleaks.toml` with `sk-prefixed-api-key` rule (blocks `sk-...` tokens) | ✅ | Blocks low-entropy placeholders |
+| `docs/` exempted from `sk-prefixed-api-key` only | ✅ | Allowlist in config |
+| `.github/pull_request_template.md` (Module 07 checklist) | ✅ | Created |
+| `ruff format` fixes applied to doc snippets | ✅ | `a3af812` commit |
+| Evidence: `docs/evidence/module-03-guard-rails.txt` | ✅ | Shows both blocks |
+| - 5 MB `big.bin` blocked by `check-added-large-files` | ✅ | `big.bin (5120 KB) exceeds 1024 KB` |
+| - Fake `sk-1234567890AAAAAAAAAAAAAAAA` blocked by gitleaks | ✅ | `RuleID: sk-prefixed-api-key` |
+| **PR #3** open: `claude/lucid-mendel-7k6uqi → dev`, reviewer Uzair requested | 🟡 | `open`, `mergeable=true`, needs Uzair review |
+| Both members run `pre-commit install` + `pre-commit run --all-files` | ⬜ | Pending (network download) |
+| 📸 Screenshots of both blocks for REPORT.md | ⬜ | Pending |
+
+---
+
+## 4. Rules scoreboard (rubric requirements)
+
+| Requirement | Target | Current | Status |
+|-------------|--------|---------|--------|
+| Uzair authored merged PRs | ≥ 2 | 0 / 2 | ⬜ |
+| Uzair reviewed PRs | ≥ 2 | 0 / 2 | ⬜ |
+| Saad authored merged PRs | ≥ 2 | 0 / 2 | ⬜ |
+| Saad reviewed PRs | ≥ 2 | 0 / 2 | ⬜ |
+| "Changes requested" reviews | ≥ 1 | 0 / 1 | ⬜ |
+| Experiments per member | ≥ 3 | 0 / 3 each | ⬜ |
+| Protected branches | `main`, `staging`, `dev` | **3 / 3** ✅ | ✅ |
+| Required CI checks on all 3 branches | 3 | 0 / 3 | ⬜ (Module 08) |
+| Release tag `model-v1.0` on `main` | 1 | 0 / 1 | ⬜ |
+| Independent reproduction matches exactly | 1 | 0 / 1 | ⬜ |
+| `REPORT.md` complete | 1 | **1 / 1** (this file) | ✅ |
+| Bonus: CML comment **or** `model-v1.0.1` | 1 | 0 / 1 | ⬜ |
+
+---
+
+## 5. Current open PRs
+
+| PR | Title | Author | Base | Head | State | Reviewers | Next Action |
+|----|-------|--------|------|------|-------|-----------|-------------|
+| #1 | docs: record Saad clone verification | Saad | `chore/bootstrap` | `chore/saad-setup` | **closed** (not merged) | — | — |
+| #2 | docs: module 02 close-out and starter-code defect notes | Uzair | `dev` | `docs/module-02-closeout` | **open** | Saad (`msaadsbr`) | Saad: Approve → Squash merge |
+| #3 | chore: add pre-commit guard rails | Saad | `dev` | `claude/lucid-mendel-7k6uqi` | **open** | Uzair (`Uzair3112`) | Uzair: Review → Approve → Squash merge |
+
+---
+
+## 6. Reproducibility verification (current `dev` baseline)
+
+```bash
+# On any fresh clone:
+uv sync
+python -m ml_skyline.prepare
+python -m ml_skyline.train
+python -m ml_skyline.evaluate
+pytest -q
+```
+
+**Expected metrics** (seed 42, commit `5078478` / `e55d526`):
+- accuracy: **0.9299**
+- precision: **0.9248**
+- recall: **0.9125**
+- F1: **0.9186**
+- ROC-AUC: **0.9811**
+
+**Verified:** ✅ All 17 tests pass, ruff clean, pipeline byte-identical metrics.
+
+---
+
+## 7. Starter-code defects fixed (for report)
+
+| # | Defect | Fix |
+|---|--------|-----|
+| 1 | `train.csv` tab-corrupted: `Customer\tType`, `satisfied\t\t\t` | `normalise_frame()` collapses whitespace runs; columns match clean `test.csv` |
+| 2 | `ColumnTransformer` used `remainder='drop'` → all numeric features discarded; `y_test`/`X_test` from training frame (leakage) | Explicit numeric + categorical transformers, proper seeded holdout split, fit only on train |
+
+---
+
+## 8. Links (to be filled as modules complete)
+
+- [ ] Data-update PR (Module 09): `<url>`
+- [ ] Conflict-resolution PR (Module 07/10): `<url>`
+- [ ] One "changes requested" review (Module 07): `<url>`
+- [ ] Release PR `dev → staging` (Module 09): `<url>`
+- [ ] Release PR `staging → main` (Module 09): `<url>`
+- [ ] Abandoned `exp/` branch + why (Module 07): `<url>`
+
+---
+
+## 9. Screenshots required (to be added)
+
+| # | Screenshot | Module | Status |
+|---|------------|--------|--------|
+| 1 | Blocked large file (5 MB) | 03 | ⬜ Pending |
+| 2 | Blocked fake secret (`sk-...`) | 03 | ⬜ Pending |
+| 3 | Failing CI check (red) | 08 | ⬜ Pending |
+| 4 | Passing CI check (green) | 08 | ⬜ Pending |
+
+---
+
+## 10. Next actions (priority order)
+
+| Priority | Action | Owner | Blocking |
+|----------|--------|-------|----------|
+| 1 | Saad reviews & **approves PR #2** (squash merge into `dev`) | Saad | Unblocks `dev` for Module 03 merge |
+| 2 | Uzair reviews & **approves PR #3** (checkout branch, run hooks, post checklist) | Uzair | Completes Module 03 |
+| 3 | Both run `uv run pre-commit install` in their clones | Uzair + Saad | Required for Module 03 checkpoint |
+| 4 | 📸 Screenshot both blocked commits for REPORT.md | Uzair + Saad | Required by rubric |
+| 5 | Merge PR #3 (squash into `dev`), delete `feat/pre-commit` | Uzair (or Saad) | Enables Module 04 |
+| 6 | **Module 04**: DVC init + DagsHub remote + `dvc add data/train.csv` + `dvc push` | Uzair | Needs DagsHub setup |
+| 7 | **Module 05**: EDA notebook (clean, no outputs in PR) | Saad | — |
+| 8 | **Module 06**: `dvc repro` pipeline, fresh-clone identical metrics | Both | — |
+| 9 | **Module 07**: ≥3 experiments each, conflict PR, changes-requested review | Both | — |
+| 10 | **Module 08**: CI workflow (ruff, pytest, pre-commit), red/green screenshots | Saad | — |
+| 11 | **Module 09**: Release `model-v1.0`, independent reproduction, final REPORT.md | Both | — |
+
+---
+
+## 11. Individual contribution (current)
+
+**Uzair Tariq** — Data owner + Platform A
+- Created repository, configured SSH rewrite for correct authorship
+- Renamed project, rewired package to `src/ml_skyline/`, fixed `pyproject.toml`
+- Refactored starter code into 5 CLI modules with fixed CSV parsing and no leakage
+- Wrote 17 tests, pinned environment (`uv.lock`), configured ruff/pytest
+- Pushed initial import to `main` (only direct push), created `staging`/`dev`
+- Applied branch protection ×3 via API, proved GH006 rejection, switched default branch
+- Wrote `CONTRIBUTING.md`, `docs/PROGRESS.md`, module docs
+- **PRs authored**: PR #2 (docs close-out)
+- **PRs reviewed**: 0 (awaiting PR #3 review)
+
+**Muhammad Saad Sabir** — Model owner + Platform B
+- Cloned repo, set per-clone identity, pushed `chore/saad-setup` (Phase 1 checkpoint)
+- Authored Module 03 pre-commit configuration (`.pre-commit-config.yaml`, `.gitleaks.toml`, PR template)
+- Proved both guard rails block (5 MB file, fake API key) with transcript evidence
+- Updated Module 03 docs with checkboxes and evidence links
+- **PRs authored**: PR #1 (closed), PR #3 (pre-commit guard rails)
+- **PRs reviewed**: 0 (awaiting PR #2 review)
+
+---
+
+## 12. Retrospective (ongoing)
+
+**What broke:**
+- Starter CSV was tab-corrupted — caught during import, fixed in code not raw data
+- Starter `ColumnTransformer` had `remainder='drop'` (silent numeric feature loss) + train-as-test leakage — refactored to proper split
+- GitHub default branch was `chore/bootstrap` — had to switch to `main` after first push
+- Plain `github.com` SSH authenticates as Uzair599 — repo-local rewrite needed for Uzair3112
+
+**What we standardised:**
+- Extension-based `.gitignore` (not directory-based) to keep DVC pointers committable
+- Conventional Commits, branch naming (`feat/`, `data/`, `exp/`, `fix/`), squash into `dev`
+- Pinned all tool versions (`uv.lock`, pre-commit `rev:` tags)
+- `params.yaml` drives all paths/seeds/model params — no hardcoded paths in source
+- Pre-commit hooks for formatting, large files, secrets, notebooks
+
+**What we added to `CONTRIBUTING.md` as a result:**
+- Branch protection rules (PR required, 1 approval, dismiss stale, no force-push, enforce_admins)
+- Merge strategy: squash into `dev`, rebase/merge-commit into `staging`/`main`
+- `dvc push` before `git push` rule
+- Reviewer must check out branch for pipeline-changing PRs
+- Never run experiments on uncommitted code
+
+---
+
+## 13. Environment & commands reference
+
+```bash
+# Clone & setup
+git clone git@github.com:Uzair3112/skyline-ml-collab.git
+cd skyline-ml-collab
+uv sync --reinstall
+git config user.name "Your Name"
+git config user.email "your@email.com"
+uv run pre-commit install
+
+# Run pipeline
+python -m ml_skyline.prepare && python -m ml_skyline.train && python -m ml_skyline.evaluate
+
+# Test & lint
+uv run pytest -q
+uv run ruff check src tests
+uv run ruff format --check src tests
+
+# Pre-commit
+uv run pre-commit run --all-files
+
+# Git hygiene
+git fetch --prune
+git log --oneline main -5
+git rev-list --objects --all | grep -c "\.csv$"  # should be 0
+```
+
+---
+
+## 14. Known issues / blockers
+
+| Issue | Module | Status |
+|-------|--------|--------|
+| Instructor not added as collaborator | 01 | **SKIPPED** (user decision) |
+| PR #2 awaiting Saad review | 02 | 🟡 Blocked |
+| PR #3 awaiting Uzair review | 03 | 🟡 Blocked |
+| DagsHub account + token not created | 04 | ⬜ Pending |
+| Network downloads for pre-commit hooks slow/flaky | 03 | ⚠️ Known |
+| Screenshots for REPORT.md not captured | 03, 08 | ⬜ Pending |
+
+---
+
+*Last updated: 2026-09-29 — this file lives at repo root and is updated with each module close-out.*
