@@ -1,0 +1,62 @@
+=== Module 04 evidence: DVC push + fresh-clone dvc pull verification ===
+repo:   https://github.com/Uzair3112/skyline-ml-collab
+branch: data/initial-dataset  (commit b3d4a32 "data: track raw airline satisfaction dataset with DVC")
+date:   2026-09-29
+dvc:    3.67.1 (local .venv), remote = https://dagshub.com/Uzair3112/skyline-ml-collab.dvc
+
+--- 1. what the commit tracks (5 files, no CSV) ---
+ data/raw/train.csv.dvc   md5:7795cca073013498de22f07333cc4e97  size:14873245
+ data/raw/test.csv.dvc    md5:e70c499bd30bc487549e887889a3e5c4  size:3037688
+ .dvc/.gitignore  .dvc/config  .dvcignore
+ .dvc/config.local (auth) is git-ignored and NOT committed
+
+--- 2. dvc status + dvc list (author machine) ---
+$ dvc status
+Data and pipelines are up to date.
+$ dvc list --dvc-only -R data
+data\raw\test.csv
+data\raw\train.csv
+
+--- 3. raw CSVs never enter git history (checkpoint) ---
+$ git rev-list --objects --all | grep -c '\.csv$'   # full-match *.csv
+0
+$ git log --all --oneline -- '*.csv'
+(no output)
+
+--- 4. reviewer verification: clean clone from GitHub, then pull ---
+$ git clone --branch data/initial-dataset \
+    https://github.com/Uzair3112/skyline-ml-collab.git   # fresh clone, not a local copy
+$ cd skyline-ml-collab
+# credentials: .dvc/config.local copied into the clone (git-ignored, never in the repo)
+
+# raw CSVs removed so dvc pull must actually fetch them:
+$ dvc status
+data\raw\test.csv.dvc:
+        changed outs:
+                deleted:            data\raw\test.csv
+data\raw\train.csv.dvc:
+        changed outs:
+                deleted:            data\raw\train.csv
+
+$ dvc pull
+A       data\raw\test.csv
+A       data\raw\train.csv
+2 files added
+
+$ dvc status
+Data and pipelines are up to date.
+
+--- 5. md5 three-way comparison (pointer vs pulled clone vs author local) ---
+train.csv  7795cca073013498de22f07333cc4e97  pointer = clone = local  MATCH=True
+test.csv   e70c499bd30bc487549e887889a3e5c4  pointer = clone = local  MATCH=True
+
+sizes: train.csv 14873245 B, test.csv 3037688 B (byte-identical)
+
+--- 6. notes / gotchas (for the module doc) ---
+* dvc 3.67.1 rejects the dagshub:// URL scheme:
+    Unsupported URL type 'dagshub://...'
+* there is no `dvc dagshub-setup` subcommand, and dvc[dagshub] is not a real extra.
+* working recipe: `dvc remote add -d storage https://dagshub.com/<owner>/<repo>.dvc`
+  + HTTP basic auth stored only in .dvc/config.local via `dvc remote modify --local storage user <name>`
+  and `dvc remote modify --local storage password <token>`.
+* order matters: dvc push BEFORE git push (DagsHub host key must be trusted once on first push).
