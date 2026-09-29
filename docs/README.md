@@ -18,7 +18,7 @@ each one ends with a checkpoint that must be visible in the repository.
 | 04 | [Version the data with DVC](module-04-dvc-data-versioning.md) | Phase 4 | Uzair | `data/initial-dataset` · PR **#7 merged** | ✅ |
 | 05 | [Notebooks done right](module-05-notebooks.md) | Phase 5 | Saad (built by Uzair) | `feat/eda-notebook` · PR **#9 merged** | ✅ |
 | 06 | [Reproducible DVC pipeline](module-06-reproducible-pipeline.md) | Phase 6 | Saad (executed by Uzair) | `feat/dvc-pipeline` | ✅ |
-| 07 | [Experiments & pull requests](module-07-experiments-and-prs.md) | Phase 7 | both | `exp/*` | ⬜ |
+| 07 | [Experiments & pull requests](module-07-experiments-and-prs.md) | Phase 7 | both (Uzair executed) | `exp/*` kept, others deleted | ✅ |
 | 08 | [CI on every pull request](module-08-ci.md) | Phase 8 | Uzair | `feat/ci` | ⬜ |
 | 09 | [Release: dev → staging → main](module-09-release.md) | Phase 9 | both | `staging` | ⬜ |
 | — | [REPORT.md outline](REPORT-outline.md) | submission | both | — | ⬜ |
