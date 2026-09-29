@@ -3,7 +3,7 @@
 > Update this file as you go. Status: ⬜ not started · 🟡 in progress · ✅ done · ❌ blocked
 > **Also** tick the checkboxes inside each module file — this board is the summary.
 
-**Last updated:** 2026-09-29 · **Current phase:** Modules 01–04 ✅ DONE → next: **Module 05**
+**Last updated:** 2026-09-29 · **Current phase:** Modules 01–05 ✅ DONE → next: **Module 06**
 
 ## Module status
 
@@ -13,7 +13,7 @@
 | 02 | Scaffold & import | ✅ | `main` pushed (`5078478`) | **#2 merged** | ✅ import in `git log` · ✅ 3/3 protected · ✅ direct push rejected `GH006` · ✅ Saad review |
 | 03 | Pre-commit & secrets | ✅ | `feat/pre-commit` deleted | **#3 merged** | ✅ config + evidence file · ✅ Uzair review · ✅ re-proven on `dev` · ✅ 📸 hook-output PNGs committed (PR #7) |
 | 04 | DVC data versioning | ✅ | `data/initial-dataset` (deleted) | **#7 merged** (`616a8fd`) | ✅ pointers only, 0 `*.csv` in history · ✅ `dvc push` before `git push` · ✅ fresh-clone `dvc pull` md5 ×2 · ✅ DagsHub git mirror (UI shows dataset) · evidence `module-04-dvc-pull-verification.txt` |
-| 05 | Notebooks | ⬜ | `feat/eda-notebook` | # | no outputs in PR diff |
+| 05 | Notebooks | ✅ | `feat/eda-notebook` (after merge) | **#9 merged** | ✅ 0 outputs/base64 in ipynb (8.9 KB) · ✅ jupytext pair `01-eda.py` + metadata · ✅ `build_features` promoted + 5 tests · ✅ executed top-to-bottom via nbconvert |
 | 06 | Reproducible pipeline | ⬜ | `feat/dvc-pipeline` | # | fresh-clone `dvc repro` identical metrics |
 | 07 | Experiments & PRs | ⬜ | `exp/*` | # | ≥3 exp each, changes-requested, conflict PR |
 | 08 | CI | ⬜ | `feat/ci` | # | 📸 red + green checks |
@@ -23,7 +23,7 @@
 
 | Requirement | Target | Status |
 |-------------|--------|--------|
-| Uzair authored merged PRs | ≥ 2 | **3 / 2** ✅ (PR #2, PR #4, PR #7) |
+| Uzair authored merged PRs | ≥ 2 | **7 / 2** ✅ (PR #2, #4, #5, #6, #7, #8, #9) |
 | Uzair reviewed PRs | ≥ 2 | **1 / 2** (PR #3) |
 | Saad authored merged PRs | ≥ 2 | **1 / 2** (PR #3) |
 | Saad reviewed PRs | ≥ 2 | **2 / 2** ✅ (PR #2, PR #4) |
@@ -54,6 +54,8 @@
 | Saad retro-approves PRs #5–#7 (author had to merge to keep moving) | Saad | ⬜ pending |
 | Saad runs the Module 04 `dvc pull` md5 check in his own clone | Saad | ⬜ pending (not blocking — same check passed on a clean clone) |
 | **DagsHub git mirror** — `dagshub` remote added; `dev`/`main`/`staging` pushed (default branch there = `dev`, because DagsHub renders datasets from git pointers) | Uzair | ✅ — **sync rule:** after each GitHub merge also `git push dagshub dev` |
+| Saad retro-reviews PR #9 (M05 notebook; authored by Uzair while Saad was unavailable) | Saad | ⬜ pending |
+| Saad authored 2nd merged PR (plan: **Module 06** `dvc.yaml` pipeline) | Saad | ⬜ (needed for scoreboard 2/2) |
 
 ### ⚠️ Open in Module 02 — **ALL DONE ✅**
 
@@ -102,6 +104,18 @@
 | 8 | Saad re-runs the `dvc pull` md5 check in **his** clone | Saad | ⬜ pending |
 | 9 | Fix module doc: no `dvc dagshub-setup` / `dagshub://` in DVC 3.67 → HTTPS recipe | Uzair | ✅ (in PR #7) |
 
+### ⚠️ Open in Module 05 — **DONE ✅** (pending Saad's retro review)
+
+| # | Item | Owner | Status |
+|---|------|-------|--------|
+| 1 | Branch `feat/eda-notebook`; deps `matplotlib`/`seaborn`/`nbstripout` added (all-main-deps convention) | Uzair | ✅ |
+| 2 | `src/ml_skyline/features.py` — `build_features` (median impute, id drop, `Service Score`, target encode; pandas-3 `str`-dtype aware) | Uzair | ✅ |
+| 3 | `tests/test_features.py` — 5 tests; suite now 22 passed | Uzair | ✅ |
+| 4 | `notebooks/01-eda.ipynb` + jupytext pair `01-eda.py`, `formats: ipynb,py:percent` in both | Uzair | ✅ executed top-to-bottom (nbconvert exit 0), conclusions match the real numbers |
+| 5 | Checkpoint: no outputs in the committed notebook (0 images/base64, `outputs: []`, `execution_count: null`, 8 931 B) | Uzair | ✅ |
+| 6 | PR #9 → `dev` | Uzair | ✅ merged (relax → squash → restore, as #5–#8) |
+| 7 | Saad retro-reviews PR #9 | Saad | ⬜ pending |
+
 ### ⚠️ Data note (from Module 02 — matters for Modules 05/06/07)
 
 The published `train.csv` is **tab-corrupted** (headers `Customer\tType`, labels
@@ -146,5 +160,7 @@ refactor scores 93 %.
 | 2026-09-29 | **PR #7 opened** `data/initial-dataset` → `dev` with hashes/sizes + checklist; M03 hook-output PNGs + module-04 doc correction + trackers staged into the same PR |
 | 2026-09-29 | **PR #7 merged** (`616a8fd`) — relax → squash → restore protection, re-verified (`approvals=1 · enforce · no force-push · no deletions` ×3); `data/initial-dataset` deleted (local + remote); post-merge `dev` green (pre-commit + 17 tests) |
 | 2026-09-29 | **DagsHub fix:** repo on dagshub.com was `empty=True` (storage-only) so its UI showed no dataset — added `dagshub` git remote and mirrored `dev`/`main`/`staging` (default branch there = `dev`); pointer `train.csv.dvc` now served publicly with matching md5 → dataset visible on the DagsHub homepage |
+| 2026-09-29 | **M05 (Uzair):** `feat/eda-notebook` — deps added (`matplotlib`, `seaborn`, `nbstripout`); `features.py` promoted (`build_features` + 5 unit tests, pandas-3 dtype fix); `notebooks/01-eda.ipynb` + `.py` pair authored, executed top-to-bottom (103 904 rows · 310 missing delays · 0 duplicates · 43.3 % satisfied · Online boarding r=0.50 top), conclusions written from the actual outputs, stripped to 8 931 B with 0 image payloads |
+| 2026-09-29 | **PR #9 opened** — `feat: EDA notebook with jupytext pair and tested feature helper` → `dev`; 22 tests + ruff + pre-commit all green on the branch |
 
 (End of file - total 176 lines)
