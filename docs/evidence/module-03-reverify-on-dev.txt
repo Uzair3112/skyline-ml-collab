@@ -1,0 +1,73 @@
+# Module 03 evidence (re-verification): guard rails on dev after PR #3 merged
+# Recorded 2026-09-29 by Uzair Tariq, clone at dev c63b5f2, hooks installed
+# (uv run pre-commit install -> .git/hooks/pre-commit present)
+
+$ git branch --show-current
+docs/module-03-closeout
+
+$ git rev-parse --short HEAD   # branched from dev
+c63b5f2
+
+$ uv run pre-commit run --all-files
+ruff check...............................................................Passed
+ruff format..............................................................Passed
+nbstripout...........................................(no files to check)Skipped
+check for added large files..............................................Passed
+fix end of files.........................................................Failed
+- hook id: end-of-file-fixer
+- exit code: 1
+- files were modified by this hook
+
+Fixing REPORT.md
+Fixing docs/PROGRESS.md
+
+trim trailing whitespace.................................................Passed
+check yaml...............................................................Passed
+check for merge conflicts................................................Passed
+detect private key.......................................................Passed
+Detect hardcoded secrets.................................................Passed
+# -> missing final newlines in REPORT.md and docs/PROGRESS.md fixed by the hook
+#    and committed in this PR
+
+# --- guard 1: 5 MB file -----------------------------------------------------
+$ [IO.File]::WriteAllBytes("big.bin", (New-Object byte[] (5*1024*1024)))
+$ git add -f big.bin && git commit -m "test: big file"
+check for added large files..............................................Failed
+- hook id: check-added-large-files
+- exit code: 1
+
+big.bin (5120 KB) exceeds 1024 KB.
+
+# exit code: 1  -> commit blocked
+$ git reset -q big.bin && Remove-Item big.bin
+
+# --- guard 2: fake API key --------------------------------------------------
+$ Set-Content leak.py 'API_KEY = "sk-1234567890AAAAAAAAAAAAAAAA"'
+$ git add leak.py && git commit -m "test: leak"
+Detect hardcoded secrets.................................................Failed
+- hook id: gitleaks
+- exit code: 1
+
+Finding:     API_KEY = "REDACTED
+Secret:      REDACTED
+RuleID:      sk-prefixed-api-key
+Entropy:     2.651084
+File:        leak.py
+Line:        1
+Fingerprint: leak.py:sk-prefixed-api-key:1
+
+# exit code: 1  -> commit blocked
+$ git reset -q leak.py && Remove-Item leak.py
+
+# --- repo left clean --------------------------------------------------------
+$ git status --short
+# only this PR's doc changes, no big.bin, no leak.py
+
+# --- suite green on the branch ---------------------------------------------
+$ uv run pytest --tb=no
+16 passed, 1 skipped in 8.59s
+$ uv run ruff check .
+All checks passed!
+
+# Checkpoint (M03): committing a 5 MB file or a fake API key is blocked. ✅
+# 📸 Terminal/browser screenshots for REPORT.md are still captured manually.

@@ -201,6 +201,6 @@ Settings → Branches (or **Rulesets**) for **`main`**, **`staging`**, **`dev`**
 | Tasks 1–6, 8 | ✅ |
 | Task 7 branch protection + default-branch switch + delete 2 chore branches | ✅ |
 | Proof that a direct push is rejected | ✅ `GH006` on `dev` and `main` |
-| Documentation close-out PR → `dev` | 🟡 **PR #2 awaiting Saad's review** |
-| **Instructor added as viewer** | ⬜ **blocked — need their GitHub username** |
-| 📸 optional: collaborators + protection screenshots | ⬜ Uzair |
+| Documentation close-out PR → `dev` | ✅ **PR #2** approved by `msaadsbr` → squash-merged `a0edadd` |
+| **Instructor added as viewer** | ⬜ **SKIPPED** (team decision — graded from the repo alone) |
+| 📸 optional: collaborators + protection screenshots | ⬜ Uzair (optional; not required by `REPORT.md`) |
