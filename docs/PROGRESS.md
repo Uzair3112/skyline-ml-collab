@@ -3,7 +3,7 @@
 > Update this file as you go. Status: ⬜ not started · 🟡 in progress · ✅ done · ❌ blocked
 > **Also** tick the checkboxes inside each module file — this board is the summary.
 
-**Last updated:** 2026-09-29 · **Current phase:** Modules 01–05 ✅ DONE → next: **Module 06**
+**Last updated:** 2026-09-30 · **Current phase:** Modules 01–06 ✅ DONE → next: **Module 07**
 
 ## Module status
 
@@ -14,7 +14,7 @@
 | 03 | Pre-commit & secrets | ✅ | `feat/pre-commit` deleted | **#3 merged** | ✅ config + evidence file · ✅ Uzair review · ✅ re-proven on `dev` · ✅ 📸 hook-output PNGs committed (PR #7) |
 | 04 | DVC data versioning | ✅ | `data/initial-dataset` (deleted) | **#7 merged** (`616a8fd`) | ✅ pointers only, 0 `*.csv` in history · ✅ `dvc push` before `git push` · ✅ fresh-clone `dvc pull` md5 ×2 · ✅ DagsHub git mirror (UI shows dataset) · evidence `module-04-dvc-pull-verification.txt` |
 | 05 | Notebooks | ✅ | `feat/eda-notebook` (after merge) | **#9 merged** | ✅ 0 outputs/base64 in ipynb (8.9 KB) · ✅ jupytext pair `01-eda.py` + metadata · ✅ `build_features` promoted + 5 tests · ✅ executed top-to-bottom via nbconvert |
-| 06 | Reproducible pipeline | ⬜ | `feat/dvc-pipeline` | # | fresh-clone `dvc repro` identical metrics |
+| 06 | Reproducible pipeline | ✅ | `feat/dvc-pipeline` (after merge) | **#11 merged** | ✅ `dvc.yaml` 3 stages + `dvc.lock` + `params.yaml` · ✅ `run_at` removed (deterministic) · ✅ fresh-clone `dvc pull && dvc repro` identical metrics (`docs/evidence/module-06-dvc-repro-verification.txt`) · ✅ `dvc push` before `git push` |
 | 07 | Experiments & PRs | ⬜ | `exp/*` | # | ≥3 exp each, changes-requested, conflict PR |
 | 08 | CI | ⬜ | `feat/ci` | # | 📸 red + green checks |
 | 09 | Release & report | ⬜ | `staging` | # | `model-v1.0` + independent reproduction |
@@ -23,11 +23,11 @@
 
 | Requirement | Target | Status |
 |-------------|--------|--------|
-| Uzair authored merged PRs | ≥ 2 | **7 / 2** ✅ (PR #2, #4, #5, #6, #7, #8, #9) |
-| Uzair reviewed PRs | ≥ 2 | **1 / 2** (PR #3) |
-| Saad authored merged PRs | ≥ 2 | **1 / 2** (PR #3) |
+| Uzair authored merged PRs | ≥ 2 | **8 / 2** ✅ (PR #2, #4, #5, #6, #7, #8, #9, #11) |
+| Uzair reviewed PRs | ≥ 2 | **2 / 2** ✅ (PR #3, #10) |
+| Saad authored merged PRs | ≥ 2 | **2 / 2** ✅ (PR #3, #10) |
 | Saad reviewed PRs | ≥ 2 | **2 / 2** ✅ (PR #2, PR #4) |
-| "Changes requested" reviews | ≥ 1 | 0 / 1 |
+| "Changes requested" reviews | ≥ 1 | 0 / 1 — **planned: Saad requests changes on a Uzair-authored PR in M07** (author can't review own PR) |
 | Experiments per member | ≥ 3 | Uzair 0/3 · Saad 0/3 |
 | Protected branches | `main`, `staging`, `dev` | **3 / 3** ✅ |
 | Required CI checks on | all 3 branches | 0 / 3 |
@@ -55,7 +55,9 @@
 | Saad runs the Module 04 `dvc pull` md5 check in his own clone | Saad | ⬜ pending (not blocking — same check passed on a clean clone) |
 | **DagsHub git mirror** — `dagshub` remote added; `dev`/`main`/`staging` pushed (default branch there = `dev`, because DagsHub renders datasets from git pointers) | Uzair | ✅ — **sync rule:** after each GitHub merge also `git push dagshub dev` |
 | Saad retro-reviews PR #9 (M05 notebook; authored by Uzair while Saad was unavailable) | Saad | ⬜ pending |
-| Saad authored 2nd merged PR (plan: **Module 06** `dvc.yaml` pipeline) | Saad | ⬜ (needed for scoreboard 2/2) |
+| Saad authored 2nd merged PR | Saad | ✅ **PR #10** (opened `dev` → `main` instead of M06; title corrected + approved + rebase-merged by Uzair 2026-09-29) |
+| **"Changes requested" review (≥1)** | Saad | ⬜ pending — needs Saad's account on a Uzair-authored PR; **scheduled for Module 07** (Uzair cannot review his own PRs) |
+| **M06 executed by Uzair** (Saad's attempt produced wrong PR #10; team decision: don't loop Saad back) | Uzair | ✅ PR #11 |
 
 ### ⚠️ Open in Module 02 — **ALL DONE ✅**
 
@@ -116,6 +118,19 @@
 | 6 | PR #9 → `dev` | Uzair | ✅ merged (relax → squash → restore, as #5–#8) |
 | 7 | Saad retro-reviews PR #9 | Saad | ⬜ pending |
 
+### ⚠️ Open in Module 06 — **DONE ✅** (execution by Uzair; changes-requested moved to M07)
+
+| # | Item | Owner | Status |
+|---|------|-------|--------|
+| 1 | Branch `feat/dvc-pipeline` from `dev` | Uzair | ✅ |
+| 2 | Remove `run_at` from `metrics.json` (deterministic evaluate) | Uzair | ✅ commit `050ee1c` |
+| 3 | `dvc.yaml` — prepare/train/evaluate, colon-free `params:` syntax (see doc §3 gotcha), `metrics: cache: false` | Uzair | ✅ commit `050ee1c` |
+| 4 | `dvc repro` green; 22 tests + ruff + 10 hooks pass | Uzair | ✅ |
+| 5 | `dvc.lock` + `metrics.json` committed at code sha (`commit_sha=050ee1c`), `dvc push` (3 files) before `git push` | Uzair | ✅ commit `9e6ff42` |
+| 6 | Fresh-clone checkpoint: `uv sync && dvc pull && dvc repro` → identical metrics | Uzair | ✅ `docs/evidence/module-06-dvc-repro-verification.txt` |
+| 7 | PR #11 → `dev`, squash-merge, branch cleanup, DagsHub mirror sync | Uzair | ✅ |
+| 8 | **Saad's "changes requested" review (rubric ≥1)** | Saad | ⬜ **moved to Module 07** — needs his account on a Uzair PR |
+
 ### ⚠️ Data note (from Module 02 — matters for Modules 05/06/07)
 
 The published `train.csv` is **tab-corrupted** (headers `Customer\tType`, labels
@@ -162,5 +177,9 @@ refactor scores 93 %.
 | 2026-09-29 | **DagsHub fix:** repo on dagshub.com was `empty=True` (storage-only) so its UI showed no dataset — added `dagshub` git remote and mirrored `dev`/`main`/`staging` (default branch there = `dev`); pointer `train.csv.dvc` now served publicly with matching md5 → dataset visible on the DagsHub homepage |
 | 2026-09-29 | **M05 (Uzair):** `feat/eda-notebook` — deps added (`matplotlib`, `seaborn`, `nbstripout`); `features.py` promoted (`build_features` + 5 unit tests, pandas-3 dtype fix); `notebooks/01-eda.ipynb` + `.py` pair authored, executed top-to-bottom (103 904 rows · 310 missing delays · 0 duplicates · 43.3 % satisfied · Online boarding r=0.50 top), conclusions written from the actual outputs, stripped to 8 931 B with 0 image payloads |
 | 2026-09-29 | **PR #9 opened** — `feat: EDA notebook with jupytext pair and tested feature helper` → `dev`; 22 tests + ruff + pre-commit all green on the branch |
+| 2026-09-29 | **PR #9 merged** (`ff05906`) — M05 done; DagsHub mirror synced; M06 brief written for Saad (owner per `00-overview.md:102`) |
+| 2026-09-29 | **Saad's M06 attempt → wrong PR #10** (`dev` → `main`, M05-styled title, no `feat/dvc-pipeline` branch, no `dvc.yaml` anywhere) |
+| 2026-09-29 | **PR #10 handled per team decision (no re-looping Saad):** title corrected → Uzair submitted the full review checklist + **APPROVED** (his 2nd review, Saad authored it → his 2nd PR) → **rebase-merged** into `main` (`86299fe`, CONTRIBUTING §3) → local `main` + DagsHub mirror synced; protection re-verified ×3 |
+| 2026-09-30 | **M06 (Uzair):** `feat/dvc-pipeline` — `run_at` removed (determinism); `dvc.yaml` wired (3 stages); two DVC gotchas solved live: `- seed:`-style params entries mean "file named seed" → colon-free keys; metrics need `cache: false` to stay git-tracked; commits `050ee1c` (code) + `9e6ff42` (lock+metrics, `commit_sha` matches code commit); `dvc push` 3 files; fresh-clone checkpoint PASS → evidence `docs/evidence/module-06-dvc-repro-verification.txt`; PR #11 opened |
 
 (End of file - total 176 lines)
