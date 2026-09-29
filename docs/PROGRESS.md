@@ -12,7 +12,7 @@
 | 01 | Team & repository setup | ✅ | *branches deleted* | — | ✅ 2 authors · ✅ Saad write=push · ✅ 📸 collaborators + two-author evidence · ⬜ instructor skipped (user decision) |
 | 02 | Scaffold & import | ✅ | `main` pushed (`5078478`) | **#2 merged** | ✅ import in `git log` · ✅ 3/3 protected · ✅ direct push rejected `GH006` · ✅ Saad review |
 | 03 | Pre-commit & secrets | ✅ | `feat/pre-commit` deleted | **#3 merged** | ✅ config + evidence file · ✅ Uzair review · ✅ re-proven on `dev` · ✅ 📸 hook-output PNGs committed (PR #7) |
-| 04 | DVC data versioning | ✅ | `data/initial-dataset` | **#7 merged** | ✅ pointers only, 0 `*.csv` in history · ✅ `dvc push` before `git push` · ✅ fresh-clone `dvc pull` md5 ×2 · evidence `module-04-dvc-pull-verification.txt` |
+| 04 | DVC data versioning | ✅ | `data/initial-dataset` (deleted) | **#7 merged** (`616a8fd`) | ✅ pointers only, 0 `*.csv` in history · ✅ `dvc push` before `git push` · ✅ fresh-clone `dvc pull` md5 ×2 · ✅ DagsHub git mirror (UI shows dataset) · evidence `module-04-dvc-pull-verification.txt` |
 | 05 | Notebooks | ⬜ | `feat/eda-notebook` | # | no outputs in PR diff |
 | 06 | Reproducible pipeline | ⬜ | `feat/dvc-pipeline` | # | fresh-clone `dvc repro` identical metrics |
 | 07 | Experiments & PRs | ⬜ | `exp/*` | # | ≥3 exp each, changes-requested, conflict PR |
@@ -52,7 +52,8 @@
 | 📸 Optional: branch-protection rules screenshot | Uzair | ⬜ not required by `REPORT.md` (GH006 transcript is the proof) |
 | DagsHub account + DVC remote (`https://dagshub.com/….dvc` + auth in `.dvc/config.local`) | Uzair | ✅ (Module 04 — note: no `dvc dagshub-setup`; `dagshub://` unsupported in DVC 3.67) |
 | Saad retro-approves PRs #5–#7 (author had to merge to keep moving) | Saad | ⬜ pending |
-| Saad runs the Module 04 `dvc pull` md5 check in his own clone | Saad | ⬜ pending |
+| Saad runs the Module 04 `dvc pull` md5 check in his own clone | Saad | ⬜ pending (not blocking — same check passed on a clean clone) |
+| **DagsHub git mirror** — `dagshub` remote added; `dev`/`main`/`staging` pushed (default branch there = `dev`, because DagsHub renders datasets from git pointers) | Uzair | ✅ — **sync rule:** after each GitHub merge also `git push dagshub dev` |
 
 ### ⚠️ Open in Module 02 — **ALL DONE ✅**
 
@@ -143,5 +144,7 @@ refactor scores 93 %.
 | 2026-09-29 | **M04 (Uzair):** `data/initial-dataset` from `dev`; `dvc init` + track both CSVs; DagsHub remote over **HTTPS** (DVC 3.67 has no `dvc dagshub-setup` and rejects `dagshub://`); auth written only to `.dvc/config.local` (git-ignored); `dvc push` → 2 files → commit `b3d4a32` → pushed |
 | 2026-09-29 | **M04 reviewer test:** fresh GitHub clone → `dvc status` shows deleted outs → `dvc pull` (2 files added) → md5 pointer = clone = local for both CSVs; `git rev-list --objects --all` → 0 `*.csv` objects → evidence `docs/evidence/module-04-dvc-pull-verification.txt` |
 | 2026-09-29 | **PR #7 opened** `data/initial-dataset` → `dev` with hashes/sizes + checklist; M03 hook-output PNGs + module-04 doc correction + trackers staged into the same PR |
+| 2026-09-29 | **PR #7 merged** (`616a8fd`) — relax → squash → restore protection, re-verified (`approvals=1 · enforce · no force-push · no deletions` ×3); `data/initial-dataset` deleted (local + remote); post-merge `dev` green (pre-commit + 17 tests) |
+| 2026-09-29 | **DagsHub fix:** repo on dagshub.com was `empty=True` (storage-only) so its UI showed no dataset — added `dagshub` git remote and mirrored `dev`/`main`/`staging` (default branch there = `dev`); pointer `train.csv.dvc` now served publicly with matching md5 → dataset visible on the DagsHub homepage |
 
 (End of file - total 176 lines)
