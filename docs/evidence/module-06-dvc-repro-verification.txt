@@ -1,0 +1,94 @@
+================================================================================
+Module 06 checkpoint evidence - fresh-clone reproduction
+repo:    Uzair3112/skyline-ml-collab
+branch:  feat/dvc-pipeline
+date:    2026-09-30
+verifier: Uzair3112 (fresh clone into an empty temp directory)
+purpose: PDF Phase 6 checkpoint - "a teammate on a fresh clone runs
+         dvc pull && dvc repro and gets identical metrics"
+================================================================================
+
+[1] fresh clone
+--------------------------------------------------------------------------------
+$ git clone -b feat/dvc-pipeline https://github.com/Uzair3112/skyline-ml-collab.git m06-verify
+$ git -C m06-verify rev-parse HEAD
+9e6ff42d41e5e9f50967d9fd5d30763a572330b3
+(exit 0)
+
+[2] environment + data
+--------------------------------------------------------------------------------
+$ cp <main-clone>/.dvc/config.local m06-verify/.dvc/config.local   # DagsHub auth, git-ignored
+$ uv sync
+... installed from uv.lock (exit 0)
+
+$ uv run dvc pull
+A       data\processed\test.csv
+A       data\processed\train.csv
+A       data\raw\test.csv
+A       data\raw\train.csv
+A       models\model.pkl
+5 files fetched and 5 files added
+(exit 0)
+
+[3] plain dvc repro on the fresh clone (PDF command: dvc pull && dvc repro)
+--------------------------------------------------------------------------------
+$ uv run dvc repro
+'data\raw\train.csv.dvc' didn't change, skipping
+Stage 'prepare' didn't change, skipping
+Stage 'train' didn't change, skipping
+Stage 'evaluate' didn't change, skipping
+Data and pipelines are up to date.
+(exit 0)
+
+$ git status --porcelain
+(empty - working tree unchanged; committed metrics.json/lock reproduced exactly)
+
+[4] forced full re-execution: dvc repro -f  (prepare -> train -> evaluate)
+--------------------------------------------------------------------------------
+$ uv run dvc repro -f
+Running stage 'prepare':
+> uv run python -m ml_skyline.prepare
+train: data\processed\train.csv (83123, 23)
+test:  data\processed\test.csv (20781, 23)
+Running stage 'train':
+> uv run python -m ml_skyline.train
+model:   random_forest (seed=42)
+train accuracy: 0.9297
+Running stage 'evaluate':
+> uv run python -m ml_skyline.evaluate
+{
+  "accuracy": 0.9299,
+  "precision": 0.9248,
+  "recall": 0.9125,
+  "f1": 0.9186,
+  "roc_auc": 0.9811
+}
+(exit 0)
+
+[5] metrics comparison: committed file vs fresh-clone re-run
+--------------------------------------------------------------------------------
+key         committed (050ee1c run)     fresh-clone re-run      match
+accuracy    0.929935999230066           0.929935999230066       True
+precision   0.9248171074845245          0.9248171074845245      True
+recall      0.9124930594114381          0.9124930594114381      True
+f1          0.9186137506987143          0.9186137506987143      True
+roc_auc     0.981106463724863           0.981106463724863       True
+n_train     83123                       83123                   True
+n_test      20781                       20781                   True
+seed        42                          42                      True
+model       random_forest               random_forest           True
+
+commit_sha  050ee1c (code commit of that run)   9e6ff42 (clone HEAD of this run)
+            -> differs BY DESIGN: commit_sha records the commit that produced the
+               run (PDF: "log the current commit SHA with every run"). run_at was
+               removed in M06 so every value metric is deterministic.
+git diff after forced re-run: only the commit_sha line in metrics.json and its
+md5 line in dvc.lock (1 line each) - all value metrics byte-identical.
+
+================================================================================
+CONCLUSION: PASS
+  * fresh clone + uv sync + dvc pull restored all 5 DVC-tracked files
+  * plain dvc repro  -> "Data and pipelines are up to date", tree clean
+  * forced  dvc repro -> identical value metrics (all 9 keys), seed 42
+  * params.yaml drives split + hyperparameters; nothing hardcoded in code
+================================================================================
