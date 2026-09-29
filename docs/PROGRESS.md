@@ -3,15 +3,15 @@
 > Update this file as you go. Status: ⬜ not started · 🟡 in progress · ✅ done · ❌ blocked
 > **Also** tick the checkboxes inside each module file — this board is the summary.
 
-**Last updated:** 2026-09-27 · **Current phase:** Module 02 (Phase 2) — 🟡 GitHub side done · waiting on Saad's review of PR #2 · next: Module 03
+**Last updated:** 2026-09-29 · **Current phase:** Module 03 (Phase 3) — 🟡 code done on both PR #2 & #3 · awaiting reviews → next: Module 04
 
 ## Module status
 
 | # | Module | Status | Branch | PR | Checkpoint evidence |
 |---|--------|--------|--------|----|---------------------|
-| 01 | Team & repository setup | ✅ | *branches deleted* | — | ✅ 2 authors · ✅ Saad write=push · ⬜ instructor still missing |
+| 01 | Team & repository setup | ✅ | *branches deleted* | — | ✅ 2 authors · ✅ Saad write=push · ⬜ instructor skipped (user decision) |
 | 02 | Scaffold & import | 🟡 | `main` pushed (`5078478`) | **PR #2** open | ✅ import in `git log` · ✅ 3/3 protected · ✅ direct push rejected `GH006` · ⬜ Saad review |
-| 03 | Pre-commit & secrets | ⬜ | `feat/pre-commit` | # | 📸 blocked 5 MB file + fake key |
+| 03 | Pre-commit & secrets | 🟡 | `feat/pre-commit` | **PR #3** open | ✅ config + evidence file · ⬜ Uzair review · ⬜ 📸 screenshots |
 | 04 | DVC data versioning | ⬜ | `data/initial-dataset` | # | CSV absent from git history |
 | 05 | Notebooks | ⬜ | `feat/eda-notebook` | # | no outputs in PR diff |
 | 06 | Reproducible pipeline | ⬜ | `feat/dvc-pipeline` | # | fresh-clone `dvc repro` identical metrics |
@@ -33,7 +33,7 @@
 | Required CI checks on | all 3 branches | 0 / 3 |
 | Release tag | `model-v1.0` on `main` | ⬜ |
 | Independent reproduction | matches exactly | ⬜ |
-| `REPORT.md` | complete | ⬜ |
+| `REPORT.md` | complete | ✅ **created** |
 | Bonus | CML comment **or** `model-v1.0.1` | ⬜ |
 
 ## Open decisions / blockers
@@ -42,7 +42,7 @@
 |------|-------|--------|
 | Instructor approval of the Airline dataset (not on the PDF's list) | Uzair | ✅ (task 1 done) |
 | Repo created on GitHub + Saad (write) added | Uzair | ✅ |
-| **Instructor added as viewer (read)** | Uzair | ❌ **not added yet — need their GitHub username** |
+| **Instructor added as viewer (read)** | Uzair | ⬜ **SKIPPED** (user decision) |
 | Local folder renamed → `skyline-ml-collab`, venv rebuilt, `pyproject` renamed | Uzair | ✅ |
 | Local branch `master` → `main`, `origin` set, identity = Uzair Tariq | Uzair | ✅ |
 | `README.md` with team/roles committed | Uzair | ✅ |
@@ -63,12 +63,26 @@
 | 6 | Close stale PR #1 (adds 0 commits to `dev`) | Uzair | ✅ |
 | 7 | **Review + squash-merge PR #2** | **Saad** | ⬜ |
 | 8 | Saad's env check on `dev` (`uv sync` + 3 stages + `pytest`) | Saad | ⬜ |
-| 9 | **Add instructor as a read-only collaborator** | Uzair | ❌ need their GitHub username |
+| 9 | ~~Add instructor as a read-only collaborator~~ | — | ⬜ **SKIPPED** |
 | 10 | 📸 optional screenshots (collaborators / protection) | Uzair | ⬜ |
 
 > **No direct pushes to `dev`/`staging`/`main` from now on** — proven above.
 
-### ⚠️ Data note found in Phase 2 — matters for Modules 05/06/07
+### ⚠️ Open in Module 03
+
+| # | Item | Owner | Status |
+|---|------|-------|--------|
+| 1 | `.pre-commit-config.yaml` with pinned revs (ruff v0.16.9, nbstripout 0.8.1, pre-commit-hooks v6.0.0, gitleaks v8.28.0) | Saad | ✅ |
+| 2 | `.gitleaks.toml` with `sk-prefixed-api-key` rule + `docs/` allowlist | Saad | ✅ |
+| 3 | `.github/pull_request_template.md` (Module 07 checklist) | Saad | ✅ |
+| 4 | Evidence: `docs/evidence/module-03-guard-rails.txt` (5MB + fake key blocked) | Saad | ✅ |
+| 5 | PR #3 opened: `claude/lucid-mendel-7k6uqi → dev`, Uzair requested as reviewer | Saad | ✅ |
+| 6 | **Uzair reviews PR #3**: checkout branch, `pre-commit install`, `run --all-files`, post checklist | **Uzair** | ⬜ |
+| 7 | **Approve + squash-merge PR #3** into `dev`, delete `feat/pre-commit` | Uzair/Saad | ⬜ |
+| 8 | Both members run `uv run pre-commit install` in their clones | Uzair + Saad | ⬜ |
+| 9 | 📸 Screenshot both blocked commits for REPORT.md | Uzair + Saad | ⬜ |
+
+### ⚠️ Data note (from Module 02 — matters for Modules 05/06/07)
 
 The published `train.csv` is **tab-corrupted** (headers `Customer\tType`, labels
 `satisfied\t\t\t`). Repaired in code by `ml_skyline.prepare.normalise_frame`, not by rewriting the
@@ -97,4 +111,8 @@ refactor scores 93 %.
 | 2026-09-27 | **M02 task 8:** `CONTRIBUTING.md` — branch rules, Conventional Commits, **squash into `dev`** decision, DVC and review rules |
 | 2026-09-27 | **M02 GitHub side (Uzair, via API with a 7-day `repo` token):** retargeted PR #2 base → `dev`; requested `msaadsbr` as reviewer; closed stale PR #1 (added 0 commits); **branch protection ×3** (`PR required`, `1 approval`, `dismiss stale`, `no force-push`, `no deletions`, `enforce_admins`); default branch → `main`; deleted `chore/bootstrap` + `chore/saad-setup` |
 | 2026-09-27 | **Protection proven:** direct pushes to `dev` and `main` rejected with `GH006: Protected branch update failed … Changes must be made through a pull request`; all refs stayed at `5078478` |
-| 2026-09-27 | **Blocker found:** instructor is **not** a collaborator (`GET /collaborators` returns only `Uzair3112` and `msaadsbr`) — need their GitHub username to satisfy Phase 1 task 2 |
+| 2026-09-27 | Instructor collaborator check: only `Uzair3112` + `msaadsbr` — **SKIPPED per user decision** |
+| 2026-09-29 | **M03 (Saad):** `.pre-commit-config.yaml`, `.gitleaks.toml`, `.github/pull_request_template.md` created on `feat/pre-commit`; guards proved (5MB file + fake `sk-...` key blocked); evidence in `docs/evidence/module-03-guard-rails.txt`; Module 03 doc updated with checkboxes; PR #3 opened |
+| 2026-09-29 | **M03 (Uzair):** `REPORT.md` created at repo root with full progress tracking; `docs/PROGRESS.md` updated |
+
+(End of file - total 155 lines)
