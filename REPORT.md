@@ -187,10 +187,12 @@ key blocked — `docs/evidence/module-03-reverify-on-dev.txt`).
 
 | # | Screenshot | Module | Status |
 |---|------------|--------|--------|
-| 1 | Blocked large file (5 MB) | 03 | ⬜ image pending — transcript: `docs/evidence/module-03-guard-rails.txt` + `module-03-reverify-on-dev.txt` |
-| 2 | Blocked fake secret (`sk-...`) | 03 | ⬜ image pending — same two evidence files |
-| 3 | Failing CI check (red) | 08 | ⬜ Pending |
-| 4 | Passing CI check (green) | 08 | ⬜ Pending |
+| 1 | Blocked large file (5 MB) — must show the hook **failure output** | 03 | ⬜ retake — transcript: `docs/evidence/module-03-guard-rails.txt` |
+| 2 | Blocked fake secret (`sk-...`) — must show gitleaks `RuleID: sk-prefixed-api-key` | 03 | ⬜ retake — transcript: `docs/evidence/module-03-reverify-on-dev.txt` |
+| 3 | Failing CI check (red) | 08 | ⬜ pending (Module 08) |
+| 4 | Passing CI check (green) | 08 | ⬜ pending (Module 08) |
+| 5 | Two authors in `git log` (Phase 1 checkpoint) | 01 | ✅ `docs/evidence/module-01-two-authors.png` |
+| 6 | Collaborators page — `msaadsbr` · Collaborator (Write) | 01 | ✅ `docs/evidence/module-01-collaborators.png` |
 
 ---
 
