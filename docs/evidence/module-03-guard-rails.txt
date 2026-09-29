@@ -1,0 +1,44 @@
+# Module 03 evidence: pre-commit blocks a 5 MB file and a fake API key
+# Recorded 2026-09-29 on 5078478 + the M03 hook config
+
+$ dd if=/dev/zero of=big.bin bs=1M count=5 && git add big.bin && git commit -m "test: big file"
+check for added large files..............................................Failed
+- hook id: check-added-large-files
+- exit code: 1
+
+big.bin (5120 KB) exceeds 1024 KB.
+
+Detect hardcoded secrets.................................................Passed
+# exit code: 1  -> commit blocked
+
+$ echo 'API_KEY = "sk-1234567890AAAAAAAAAAAAAAAA"' > leak.py && git add leak.py && git commit -m "test: leak"
+ruff check...............................................................Passed
+ruff format..............................................................Passed
+check for added large files..............................................Passed
+fix end of files.........................................................Passed
+trim trailing whitespace.................................................Passed
+check for merge conflicts................................................Passed
+detect private key.......................................................Passed
+Detect hardcoded secrets.................................................Failed
+- hook id: gitleaks
+- exit code: 1
+
+○
+    │╲
+    │ ○
+    ○ ░
+    ░    gitleaks
+
+Finding:     API_KEY = "REDACTED
+Secret:      REDACTED
+RuleID:      sk-prefixed-api-key
+Entropy:     2.651084
+File:        leak.py
+Line:        1
+Fingerprint: leak.py:sk-prefixed-api-key:1
+
+5:39AM INF 0 commits scanned.
+5:39AM INF scanned ~42 bytes (42 bytes) in 37.6ms
+5:39AM WRN leaks found: 1
+
+# exit code: 1  -> commit blocked
