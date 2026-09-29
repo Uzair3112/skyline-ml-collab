@@ -67,12 +67,12 @@ stages:
         train:
           model: random_forest
           n_estimators: 100
-          max_depth: 6
+          max_depth: 10
     outs:
     - path: models/model.pkl
       hash: md5
-      md5: 073cda4e58ef4ed7c8d384315a6cfaf7
-      size: 958507
+      md5: 15c087d7155eb42df7d4bec24035672d
+      size: 7498187
   evaluate:
     cmd: uv run python -m ml_skyline.evaluate
     deps:
@@ -82,8 +82,8 @@ stages:
       size: 1856618
     - path: models/model.pkl
       hash: md5
-      md5: 073cda4e58ef4ed7c8d384315a6cfaf7
-      size: 958507
+      md5: 15c087d7155eb42df7d4bec24035672d
+      size: 7498187
     - path: src/ml_skyline/common.py
       hash: md5
       md5: e2c0a76b466d1095a6218ffc37981bed
@@ -106,9 +106,9 @@ stages:
         train:
           model: random_forest
           n_estimators: 100
-          max_depth: 6
+          max_depth: 10
     outs:
     - path: metrics.json
       hash: md5
-      md5: 88243fa951eeebc85a825b5d6cfe1856
-      size: 491
+      md5: 67527f5ed8977c95873e824ddfb1ad4b
+      size: 493
