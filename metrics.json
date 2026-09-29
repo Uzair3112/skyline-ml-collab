@@ -1,7 +1,7 @@
 {
-  "accuracy": 0.9547663731293008,
-  "commit_sha": "4cc62cfe7ac0598ae15b6256a9501c1377ea26a5",
-  "f1": 0.9475622001561977,
+  "accuracy": 0.9624657138732496,
+  "commit_sha": "2bb2d004b057fe3c7a81e9d4fb5d0a17c688c9f3",
+  "f1": 0.9561452828067019,
   "model": "random_forest",
   "n_test": 20781,
   "n_train": 83123,
@@ -10,13 +10,13 @@
       "test_size": 0.2
     },
     "train": {
-      "max_depth": 12,
+      "max_depth": 24,
       "model": "random_forest",
       "n_estimators": 100
     }
   },
-  "precision": 0.9520233157717745,
-  "recall": 0.9431426985008329,
-  "roc_auc": 0.992485968883531,
+  "precision": 0.9683407356793076,
+  "recall": 0.9442531926707385,
+  "roc_auc": 0.9941573399364483,
   "seed": 42
 }
