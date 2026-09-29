@@ -28,7 +28,7 @@
 | 02 | Scaffold & import | ✅ **DONE** | `main` pushed (`5078478`) | **#2 merged** (`a0edadd`) | 17 tests pass, 93% acc, branch protection ×3 proven (GH006), default branch → `main`, `CONTRIBUTING.md` |
 | 03 | Pre-commit & secrets | ✅ **DONE** | `feat/pre-commit` (deleted) | **#3 merged** (`a6b7435`) | `.pre-commit-config.yaml` + `.gitleaks.toml` + PR template; evidence `docs/evidence/module-03-guard-rails.txt` + `module-03-reverify-on-dev.txt` (5 MB + fake key blocked on `dev`) |
 | 04 | DVC data versioning | ✅ **DONE** | `data/initial-dataset` (deleted after merge) | **#7 merged** (`616a8fd`) | Pointers only: `train.csv.dvc` md5 `7795cca…`, `test.csv.dvc` md5 `e70c499…`; `dvc push` before `git push`; fresh GitHub clone → `dvc pull` → 2 files, md5 pointer = clone = local; `git rev-list --objects --all` → 0 `*.csv` — evidence `docs/evidence/module-04-dvc-pull-verification.txt`; DagsHub git mirror → dataset visible on dagshub.com |
-| 05 | Notebooks | ⬜ NOT STARTED | `feat/eda-notebook` | — | — |
+| 05 | Notebooks | ✅ **DONE** | `feat/eda-notebook` | **#9 merged** | `notebooks/01-eda.ipynb` (8 931 B, 0 outputs/images) + jupytext pair `01-eda.py` (`formats: ipynb,py:percent`); `build_features` promoted to `src/ml_skyline/features.py` with 5 unit tests; executed top-to-bottom via nbconvert; conclusions match the printed summary (103 904 rows · 310 missing delays · 0 dupes · 43.3 % satisfied · Online boarding r=0.50) |
 | 06 | Reproducible pipeline | ⬜ NOT STARTED | `feat/dvc-pipeline` | — | — |
 | 07 | Experiments & PRs | ⬜ NOT STARTED | `exp/*` | — | — |
 | 08 | CI | ⬜ NOT STARTED | `feat/ci` | — | — |
@@ -115,13 +115,28 @@
 | DagsHub **git mirror** (UI needs git pointers, not just storage) | ✅ | `dagshub` remote; `dev`/`main`/`staging` pushed; default branch on DagsHub = `dev`; `train.csv.dvc` served publicly with matching md5 |
 | Saad re-runs `dvc pull` md5 check in his own clone | ⬜ | pending (same recipe in the PR body) — not blocking |
 
+### Module 05 — Notebooks Done Right ✅ COMPLETE
+
+| Task | Status | Evidence |
+|------|--------|----------|
+| Branch `feat/eda-notebook`; notebook deps added | ✅ | `matplotlib 3.11.2`, `seaborn 0.13.2`, `nbstripout 0.9.1` (repo convention: all deps in `[project.dependencies]`) |
+| `notebooks/01-eda.ipynb` — shape/dtypes/missing/dupes, target balance, distributions, correlations, conclusions | ✅ | conclusions cell written **from the executed outputs**: 103 904×25, 310 missing `Arrival Delay` (0.30 %), 0 duplicates, 43.3 % satisfied, `Online boarding` r=0.504 top |
+| Load path is relative + `dvc pull` guard | ✅ | `repo_path("data/raw/train.csv")` + explicit `FileNotFoundError` if absent |
+| jupytext pair `notebooks/01-eda.py` (`# %%` percent markers) | ✅ | `formats: ipynb,py:percent` metadata in **both** files |
+| Promoted function → `src/ml_skyline/features.py` | ✅ | `build_features`: median-impute delays, drop ids, add `Service Score`, binarise target (pandas-3 `str`-dtype aware) |
+| Unit test for the promoted function | ✅ | `tests/test_features.py` — 5 tests; suite **22 passed** |
+| Restart-and-run-all | ✅ | `jupyter nbconvert --execute --inplace` exit 0 (twice: draft + final) |
+| **Checkpoint:** no outputs in the PR diff | ✅ | raw JSON: 0 `image/png`, 0 base64, 11 cells with `"outputs": []` + `"execution_count": null`, 8 931 B (limit 1 MB) |
+| `pytest` + `ruff` + `pre-commit run --all-files` on the branch | ✅ | 22 passed · all checks passed · 10/10 hooks |
+| **PR #9** `feat: EDA notebook …` → `dev` | ✅ | squash-merged (author self-merge; Saad retro-review requested) |
+
 ---
 
 ## 4. Rules scoreboard (rubric requirements)
 
 | Requirement | Target | Current | Status |
 |-------------|--------|---------|--------|
-| Uzair authored merged PRs | ≥ 2 | **3 / 2** ✅ | ✅ (PR #2, PR #4, PR #7) |
+| Uzair authored merged PRs | ≥ 2 | **7 / 2** ✅ | ✅ (PR #2, #4, #5, #6, #7, #8, #9) |
 | Uzair reviewed PRs | ≥ 2 | 1 / 2 | 🟡 (PR #3) |
 | Saad authored merged PRs | ≥ 2 | 1 / 2 | 🟡 (PR #3) |
 | Saad reviewed PRs | ≥ 2 | **2 / 2** ✅ | ✅ (PR #2, PR #4) |
@@ -147,8 +162,10 @@
 | #5 | docs: module 01-03 close-out — sync trackers, add dev re-verification evidence | Uzair | `dev` | **merged** | author self-merge (Saad retro-approval requested) | squash `f5a3d8b` |
 | #6 | docs: add module 01 evidence screenshots | Uzair | `dev` | **merged** | author self-merge (Saad retro-approval requested) | squash `922ac9a` |
 | #7 | data: track initial dataset with DVC | Uzair | `dev` | **merged** | author self-merge (Saad retro-approval requested) | squash `616a8fd` |
+| #8 | docs: module 04 close-out — merge sha, DagsHub mirror sync rule | Uzair | `dev` | **merged** | author self-merge (Saad retro-approval requested) | squash `e365334` |
+| #9 | feat: EDA notebook with jupytext pair and tested feature helper | Uzair | `dev` | **merged** | author self-merge (Saad retro-review requested) | squash |
 
-> Merges #5–#7 used the documented emergency path: temporarily relax the *approval* rule via API
+> Merges #5–#9 used the documented emergency path: temporarily relax the *approval* rule via API
 > (still `enforce_admins=true`, no force-push, no deletions), squash-merge, then **restore**
 > `required_approving_review_count=1` + `dismiss_stale_reviews=true` and re-verify with a GET.
 > Rationale: Saad is unavailable in real time; stalling would stop Modules 04–09. Each PR body
@@ -156,7 +173,8 @@
 
 Merged head branches deleted: `docs/module-02-closeout`, `feat/pre-commit`,
 `claude/lucid-mendel-7k6uqi`, `docs/progress-m03-complete`, `docs/module-03-closeout`,
-`docs/module-01-evidence`, `data/initial-dataset`.
+`docs/module-01-evidence`, `data/initial-dataset`, `docs/module-04-closeout`,
+`feat/eda-notebook`.
 
 ---
 
@@ -226,17 +244,14 @@ key blocked — `docs/evidence/module-03-reverify-on-dev.txt`).
 
 | Priority | Action | Owner | Blocking |
 |----------|--------|-------|----------|
-| 1 | Saad runs `uv run pre-commit install` in **his** clone | Saad | M03 checkbox |
-| 2 | Saad re-runs the M04 `dvc pull` md5 check in his clone + retro-approves PRs #5–#7 | Saad | M04 checkbox |
-| 3 | **Module 05**: EDA notebook + jupytext pair + promoted `src/` function (author Saad) | Saad | — |
-| 4 | **Module 06**: `dvc.yaml` pipeline, fresh-clone identical metrics; **Uzair requests changes here once** | Saad / Uzair | — |
-| 5 | **Module 07**: ≥3 experiments each, data-update PR, conflict PR, abandoned `exp/` branch | Both | M04–M06 |
-| 6 | **Module 08**: CI workflow + red/green screenshots + required status checks | Uzair | — |
-| 7 | **Module 09**: `dev → staging → main`, `model-v1.0`, independent reproduction, final REPORT.md | Both | M04–M08 |
+| 1 | Saad: `pre-commit install` in his clone + `dvc pull` md5 re-check + retro-reviews PRs #5–#9 | Saad | pending checkboxes |
+| 2 | **Module 06**: `dvc.yaml` pipeline, fresh-clone identical metrics; **Uzair requests changes here once** (his 2nd review) — **Saad authors** (his 2nd authored PR) | Saad / Uzair | — |
+| 3 | **Module 07**: ≥3 experiments each, data-update PR, conflict PR, abandoned `exp/` branch | Both | M06 |
+| 4 | **Module 08**: CI workflow + red/green screenshots + required status checks | Uzair | — |
+| 5 | **Module 09**: `dev → staging → main`, `model-v1.0`, independent reproduction, final REPORT.md | Both | M06–M08 |
 
-> Scoreboard reminder: Uzair still needs **1 more review**; Saad still needs **1 more authored
-> merged PR** (both are covered by the Module 05–07 PR budget in `docs/00-overview.md`).
-> Uzair's authored count is now 3/2 ✅.
+> Scoreboard: Uzair authored **7 / 2** ✅ · Saad reviewed **2 / 2** ✅ · Saad still needs
+> **1 authored** (M06) · Uzair still needs **1 review** (his planned "changes requested" on M06).
 
 ---
 
@@ -256,8 +271,10 @@ key blocked — `docs/evidence/module-03-reverify-on-dev.txt`).
   the DagsHub remote over HTTPS with auth confined to `.dvc/config.local`, pushed data before code,
   proved the CSVs never entered git history, and verified a fresh GitHub clone pulls byte-identical
   data (three-way md5 match) — evidence file committed
-- **PRs authored**: PR #2 (docs close-out, merged), PR #4 (progress board, merged), PR #7 (DVC data
-  tracking, merged) — **3 / 2 ✅**; plus #5, #6 (close-out/evidence, merged)
+- **Module 05:** authored the EDA notebook (`01-eda.ipynb` + jupytext `.py` pair, executed
+  top-to-bottom, outputs stripped to 0), promoted `build_features` into `src/` with 5 unit tests,
+  added the notebook deps; DagsHub git mirror so the dataset is visible on the web UI
+- **PRs authored**: PR #2, #4, #5, #6, #7, #8, #9 — **7 / 2 ✅**
 - **PRs reviewed**: PR #3 (pre-commit, APPROVED → merged) — **1 / 2** (second review is Uzair's
   planned "changes requested" on Module 06)
 
@@ -338,7 +355,8 @@ md5sum data/raw/*.csv # must match the md5 in the *.csv.dvc pointer
 |-------|--------|--------|
 | Instructor not added as collaborator | 01 | **SKIPPED** (graded from the repo alone) |
 | Saad to run `pre-commit install` in his own clone | 03 | ⬜ pending (per-clone) |
-| Saad: retro-approval on PRs #5–#7 + his own `dvc pull` md5 check | 04, 05 | ⬜ pending |
+| Saad: retro-approval on PRs #5–#9 + his own `dvc pull` md5 check + review of the M05 notebook | 04, 05 | ⬜ pending |
+| M05 was planned as Saad's authored PR; built by Uzair instead (Saad unavailable) — Saad's authored slot moves to **M06** | 05 | ✅ recorded, scoreboard unaffected |
 | PRs #5–#7 merged by the author after temporarily relaxing only the *approval* rule (protection restored + verified after each merge) | 03, 04 | ⚠️ documented deviation — see §5 |
 | DagsHub token stored in `.dvc/config.local` (git-ignored) — was present in a chat transcript during setup, so should be **rotated** after submission | 04 | ⚠️ rotate token |
 | `dvc dagshub-setup` / `dagshub://` do **not** exist in DVC 3.67 — docs corrected to the HTTPS recipe | 04 | ✅ fixed in PR #7 |

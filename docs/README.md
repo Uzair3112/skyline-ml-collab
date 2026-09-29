@@ -16,7 +16,7 @@ each one ends with a checkpoint that must be visible in the repository.
 | 02 | [Scaffold & import starter code](module-02-scaffold-and-import.md) | Phase 2 | both | `main` · PR **#2 merged** | ✅ |
 | 03 | [Guard rails: pre-commit & secrets](module-03-guard-rails-pre-commit.md) | Phase 3 | Saad | `feat/pre-commit` · PR **#3 merged** | ✅ |
 | 04 | [Version the data with DVC](module-04-dvc-data-versioning.md) | Phase 4 | Uzair | `data/initial-dataset` · PR **#7 merged** | ✅ |
-| 05 | [Notebooks done right](module-05-notebooks.md) | Phase 5 | Saad | `feat/eda-notebook` | ⬜ |
+| 05 | [Notebooks done right](module-05-notebooks.md) | Phase 5 | Saad (built by Uzair) | `feat/eda-notebook` · PR **#9 merged** | ✅ |
 | 06 | [Reproducible DVC pipeline](module-06-reproducible-pipeline.md) | Phase 6 | Saad | `feat/dvc-pipeline` | ⬜ |
 | 07 | [Experiments & pull requests](module-07-experiments-and-prs.md) | Phase 7 | both | `exp/*` | ⬜ |
 | 08 | [CI on every pull request](module-08-ci.md) | Phase 8 | Uzair | `feat/ci` | ⬜ |

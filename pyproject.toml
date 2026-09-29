@@ -12,12 +12,15 @@ dependencies = [
     "joblib>=1.5",
     "jupyter>=1.1.1",
     "jupytext>=1.19.5",
+    "matplotlib",
+    "nbstripout",
     "pandas>=3.0.6",
     "pre-commit>=4.6.2",
     "pytest>=9.1.1",
     "pyyaml>=6.0",
     "ruff>=0.16.9",
     "scikit-learn>=1.9.1",
+    "seaborn",
 ]
 
 [tool.ruff]
