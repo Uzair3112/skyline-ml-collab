@@ -1,6 +1,6 @@
 {
   "accuracy": 0.9547663731293008,
-  "commit_sha": "34cc85886d6cec2f19c44bc408b312fd90895887",
+  "commit_sha": "4cc62cfe7ac0598ae15b6256a9501c1377ea26a5",
   "f1": 0.9475622001561977,
   "model": "random_forest",
   "n_test": 20781,
