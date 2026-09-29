@@ -24,6 +24,8 @@ dependencies = [
 line-length = 100
 src = ["src", "tests"]
 target-version = "py313"
+# Prose lives in Markdown; ruff must not reformat the examples inside it.
+extend-exclude = ["*.md"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B"]
