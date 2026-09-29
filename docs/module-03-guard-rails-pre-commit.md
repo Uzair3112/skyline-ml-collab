@@ -51,13 +51,19 @@ repos:
       - id: gitleaks            # secret scanner (alternative: detect-secrets)
 ```
 
-- [ ] `ruff` (lint + format)
-- [ ] `nbstripout`
-- [ ] `check-added-large-files` at **1 MB**
-- [ ] secret scanner (`gitleaks` **or** `detect-secrets`)
-- [ ] pin `rev:` tags — never `main`
+- [x] `ruff` (lint + format) — hook id is `ruff-check` (`ruff` is now a legacy alias)
+- [x] `nbstripout`
+- [x] `check-added-large-files` at **1 MB**
+- [x] secret scanner (`gitleaks` **or** `detect-secrets`) — `gitleaks`, plus `.gitleaks.toml`
+- [x] pin `rev:` tags — never `main`
 
-Add ruff config to `pyproject.toml` so CI (M08) and hooks agree:
+> **Why `.gitleaks.toml`?** gitleaks' built-in `generic-api-key` rule skips low-entropy values,
+> so the placeholder `sk-1234567890AAAAAAAAAAAAAAAA` from task 4 **was not blocked** with the
+> default config. `.gitleaks.toml` keeps every built-in rule (`useDefault = true`) and adds a
+> rule blocking any `sk-…` token. `docs/` is exempt from that one rule only, because these docs
+> quote the placeholder on purpose.
+
+Add ruff config to `pyproject.toml` so CI (M08) and hooks agree (✅ already there since M02):
 
 ```toml
 [tool.ruff]
@@ -75,6 +81,10 @@ uv run pre-commit install
 uv run pre-commit run --all-files     # fix anything it flags, commit the fixes
 ```
 
+First `--all-files` run: `ruff format` reformatted the Python snippets in
+`docs/module-05-notebooks.md` and `docs/module-06-reproducible-pipeline.md`; everything else was
+already clean. Those fixes are committed on this branch.
+
 - [ ] Uzair: `pre-commit install` ✅
 - [ ] Saad: `pre-commit install` ✅
 
@@ -83,29 +93,34 @@ uv run pre-commit run --all-files     # fix anything it flags, commit the fixes
 ```bash
 # large file must be blocked
 dd if=/dev/zero of=big.bin bs=1M count=5
-git add big.bin      # → pre-commit fails: file larger than 1 MB
-rm big.bin
+git add big.bin
+git commit -m "test: big file"   # → check-added-large-files fails: 5120 KB exceeds 1024 KB
+git reset big.bin && rm big.bin
 
 # fake secret must be blocked
 echo 'API_KEY = "sk-1234567890AAAAAAAAAAAAAAAA"' > leak.py
-git add leak.py      # → gitleaks fails
-rm leak.py
+git add leak.py
+git commit -m "test: leak"       # → gitleaks fails (RuleID sk-prefixed-api-key)
+git reset leak.py && rm leak.py
 ```
 
-- [ ] 5 MB file blocked
-- [ ] fake API key blocked
+The hooks run on `git commit`, not on `git add`, so the commit is what gets blocked.
+
+- [x] 5 MB file blocked
+- [x] fake API key blocked
+- Transcript of both blocked commits: [`docs/evidence/module-03-guard-rails.txt`](evidence/module-03-guard-rails.txt)
 - [ ] **📸 screenshot both for REPORT.md**
 
 ### 5. Open the PR
 
 ```bash
-git add .pre-commit-config.yaml pyproject.toml
+git add .pre-commit-config.yaml .gitleaks.toml .github/pull_request_template.md
 git commit -m "chore: add pre-commit hooks (ruff, nbstripout, large files, secrets)"
 git push -u origin feat/pre-commit
 ```
 
 - [ ] PR title: `chore: add pre-commit guard rails` → base **`dev`**
-- [ ] Use the PR template (create `.github/pull_request_template.md` now — content in Module 07)
+- [x] Use the PR template (create `.github/pull_request_template.md` now — content in Module 07)
 - [ ] **Uzair reviews**: checks out the branch, runs `uv run pre-commit run --all-files`,
       fills the checklist as a PR comment
 - [ ] Squash-merge into `dev`, delete `feat/pre-commit`

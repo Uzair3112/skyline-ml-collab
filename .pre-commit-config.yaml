@@ -1,0 +1,31 @@
+# Guard rails (Module 03). Install once per clone:  uv run pre-commit install
+# Every `rev:` is pinned to a release tag — never a moving branch like `main`.
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.16.9 # keep in sync with the ruff version in uv.lock
+    hooks:
+      - id: ruff-check # lint (config in pyproject.toml [tool.ruff])
+        args: [--fix]
+      - id: ruff-format
+
+  - repo: https://github.com/kynan/nbstripout
+    rev: 0.8.1
+    hooks:
+      - id: nbstripout # strip notebook outputs / execution counts
+        files: \.ipynb$
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: check-added-large-files
+        args: ["--maxkb=1024"] # 1 MB limit — data and models belong in DVC
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+      - id: check-yaml
+      - id: check-merge-conflict
+      - id: detect-private-key
+
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.28.0
+    hooks:
+      - id: gitleaks # secret scanner

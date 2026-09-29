@@ -1,0 +1,20 @@
+# gitleaks config: keep every built-in rule, plus stricter team rules.
+# The built-in generic-api-key rule ignores low-entropy values, so an obvious
+# placeholder such as sk-1234567890AAAA... would slip through. We block any
+# `sk-`-prefixed token outright: real or fake, it never belongs in Git.
+title = "skyline-ml-collab gitleaks config"
+
+[extend]
+useDefault = true
+
+[[rules]]
+id = "sk-prefixed-api-key"
+description = "sk- prefixed API key (OpenAI / Stripe style)"
+regex = '''\bsk-[A-Za-z0-9_-]{20,}\b'''
+keywords = ["sk-"]
+
+# The Module 03 docs/evidence quote the fake key on purpose. Exempt docs/ from
+# this rule only; every built-in rule still scans docs/.
+[[rules.allowlists]]
+description = "documented placeholder key used in the guard-rail demo"
+paths = ['''^docs/''']
