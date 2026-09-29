@@ -1,6 +1,6 @@
 {
   "accuracy": 0.929935999230066,
-  "commit_sha": "e55d5268d3fdb2b63ee58bb849651e68f680a8be",
+  "commit_sha": "050ee1c679b150bf3c6dd34a795d5a65e53da070",
   "f1": 0.9186137506987143,
   "model": "random_forest",
   "n_test": 20781,
@@ -18,6 +18,5 @@
   "precision": 0.9248171074845245,
   "recall": 0.9124930594114381,
   "roc_auc": 0.981106463724863,
-  "run_at": "2026-09-27T11:25:52+00:00",
   "seed": 42
 }
