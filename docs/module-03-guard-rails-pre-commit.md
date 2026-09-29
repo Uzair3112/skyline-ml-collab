@@ -111,7 +111,10 @@ The hooks run on `git commit`, not on `git add`, so the commit is what gets bloc
 - [x] fake API key blocked
 - Transcript of both blocked commits: [`docs/evidence/module-03-guard-rails.txt`](evidence/module-03-guard-rails.txt)
 - Re-run on `dev` after the merge: [`docs/evidence/module-03-reverify-on-dev.txt`](evidence/module-03-reverify-on-dev.txt)
-- [ ] **📸 screenshot both for REPORT.md**
+- [ ] **📸 screenshot both for REPORT.md** → `docs/evidence/module-03-blocked-large-file.png`
+      and `docs/evidence/module-03-blocked-secret.png` must show the **hook failure output**
+      (`check-added-large-files … exceeds 1024 KB` / `gitleaks … RuleID: sk-prefixed-api-key`),
+      not just the commands that were run
 
 ### 5. Open the PR
 
@@ -142,7 +145,7 @@ git push -u origin feat/pre-commit
 | Evidence | [`docs/evidence/module-03-guard-rails.txt`](evidence/module-03-guard-rails.txt) (original) · [`docs/evidence/module-03-reverify-on-dev.txt`](evidence/module-03-reverify-on-dev.txt) (re-run on `dev`) |
 | `pre-commit run --all-files` on `dev` | ✅ green after fixing missing final newlines in `REPORT.md` + `docs/PROGRESS.md` |
 | Suite on the branch | ✅ `pytest` 16 passed, 1 skipped · `ruff check` clean |
-| Outstanding | 📸 2 screenshots (REPORT.md) · Saad runs `pre-commit install` in his clone |
+| Outstanding | 📸 2 authentic screenshots (hook **failure** output, not the commands) · Saad runs `pre-commit install` in his clone |
 
 ## Pitfalls
 
