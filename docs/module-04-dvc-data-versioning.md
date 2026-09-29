@@ -27,6 +27,24 @@ Auth (`user`/`password`) is written into **`.dvc/config.local`** (git-ignored) �
 `.dvc/config`, which must contain only the URL. Verify with `git status`: `config.local` must
 never appear as staged. First `dvc push` prompts once to trust the DagsHub host key (`yes`).
 
+### DagsHub git mirror (why the web UI was empty)
+
+DagsHub's UI renders DVC-tracked datasets by parsing the **`.dvc` pointer files from git** — the
+pushed storage objects alone are invisible on the website. The DagsHub repo started empty (we only
+used it as DVC storage), so we mirrored the code:
+
+```bash
+git remote add dagshub https://dagshub.com/<owner>/skyline-ml-collab.git   # creds via git credential store, never in the URL
+git push dagshub dev                                                       # became DagsHub's default branch
+git push dagshub main
+git push dagshub refs/remotes/origin/staging:refs/heads/staging            # no local staging branch
+```
+
+- DagsHub default branch = **`dev`** (first push on an empty repo) — pointer files and the rendered
+  dataset are visible on the homepage until the Module 09 release puts them on `main`.
+- **Sync rule:** GitHub `origin` is the source of truth; after every merge into `dev` (and the M09
+  release), also run `git push dagshub dev` (etc.) or the DagsHub page goes stale.
+
 ## Tasks
 
 ### 1. Branch
@@ -71,11 +89,13 @@ git push -u origin data/initial-dataset
 - [x] `git log --all -- '*.csv'` returns **nothing** (verified: `git rev-list --objects --all` → 0 `*.csv` objects)
 - [x] `dvc push` ran **before** `git push` ("2 files pushed", then `dvc status` → up to date)
 
-### 5. Open the PR — **PR #7**
+### 5. Open the PR — **PR #7** ✅ merged
 
 - [x] Title: `data: track initial dataset with DVC` → base **`dev`**
 - [x] Author: **Uzair**, Reviewer: **Saad**
 - [x] PR description includes the `.dvc` file hashes, sizes and the DVC remote URL
+- [x] Squash-merged into `dev` as **`616a8fd`**; head branch deleted; protection re-verified
+      (`approvals=1 · enforce_admins=true · no force-push · no deletions` on all 3 branches)
 
 ### 6. Reviewer verification (Saad — this is the real test)
 
@@ -94,6 +114,8 @@ md5sum data/raw/*.csv       # compare with the hashes in the PR
   `dvc pull` → *2 files added*; md5 of pointer = clone = local for both files
   (evidence: `docs/evidence/module-04-dvc-pull-verification.txt`)
 - [ ] Saad re-runs the same 4 commands in his own clone and confirms the hashes
+      — ⬜ **pending Saad** (external, same as his `pre-commit install`); does not block the
+      module: the identical check already passed on a clean clone (row above).
 
 ## Checkpoint (evidence for REPORT.md)
 
