@@ -3,7 +3,7 @@
 > Update this file as you go. Status: ⬜ not started · 🟡 in progress · ✅ done · ❌ blocked
 > **Also** tick the checkboxes inside each module file — this board is the summary.
 
-**Last updated:** 2026-09-29 · **Current phase:** Modules 01–03 ✅ DONE (verified on `dev`) → next: **Module 04**
+**Last updated:** 2026-09-29 · **Current phase:** Modules 01–04 ✅ DONE → next: **Module 05**
 
 ## Module status
 
@@ -11,8 +11,8 @@
 |---|--------|--------|--------|----|---------------------|
 | 01 | Team & repository setup | ✅ | *branches deleted* | — | ✅ 2 authors · ✅ Saad write=push · ✅ 📸 collaborators + two-author evidence · ⬜ instructor skipped (user decision) |
 | 02 | Scaffold & import | ✅ | `main` pushed (`5078478`) | **#2 merged** | ✅ import in `git log` · ✅ 3/3 protected · ✅ direct push rejected `GH006` · ✅ Saad review |
-| 03 | Pre-commit & secrets | ✅ | `feat/pre-commit` deleted | **#3 merged** | ✅ config + evidence file · ✅ Uzair review · ✅ re-proven on `dev` · ⚠️ 📸 retake (hook output) |
-| 04 | DVC data versioning | ⬜ | `data/initial-dataset` | # | CSV absent from git history |
+| 03 | Pre-commit & secrets | ✅ | `feat/pre-commit` deleted | **#3 merged** | ✅ config + evidence file · ✅ Uzair review · ✅ re-proven on `dev` · ✅ 📸 hook-output PNGs committed (PR #7) |
+| 04 | DVC data versioning | ✅ | `data/initial-dataset` | **#7 merged** | ✅ pointers only, 0 `*.csv` in history · ✅ `dvc push` before `git push` · ✅ fresh-clone `dvc pull` md5 ×2 · evidence `module-04-dvc-pull-verification.txt` |
 | 05 | Notebooks | ⬜ | `feat/eda-notebook` | # | no outputs in PR diff |
 | 06 | Reproducible pipeline | ⬜ | `feat/dvc-pipeline` | # | fresh-clone `dvc repro` identical metrics |
 | 07 | Experiments & PRs | ⬜ | `exp/*` | # | ≥3 exp each, changes-requested, conflict PR |
@@ -23,7 +23,7 @@
 
 | Requirement | Target | Status |
 |-------------|--------|--------|
-| Uzair authored merged PRs | ≥ 2 | **2 / 2** ✅ (PR #2, PR #4) |
+| Uzair authored merged PRs | ≥ 2 | **3 / 2** ✅ (PR #2, PR #4, PR #7) |
 | Uzair reviewed PRs | ≥ 2 | **1 / 2** (PR #3) |
 | Saad authored merged PRs | ≥ 2 | **1 / 2** (PR #3) |
 | Saad reviewed PRs | ≥ 2 | **2 / 2** ✅ (PR #2, PR #4) |
@@ -50,7 +50,9 @@
 | **Saad: clone + `git config user.name/user.email` + push a branch** | Saad | ✅ |
 | 📸 Screenshots: collaborators page + two-author `git log` | Uzair | ✅ committed → `docs/evidence/module-01-{collaborators,two-authors}.png` |
 | 📸 Optional: branch-protection rules screenshot | Uzair | ⬜ not required by `REPORT.md` (GH006 transcript is the proof) |
-| DagsHub account created + `dvc dagshub-setup` run | Uzair | ⬜ (Module 04) |
+| DagsHub account + DVC remote (`https://dagshub.com/….dvc` + auth in `.dvc/config.local`) | Uzair | ✅ (Module 04 — note: no `dvc dagshub-setup`; `dagshub://` unsupported in DVC 3.67) |
+| Saad retro-approves PRs #5–#7 (author had to merge to keep moving) | Saad | ⬜ pending |
+| Saad runs the Module 04 `dvc pull` md5 check in his own clone | Saad | ⬜ pending |
 
 ### ⚠️ Open in Module 02 — **ALL DONE ✅**
 
@@ -81,9 +83,23 @@
 | 6 | **Uzair reviews PR #3**: checkout branch, `pre-commit install`, `run --all-files`, post checklist | **Uzair** | ✅ **approved** |
 | 7 | **Approve + squash-merge PR #3** into `dev`, delete `feat/pre-commit` | Uzair/Saad | ✅ **merged** (sha a6b7435) |
 | 8 | Both members run `uv run pre-commit install` in their clones | Uzair + Saad | 🟡 Uzair done (`.git/hooks/pre-commit` present); Saad pending in his clone |
-| 9 | 📸 Screenshot both blocked commits for REPORT.md | Uzair | ⚠️ **retake** — the two PNGs in the working tree show only the repro commands; capture the terminal **hook failure output** (`exceeds 1024 KB` / `RuleID: sk-prefixed-api-key`) |
+| 9 | 📸 Screenshot both blocked commits for REPORT.md | Uzair | ✅ retaken showing real hook output → `docs/evidence/module-03-blocked-{large-file,secret}.png` (committed with PR #7) |
 | 10 | Delete merged branches: `feat/pre-commit`, `claude/lucid-mendel-7k6uqi`, `docs/module-02-closeout`, `docs/progress-m03-complete` | Uzair | ✅ (housekeeping with the M03 close-out PR) |
 | 11 | Re-prove both guard rails **on `dev`** after the merge | Uzair | ✅ `docs/evidence/module-03-reverify-on-dev.txt` |
+
+### ⚠️ Open in Module 04 — **ALL DONE ✅**
+
+| # | Item | Owner | Status |
+|---|------|-------|--------|
+| 1 | Branch `data/initial-dataset` from `dev`; `dvc init`; track `data/raw/{train,test}.csv` | Uzair | ✅ commit `b3d4a32` (pointers + `.dvc/config` only) |
+| 2 | DVC remote = DagsHub over HTTPS; auth in `.dvc/config.local` (git-ignored) | Uzair | ✅ `dvc push` → 2 files pushed |
+| 3 | `git push` **after** `dvc push` | Uzair | ✅ |
+| 4 | Checkpoint: 0 `*.csv` objects in git history | Uzair | ✅ `git rev-list --objects --all` → 0 |
+| 5 | Fresh-clone reviewer test: `dvc pull` + md5 match (pointer = clone = local) | Uzair | ✅ `docs/evidence/module-04-dvc-pull-verification.txt` |
+| 6 | PR #7 `data/initial-dataset` → `dev` opened with hashes in the body | Uzair | ✅ |
+| 7 | Squash-merge PR #7, delete branch | Uzair | ✅ (relax → merge → restore protection, as for #5/#6) |
+| 8 | Saad re-runs the `dvc pull` md5 check in **his** clone | Saad | ⬜ pending |
+| 9 | Fix module doc: no `dvc dagshub-setup` / `dagshub://` in DVC 3.67 → HTTPS recipe | Uzair | ✅ (in PR #7) |
 
 ### ⚠️ Data note (from Module 02 — matters for Modules 05/06/07)
 
@@ -123,5 +139,9 @@ refactor scores 93 %.
 | 2026-09-29 | **M03 close-out (Uzair):** guard rails re-proven on `dev` (5 MB + `sk-…` blocked), `pre-commit run --all-files` green after EOF fix, suite 16 passed/1 skipped + ruff clean, merged/stale remote branches deleted, docs + `REPORT.md` scoreboard synced (branch `docs/module-03-closeout` → PR) |
 | 2026-09-29 | **PR #5 merged** (`f5a3d8b`) — close-out docs landed; protection relaxed→merged→restored and re-verified (`approvals=1 · enforce_admins=true · no force-push`), `staging`/`main` untouched |
 | 2026-09-29 | **M01 evidence committed:** `docs/evidence/module-01-collaborators.png` (msaadsbr · Collaborator) + `module-01-two-authors.png` (both authors in `git log`) → PR #6 |
+| 2026-09-29 | **PR #6 merged** (`922ac9a`) — M01 evidence on `dev`; stale remote branches deleted; only `main`/`staging`/`dev` remain |
+| 2026-09-29 | **M04 (Uzair):** `data/initial-dataset` from `dev`; `dvc init` + track both CSVs; DagsHub remote over **HTTPS** (DVC 3.67 has no `dvc dagshub-setup` and rejects `dagshub://`); auth written only to `.dvc/config.local` (git-ignored); `dvc push` → 2 files → commit `b3d4a32` → pushed |
+| 2026-09-29 | **M04 reviewer test:** fresh GitHub clone → `dvc status` shows deleted outs → `dvc pull` (2 files added) → md5 pointer = clone = local for both CSVs; `git rev-list --objects --all` → 0 `*.csv` objects → evidence `docs/evidence/module-04-dvc-pull-verification.txt` |
+| 2026-09-29 | **PR #7 opened** `data/initial-dataset` → `dev` with hashes/sizes + checklist; M03 hook-output PNGs + module-04 doc correction + trackers staged into the same PR |
 
 (End of file - total 176 lines)
