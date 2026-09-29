@@ -1,0 +1,114 @@
+schema: '2.0'
+stages:
+  prepare:
+    cmd: uv run python -m ml_skyline.prepare
+    deps:
+    - path: data/raw/train.csv
+      hash: md5
+      md5: 7795cca073013498de22f07333cc4e97
+      size: 14873245
+    - path: src/ml_skyline/common.py
+      hash: md5
+      md5: e2c0a76b466d1095a6218ffc37981bed
+      size: 1999
+    - path: src/ml_skyline/prepare.py
+      hash: md5
+      md5: 67b1328f3d664de0be7f865087325b50
+      size: 4393
+    params:
+      params.yaml:
+        data:
+          raw_train: data/raw/train.csv
+          raw_test: data/raw/test.csv
+          processed_dir: data/processed
+          target: satisfaction
+        seed: 42
+        split:
+          test_size: 0.2
+    outs:
+    - path: data/processed/test.csv
+      hash: md5
+      md5: 03d509f335dc41908ab9dfc8ae0e7b72
+      size: 1856618
+    - path: data/processed/train.csv
+      hash: md5
+      md5: 00dfbc03ca34f97ea96f882e73f67c6d
+      size: 7426629
+  train:
+    cmd: uv run python -m ml_skyline.train
+    deps:
+    - path: data/processed/train.csv
+      hash: md5
+      md5: 00dfbc03ca34f97ea96f882e73f67c6d
+      size: 7426629
+    - path: src/ml_skyline/common.py
+      hash: md5
+      md5: e2c0a76b466d1095a6218ffc37981bed
+      size: 1999
+    - path: src/ml_skyline/pipeline.py
+      hash: md5
+      md5: cd9eec46bca409c1a9bd6e9f25c62da5
+      size: 3455
+    - path: src/ml_skyline/train.py
+      hash: md5
+      md5: 5f53df6f4348cdb4bd4ed582aad1e5a8
+      size: 1491
+    params:
+      params.yaml:
+        data:
+          raw_train: data/raw/train.csv
+          raw_test: data/raw/test.csv
+          processed_dir: data/processed
+          target: satisfaction
+        paths:
+          model: models/model.pkl
+          metrics: metrics.json
+        seed: 42
+        train:
+          model: random_forest
+          n_estimators: 100
+          max_depth: 6
+    outs:
+    - path: models/model.pkl
+      hash: md5
+      md5: 073cda4e58ef4ed7c8d384315a6cfaf7
+      size: 958507
+  evaluate:
+    cmd: uv run python -m ml_skyline.evaluate
+    deps:
+    - path: data/processed/test.csv
+      hash: md5
+      md5: 03d509f335dc41908ab9dfc8ae0e7b72
+      size: 1856618
+    - path: models/model.pkl
+      hash: md5
+      md5: 073cda4e58ef4ed7c8d384315a6cfaf7
+      size: 958507
+    - path: src/ml_skyline/common.py
+      hash: md5
+      md5: e2c0a76b466d1095a6218ffc37981bed
+      size: 1999
+    - path: src/ml_skyline/evaluate.py
+      hash: md5
+      md5: c71ca764693e98d1ddf7d04dd5140c94
+      size: 3201
+    params:
+      params.yaml:
+        data:
+          raw_train: data/raw/train.csv
+          raw_test: data/raw/test.csv
+          processed_dir: data/processed
+          target: satisfaction
+        paths:
+          model: models/model.pkl
+          metrics: metrics.json
+        seed: 42
+        train:
+          model: random_forest
+          n_estimators: 100
+          max_depth: 6
+    outs:
+    - path: metrics.json
+      hash: md5
+      md5: 88243fa951eeebc85a825b5d6cfe1856
+      size: 491
