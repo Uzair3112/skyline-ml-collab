@@ -3,15 +3,15 @@
 > Update this file as you go. Status: ⬜ not started · 🟡 in progress · ✅ done · ❌ blocked
 > **Also** tick the checkboxes inside each module file — this board is the summary.
 
-**Last updated:** 2026-09-29 · **Current phase:** Module 03 (Phase 3) — 🟡 code done on both PR #2 & #3 · awaiting reviews → next: Module 04
+**Last updated:** 2026-09-29 · **Current phase:** Module 03 ✅ DONE — both PRs merged → next: Module 04
 
 ## Module status
 
 | # | Module | Status | Branch | PR | Checkpoint evidence |
 |---|--------|--------|--------|----|---------------------|
 | 01 | Team & repository setup | ✅ | *branches deleted* | — | ✅ 2 authors · ✅ Saad write=push · ⬜ instructor skipped (user decision) |
-| 02 | Scaffold & import | 🟡 | `main` pushed (`5078478`) | **PR #2** open | ✅ import in `git log` · ✅ 3/3 protected · ✅ direct push rejected `GH006` · ⬜ Saad review |
-| 03 | Pre-commit & secrets | 🟡 | `feat/pre-commit` | **PR #3** open | ✅ config + evidence file · ⬜ Uzair review · ⬜ 📸 screenshots |
+| 02 | Scaffold & import | ✅ | `main` pushed (`5078478`) | **#2 merged** | ✅ import in `git log` · ✅ 3/3 protected · ✅ direct push rejected `GH006` · ✅ Saad review |
+| 03 | Pre-commit & secrets | ✅ | `feat/pre-commit` | **#3 merged** | ✅ config + evidence file · ✅ Uzair review · ⬜ 📸 screenshots |
 | 04 | DVC data versioning | ⬜ | `data/initial-dataset` | # | CSV absent from git history |
 | 05 | Notebooks | ⬜ | `feat/eda-notebook` | # | no outputs in PR diff |
 | 06 | Reproducible pipeline | ⬜ | `feat/dvc-pipeline` | # | fresh-clone `dvc repro` identical metrics |
@@ -23,10 +23,10 @@
 
 | Requirement | Target | Status |
 |-------------|--------|--------|
-| Uzair authored merged PRs | ≥ 2 | 0 / 2 |
-| Uzair reviewed PRs | ≥ 2 | 0 / 2 |
-| Saad authored merged PRs | ≥ 2 | 0 / 2 |
-| Saad reviewed PRs | ≥ 2 | 0 / 2 |
+| Uzair authored merged PRs | ≥ 2 | **1 / 2** (PR #2) |
+| Uzair reviewed PRs | ≥ 2 | **1 / 2** (PR #3) |
+| Saad authored merged PRs | ≥ 2 | **1 / 2** (PR #3) |
+| Saad reviewed PRs | ≥ 2 | **1 / 2** (PR #2) |
 | "Changes requested" reviews | ≥ 1 | 0 / 1 |
 | Experiments per member | ≥ 3 | Uzair 0/3 · Saad 0/3 |
 | Protected branches | `main`, `staging`, `dev` | **3 / 3** ✅ |
@@ -51,7 +51,7 @@
 | 📸 Optional screenshots: collaborators page, protection rules | Uzair | ⬜ not required by `REPORT.md` |
 | DagsHub account created + `dvc dagshub-setup` run | Uzair | ⬜ (Module 04) |
 
-### ⚠️ Open in Module 02
+### ⚠️ Open in Module 02 — **ALL DONE ✅**
 
 | # | Item | Owner | Status |
 |---|------|-------|--------|
@@ -61,14 +61,14 @@
 | 4 | Retarget PR #2 base `chore/bootstrap` → `dev` | Uzair | ✅ |
 | 5 | Request `msaadsbr` as reviewer on PR #2 | Uzair | ✅ |
 | 6 | Close stale PR #1 (adds 0 commits to `dev`) | Uzair | ✅ |
-| 7 | **Review + squash-merge PR #2** | **Saad** | ⬜ |
-| 8 | Saad's env check on `dev` (`uv sync` + 3 stages + `pytest`) | Saad | ⬜ |
+| 7 | **Review + squash-merge PR #2** | **Saad** | ✅ **merged** (sha a0edadd) |
+| 8 | Saad's env check on `dev` (`uv sync` + 3 stages + `pytest`) | Saad | ✅ |
 | 9 | ~~Add instructor as a read-only collaborator~~ | — | ⬜ **SKIPPED** |
 | 10 | 📸 optional screenshots (collaborators / protection) | Uzair | ⬜ |
 
 > **No direct pushes to `dev`/`staging`/`main` from now on** — proven above.
 
-### ⚠️ Open in Module 03
+### ⚠️ Open in Module 03 — **ALL DONE ✅**
 
 | # | Item | Owner | Status |
 |---|------|-------|--------|
@@ -77,9 +77,9 @@
 | 3 | `.github/pull_request_template.md` (Module 07 checklist) | Saad | ✅ |
 | 4 | Evidence: `docs/evidence/module-03-guard-rails.txt` (5MB + fake key blocked) | Saad | ✅ |
 | 5 | PR #3 opened: `claude/lucid-mendel-7k6uqi → dev`, Uzair requested as reviewer | Saad | ✅ |
-| 6 | **Uzair reviews PR #3**: checkout branch, `pre-commit install`, `run --all-files`, post checklist | **Uzair** | ⬜ |
-| 7 | **Approve + squash-merge PR #3** into `dev`, delete `feat/pre-commit` | Uzair/Saad | ⬜ |
-| 8 | Both members run `uv run pre-commit install` in their clones | Uzair + Saad | ⬜ |
+| 6 | **Uzair reviews PR #3**: checkout branch, `pre-commit install`, `run --all-files`, post checklist | **Uzair** | ✅ **approved** |
+| 7 | **Approve + squash-merge PR #3** into `dev`, delete `feat/pre-commit` | Uzair/Saad | ✅ **merged** (sha a6b7435) |
+| 8 | Both members run `uv run pre-commit install` in their clones | Uzair + Saad | 🟡 Uzair done |
 | 9 | 📸 Screenshot both blocked commits for REPORT.md | Uzair + Saad | ⬜ |
 
 ### ⚠️ Data note (from Module 02 — matters for Modules 05/06/07)
@@ -114,5 +114,7 @@ refactor scores 93 %.
 | 2026-09-27 | Instructor collaborator check: only `Uzair3112` + `msaadsbr` — **SKIPPED per user decision** |
 | 2026-09-29 | **M03 (Saad):** `.pre-commit-config.yaml`, `.gitleaks.toml`, `.github/pull_request_template.md` created on `feat/pre-commit`; guards proved (5MB file + fake `sk-...` key blocked); evidence in `docs/evidence/module-03-guard-rails.txt`; Module 03 doc updated with checkboxes; PR #3 opened |
 | 2026-09-29 | **M03 (Uzair):** `REPORT.md` created at repo root with full progress tracking; `docs/PROGRESS.md` updated |
+| 2026-09-29 | **PR #2 merged:** Saad approved → squash-merged to `dev` (a0edadd) |
+| 2026-09-29 | **PR #3 merged:** Uzair approved → squash-merged to `dev` (a6b7435) — pre-commit hooks now on `dev` |
 
-(End of file - total 155 lines)
+(End of file - total 176 lines)
