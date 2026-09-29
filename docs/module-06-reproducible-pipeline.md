@@ -110,6 +110,7 @@ stages:
 
 ```python
 import subprocess, json, datetime
+
 sha = subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()
 meta = {"commit_sha": sha, "run_at": datetime.datetime.now(datetime.UTC).isoformat(), "seed": seed}
 ```
