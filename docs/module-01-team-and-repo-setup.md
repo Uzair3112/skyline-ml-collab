@@ -113,8 +113,11 @@ git push -u origin chore/bootstrap
 
 ## Checkpoint (evidence for REPORT.md)
 
-- [ ] 📸 Screenshot: repo `skyline-ml-collab` → *Settings → Collaborators* showing
-      **Saad (Write)** and **instructor (Read)** — **the one item still manual for Uzair**
+- [x] 📸 Screenshot: *Settings → Collaborators* showing **Muhammad Saad Sabir (`msaadsbr`) · Collaborator** →
+      [`docs/evidence/module-01-collaborators.png`](evidence/module-01-collaborators.png)
+      (instructor not added — skipped by team decision; graded from the repo alone)
+- [x] 📸 Screenshot: `git log --format='%an <%ae>' … | sort -u` showing **both authors** →
+      [`docs/evidence/module-01-two-authors.png`](evidence/module-01-two-authors.png)
 - [x] `git log --format='%an %ae'` shows **both** authors:
       `Uzair Tariq <uzairtariq.pakistani@gmail.com>` ·
       `Muhammad Saad Sabir <saadsbr789@gmail.com>`
@@ -129,7 +132,7 @@ git push -u origin chore/bootstrap
 | Members' SSH identities | Uzair → `Uzair3112` (via repo-local URL rewrite) · Saad → `msaadsbr` |
 | Local `main` | `214269f`, 3 commits, **2 authors** ✅ |
 | Branches on remote | `chore/bootstrap` (`8fc1ef3`), `chore/saad-setup` (`214269f`) — both to be deleted in Module 02 |
-| Outstanding | 📸 collaborators screenshot (Uzair, browser) |
+| Outstanding | ✅ none — collaborators + two-author screenshots committed under `docs/evidence/` |
 | Next | **Module 02** — scaffold, initial import pushed to `main`, create `staging` + `dev`, branch protection, `CONTRIBUTING.md` |
 
 > `main` is deliberately **not pushed yet**: the PDF says Phase 2 is the only time anyone pushes

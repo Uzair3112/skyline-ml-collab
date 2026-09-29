@@ -9,9 +9,9 @@
 
 | # | Module | Status | Branch | PR | Checkpoint evidence |
 |---|--------|--------|--------|----|---------------------|
-| 01 | Team & repository setup | ✅ | *branches deleted* | — | ✅ 2 authors · ✅ Saad write=push · ⬜ instructor skipped (user decision) |
+| 01 | Team & repository setup | ✅ | *branches deleted* | — | ✅ 2 authors · ✅ Saad write=push · ✅ 📸 collaborators + two-author evidence · ⬜ instructor skipped (user decision) |
 | 02 | Scaffold & import | ✅ | `main` pushed (`5078478`) | **#2 merged** | ✅ import in `git log` · ✅ 3/3 protected · ✅ direct push rejected `GH006` · ✅ Saad review |
-| 03 | Pre-commit & secrets | ✅ | `feat/pre-commit` deleted | **#3 merged** | ✅ config + evidence file · ✅ Uzair review · ✅ re-proven on `dev` · ⬜ 📸 screenshots |
+| 03 | Pre-commit & secrets | ✅ | `feat/pre-commit` deleted | **#3 merged** | ✅ config + evidence file · ✅ Uzair review · ✅ re-proven on `dev` · ⚠️ 📸 retake (hook output) |
 | 04 | DVC data versioning | ⬜ | `data/initial-dataset` | # | CSV absent from git history |
 | 05 | Notebooks | ⬜ | `feat/eda-notebook` | # | no outputs in PR diff |
 | 06 | Reproducible pipeline | ⬜ | `feat/dvc-pipeline` | # | fresh-clone `dvc repro` identical metrics |
@@ -48,7 +48,8 @@
 | `README.md` with team/roles committed | Uzair | ✅ |
 | `chore/bootstrap` pushed (Phase 1 checkpoint) | Uzair | ✅ |
 | **Saad: clone + `git config user.name/user.email` + push a branch** | Saad | ✅ |
-| 📸 Optional screenshots: collaborators page, protection rules | Uzair | ⬜ not required by `REPORT.md` |
+| 📸 Screenshots: collaborators page + two-author `git log` | Uzair | ✅ committed → `docs/evidence/module-01-{collaborators,two-authors}.png` |
+| 📸 Optional: branch-protection rules screenshot | Uzair | ⬜ not required by `REPORT.md` (GH006 transcript is the proof) |
 | DagsHub account created + `dvc dagshub-setup` run | Uzair | ⬜ (Module 04) |
 
 ### ⚠️ Open in Module 02 — **ALL DONE ✅**
@@ -80,7 +81,7 @@
 | 6 | **Uzair reviews PR #3**: checkout branch, `pre-commit install`, `run --all-files`, post checklist | **Uzair** | ✅ **approved** |
 | 7 | **Approve + squash-merge PR #3** into `dev`, delete `feat/pre-commit` | Uzair/Saad | ✅ **merged** (sha a6b7435) |
 | 8 | Both members run `uv run pre-commit install` in their clones | Uzair + Saad | 🟡 Uzair done (`.git/hooks/pre-commit` present); Saad pending in his clone |
-| 9 | 📸 Screenshot both blocked commits for REPORT.md | Uzair + Saad | ⬜ (transcripts in `docs/evidence/`, images manual) |
+| 9 | 📸 Screenshot both blocked commits for REPORT.md | Uzair | ⚠️ **retake** — the two PNGs in the working tree show only the repro commands; capture the terminal **hook failure output** (`exceeds 1024 KB` / `RuleID: sk-prefixed-api-key`) |
 | 10 | Delete merged branches: `feat/pre-commit`, `claude/lucid-mendel-7k6uqi`, `docs/module-02-closeout`, `docs/progress-m03-complete` | Uzair | ✅ (housekeeping with the M03 close-out PR) |
 | 11 | Re-prove both guard rails **on `dev`** after the merge | Uzair | ✅ `docs/evidence/module-03-reverify-on-dev.txt` |
 
@@ -120,5 +121,7 @@ refactor scores 93 %.
 | 2026-09-29 | **PR #3 merged:** Uzair approved → squash-merged to `dev` (a6b7435) — pre-commit hooks now on `dev` |
 | 2026-09-29 | **PR #4 merged:** `docs/progress-m03-complete` approved by Saad → merged (c63b5f2) — Uzair now 2/2 authored, Saad 2/2 reviewed |
 | 2026-09-29 | **M03 close-out (Uzair):** guard rails re-proven on `dev` (5 MB + `sk-…` blocked), `pre-commit run --all-files` green after EOF fix, suite 16 passed/1 skipped + ruff clean, merged/stale remote branches deleted, docs + `REPORT.md` scoreboard synced (branch `docs/module-03-closeout` → PR) |
+| 2026-09-29 | **PR #5 merged** (`f5a3d8b`) — close-out docs landed; protection relaxed→merged→restored and re-verified (`approvals=1 · enforce_admins=true · no force-push`), `staging`/`main` untouched |
+| 2026-09-29 | **M01 evidence committed:** `docs/evidence/module-01-collaborators.png` (msaadsbr · Collaborator) + `module-01-two-authors.png` (both authors in `git log`) → PR #6 |
 
 (End of file - total 176 lines)
