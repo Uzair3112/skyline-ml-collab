@@ -3,7 +3,7 @@
 > Update this file as you go. Status: ⬜ not started · 🟡 in progress · ✅ done · ❌ blocked
 > **Also** tick the checkboxes inside each module file — this board is the summary.
 
-**Last updated:** 2026-09-29 · **Current phase:** Module 03 ✅ DONE — both PRs merged → next: Module 04
+**Last updated:** 2026-09-29 · **Current phase:** Modules 01–03 ✅ DONE (verified on `dev`) → next: **Module 04**
 
 ## Module status
 
@@ -11,7 +11,7 @@
 |---|--------|--------|--------|----|---------------------|
 | 01 | Team & repository setup | ✅ | *branches deleted* | — | ✅ 2 authors · ✅ Saad write=push · ⬜ instructor skipped (user decision) |
 | 02 | Scaffold & import | ✅ | `main` pushed (`5078478`) | **#2 merged** | ✅ import in `git log` · ✅ 3/3 protected · ✅ direct push rejected `GH006` · ✅ Saad review |
-| 03 | Pre-commit & secrets | ✅ | `feat/pre-commit` | **#3 merged** | ✅ config + evidence file · ✅ Uzair review · ⬜ 📸 screenshots |
+| 03 | Pre-commit & secrets | ✅ | `feat/pre-commit` deleted | **#3 merged** | ✅ config + evidence file · ✅ Uzair review · ✅ re-proven on `dev` · ⬜ 📸 screenshots |
 | 04 | DVC data versioning | ⬜ | `data/initial-dataset` | # | CSV absent from git history |
 | 05 | Notebooks | ⬜ | `feat/eda-notebook` | # | no outputs in PR diff |
 | 06 | Reproducible pipeline | ⬜ | `feat/dvc-pipeline` | # | fresh-clone `dvc repro` identical metrics |
@@ -23,10 +23,10 @@
 
 | Requirement | Target | Status |
 |-------------|--------|--------|
-| Uzair authored merged PRs | ≥ 2 | **1 / 2** (PR #2) |
+| Uzair authored merged PRs | ≥ 2 | **2 / 2** ✅ (PR #2, PR #4) |
 | Uzair reviewed PRs | ≥ 2 | **1 / 2** (PR #3) |
 | Saad authored merged PRs | ≥ 2 | **1 / 2** (PR #3) |
-| Saad reviewed PRs | ≥ 2 | **1 / 2** (PR #2) |
+| Saad reviewed PRs | ≥ 2 | **2 / 2** ✅ (PR #2, PR #4) |
 | "Changes requested" reviews | ≥ 1 | 0 / 1 |
 | Experiments per member | ≥ 3 | Uzair 0/3 · Saad 0/3 |
 | Protected branches | `main`, `staging`, `dev` | **3 / 3** ✅ |
@@ -79,8 +79,10 @@
 | 5 | PR #3 opened: `claude/lucid-mendel-7k6uqi → dev`, Uzair requested as reviewer | Saad | ✅ |
 | 6 | **Uzair reviews PR #3**: checkout branch, `pre-commit install`, `run --all-files`, post checklist | **Uzair** | ✅ **approved** |
 | 7 | **Approve + squash-merge PR #3** into `dev`, delete `feat/pre-commit` | Uzair/Saad | ✅ **merged** (sha a6b7435) |
-| 8 | Both members run `uv run pre-commit install` in their clones | Uzair + Saad | 🟡 Uzair done |
-| 9 | 📸 Screenshot both blocked commits for REPORT.md | Uzair + Saad | ⬜ |
+| 8 | Both members run `uv run pre-commit install` in their clones | Uzair + Saad | 🟡 Uzair done (`.git/hooks/pre-commit` present); Saad pending in his clone |
+| 9 | 📸 Screenshot both blocked commits for REPORT.md | Uzair + Saad | ⬜ (transcripts in `docs/evidence/`, images manual) |
+| 10 | Delete merged branches: `feat/pre-commit`, `claude/lucid-mendel-7k6uqi`, `docs/module-02-closeout`, `docs/progress-m03-complete` | Uzair | ✅ (housekeeping with the M03 close-out PR) |
+| 11 | Re-prove both guard rails **on `dev`** after the merge | Uzair | ✅ `docs/evidence/module-03-reverify-on-dev.txt` |
 
 ### ⚠️ Data note (from Module 02 — matters for Modules 05/06/07)
 
@@ -116,5 +118,7 @@ refactor scores 93 %.
 | 2026-09-29 | **M03 (Uzair):** `REPORT.md` created at repo root with full progress tracking; `docs/PROGRESS.md` updated |
 | 2026-09-29 | **PR #2 merged:** Saad approved → squash-merged to `dev` (a0edadd) |
 | 2026-09-29 | **PR #3 merged:** Uzair approved → squash-merged to `dev` (a6b7435) — pre-commit hooks now on `dev` |
+| 2026-09-29 | **PR #4 merged:** `docs/progress-m03-complete` approved by Saad → merged (c63b5f2) — Uzair now 2/2 authored, Saad 2/2 reviewed |
+| 2026-09-29 | **M03 close-out (Uzair):** guard rails re-proven on `dev` (5 MB + `sk-…` blocked), `pre-commit run --all-files` green after EOF fix, suite 16 passed/1 skipped + ruff clean, merged/stale remote branches deleted, docs + `REPORT.md` scoreboard synced (branch `docs/module-03-closeout` → PR) |
 
 (End of file - total 176 lines)

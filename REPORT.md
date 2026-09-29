@@ -25,8 +25,8 @@
 | # | Module | Status | Branch | PR | Key Evidence |
 |---|--------|--------|--------|----|--------------|
 | 01 | Team & repository setup | ✅ **DONE** | `chore/bootstrap`, `chore/saad-setup` (deleted) | — | 2 authors on `main` (`214269f`), Saad write access proven, both identities set per-clone |
-| 02 | Scaffold & import | 🟡 **CODE DONE** — PR review pending | `main` pushed (`5078478`) | **#2** open (`docs/module-02-closeout → dev`) | 17 tests pass, 93% acc, branch protection ×3 proven (GH006), default branch → `main`, `CONTRIBUTING.md` |
-| 03 | Pre-commit & secrets | 🟡 **CODE DONE** — PR review pending | `feat/pre-commit` (PR #3) | **#3** open (`claude/lucid-mendel-7k6uqi → dev`) | `.pre-commit-config.yaml` + `.gitleaks.toml` + PR template; evidence file `docs/evidence/module-03-guard-rails.txt` shows 5MB + fake key blocked |
+| 02 | Scaffold & import | ✅ **DONE** | `main` pushed (`5078478`) | **#2 merged** (`a0edadd`) | 17 tests pass, 93% acc, branch protection ×3 proven (GH006), default branch → `main`, `CONTRIBUTING.md` |
+| 03 | Pre-commit & secrets | ✅ **DONE** | `feat/pre-commit` (deleted) | **#3 merged** (`a6b7435`) | `.pre-commit-config.yaml` + `.gitleaks.toml` + PR template; evidence `docs/evidence/module-03-guard-rails.txt` + `module-03-reverify-on-dev.txt` (5 MB + fake key blocked on `dev`) |
 | 04 | DVC data versioning | ⬜ NOT STARTED | `data/initial-dataset` | — | — |
 | 05 | Notebooks | ⬜ NOT STARTED | `feat/eda-notebook` | — | — |
 | 06 | Reproducible pipeline | ⬜ NOT STARTED | `feat/dvc-pipeline` | — | — |
@@ -56,7 +56,7 @@
 | `main` fast-forwarded onto Saad's branch | ✅ | `214269f` has 2 authors |
 | **Checkpoint**: `git log --format='%an %ae'` shows both authors | ✅ | Verified |
 
-### Module 02 — Scaffold & Import 🟡 CODE COMPLETE — AWAITING PR #2 REVIEW
+### Module 02 — Scaffold & Import ✅ COMPLETE
 
 | Task | Status | Evidence |
 |------|--------|----------|
@@ -73,9 +73,9 @@
 | **Direct push rejected: GH006 on `dev` and `main`** | ✅ | Tested, refs untouched |
 | Default branch → `main`, `chore/bootstrap` + `chore/saad-setup` deleted | ✅ | Verified |
 | `CONTRIBUTING.md` with branch rules, Conventional Commits, squash into `dev` | ✅ | Committed |
-| **PR #2**: docs close-out retargeted to `dev`, Saad requested as reviewer | 🟡 | `open`, `mergeable=true`, needs Saad approval |
+| **PR #2**: docs close-out retargeted to `dev`, Saad requested as reviewer | ✅ | `msaadsbr` APPROVED → squash-merged `a0edadd` |
 
-### Module 03 — Pre-commit & Secrets 🟡 CODE COMPLETE — AWAITING PR #3 REVIEW
+### Module 03 — Pre-commit & Secrets ✅ COMPLETE (📸 pending)
 
 | Task | Status | Evidence |
 |------|--------|----------|
@@ -92,9 +92,12 @@
 | Evidence: `docs/evidence/module-03-guard-rails.txt` | ✅ | Shows both blocks |
 | - 5 MB `big.bin` blocked by `check-added-large-files` | ✅ | `big.bin (5120 KB) exceeds 1024 KB` |
 | - Fake `sk-1234567890AAAAAAAAAAAAAAAA` blocked by gitleaks | ✅ | `RuleID: sk-prefixed-api-key` |
-| **PR #3** open: `claude/lucid-mendel-7k6uqi → dev`, reviewer Uzair requested | 🟡 | `open`, `mergeable=true`, needs Uzair review |
-| Both members run `pre-commit install` + `pre-commit run --all-files` | ⬜ | Pending (network download) |
-| 📸 Screenshots of both blocks for REPORT.md | ⬜ | Pending |
+| **PR #3** merged: guard rails → `dev` | ✅ | `Uzair3112` APPROVED 2026-09-29 → squash-merged `a6b7435`, head branch deleted |
+| Guard rails re-proven **on `dev`** after merge | ✅ | `docs/evidence/module-03-reverify-on-dev.txt` — 5 MB + fake `sk-…` both blocked |
+| `pre-commit run --all-files` on `dev` | ✅ | green (fixed missing final newlines in `REPORT.md`, `docs/PROGRESS.md`) |
+| Uzair: `pre-commit install` | ✅ | `.git/hooks/pre-commit` present in this clone |
+| Saad: `pre-commit install` in **his** clone | ⬜ | per-clone step — Saad still to run it |
+| 📸 Screenshots of both blocks for REPORT.md | ⬜ | transcripts exist; images captured manually |
 
 ---
 
@@ -102,10 +105,10 @@
 
 | Requirement | Target | Current | Status |
 |-------------|--------|---------|--------|
-| Uzair authored merged PRs | ≥ 2 | 0 / 2 | ⬜ |
-| Uzair reviewed PRs | ≥ 2 | 0 / 2 | ⬜ |
-| Saad authored merged PRs | ≥ 2 | 0 / 2 | ⬜ |
-| Saad reviewed PRs | ≥ 2 | 0 / 2 | ⬜ |
+| Uzair authored merged PRs | ≥ 2 | **2 / 2** ✅ | ✅ (PR #2, PR #4) |
+| Uzair reviewed PRs | ≥ 2 | 1 / 2 | 🟡 (PR #3) |
+| Saad authored merged PRs | ≥ 2 | 1 / 2 | 🟡 (PR #3) |
+| Saad reviewed PRs | ≥ 2 | **2 / 2** ✅ | ✅ (PR #2, PR #4) |
 | "Changes requested" reviews | ≥ 1 | 0 / 1 | ⬜ |
 | Experiments per member | ≥ 3 | 0 / 3 each | ⬜ |
 | Protected branches | `main`, `staging`, `dev` | **3 / 3** ✅ | ✅ |
@@ -117,13 +120,17 @@
 
 ---
 
-## 5. Current open PRs
+## 5. PR history (Modules 01–03) — no open PRs
 
-| PR | Title | Author | Base | Head | State | Reviewers | Next Action |
-|----|-------|--------|------|------|-------|-----------|-------------|
-| #1 | docs: record Saad clone verification | Saad | `chore/bootstrap` | `chore/saad-setup` | **closed** (not merged) | — | — |
-| #2 | docs: module 02 close-out and starter-code defect notes | Uzair | `dev` | `docs/module-02-closeout` | **open** | Saad (`msaadsbr`) | Saad: Approve → Squash merge |
-| #3 | chore: add pre-commit guard rails | Saad | `dev` | `claude/lucid-mendel-7k6uqi` | **open** | Uzair (`Uzair3112`) | Uzair: Review → Approve → Squash merge |
+| PR | Title | Author | Base | State | Review | Merge |
+|----|-------|--------|------|-------|--------|-------|
+| #1 | docs: record Saad clone verification | Saad | `chore/bootstrap` | closed (not merged, added 0 commits) | — | — |
+| #2 | docs: module 02 close-out and starter-code defect notes | Uzair | `dev` | **merged** | `msaadsbr` APPROVED 2026-09-29 | squash `a0edadd` |
+| #3 | chore: add pre-commit guard rails | Saad | `dev` | **merged** | `Uzair3112` APPROVED 2026-09-29 | squash `a6b7435` |
+| #4 | docs: update PROGRESS.md — M02/M03 complete | Uzair | `dev` | **merged** | `msaadsbr` APPROVED 2026-09-29 | merge `c63b5f2` |
+
+Merged head branches deleted: `docs/module-02-closeout`, `feat/pre-commit`,
+`claude/lucid-mendel-7k6uqi`, `docs/progress-m03-complete`.
 
 ---
 
@@ -146,6 +153,13 @@ pytest -q
 - ROC-AUC: **0.9811**
 
 **Verified:** ✅ All 17 tests pass, ruff clean, pipeline byte-identical metrics.
+
+**Re-verified 2026-09-29 on `dev` (`c63b5f2`)** — `data/raw/{train,test}.csv` restored from the
+starter repo, full pipeline re-run, metrics reproduced **exactly**:
+`accuracy 0.9299 · precision 0.9248 · recall 0.9125 · f1 0.9186 · roc_auc 0.9811`.
+`git log --all -- '*.csv'` → **0** (the CSVs are git-ignored; they move under DVC in Module 04).
+Also re-ran `uv run pre-commit run --all-files` ✅ and both guard rails (5 MB file + fake `sk-…`
+key blocked — `docs/evidence/module-03-reverify-on-dev.txt`).
 
 ---
 
@@ -173,8 +187,8 @@ pytest -q
 
 | # | Screenshot | Module | Status |
 |---|------------|--------|--------|
-| 1 | Blocked large file (5 MB) | 03 | ⬜ Pending |
-| 2 | Blocked fake secret (`sk-...`) | 03 | ⬜ Pending |
+| 1 | Blocked large file (5 MB) | 03 | ⬜ image pending — transcript: `docs/evidence/module-03-guard-rails.txt` + `module-03-reverify-on-dev.txt` |
+| 2 | Blocked fake secret (`sk-...`) | 03 | ⬜ image pending — same two evidence files |
 | 3 | Failing CI check (red) | 08 | ⬜ Pending |
 | 4 | Passing CI check (green) | 08 | ⬜ Pending |
 
@@ -184,17 +198,18 @@ pytest -q
 
 | Priority | Action | Owner | Blocking |
 |----------|--------|-------|----------|
-| 1 | Saad reviews & **approves PR #2** (squash merge into `dev`) | Saad | Unblocks `dev` for Module 03 merge |
-| 2 | Uzair reviews & **approves PR #3** (checkout branch, run hooks, post checklist) | Uzair | Completes Module 03 |
-| 3 | Both run `uv run pre-commit install` in their clones | Uzair + Saad | Required for Module 03 checkpoint |
-| 4 | 📸 Screenshot both blocked commits for REPORT.md | Uzair + Saad | Required by rubric |
-| 5 | Merge PR #3 (squash into `dev`), delete `feat/pre-commit` | Uzair (or Saad) | Enables Module 04 |
-| 6 | **Module 04**: DVC init + DagsHub remote + `dvc add data/train.csv` + `dvc push` | Uzair | Needs DagsHub setup |
-| 7 | **Module 05**: EDA notebook (clean, no outputs in PR) | Saad | — |
-| 8 | **Module 06**: `dvc repro` pipeline, fresh-clone identical metrics | Both | — |
-| 9 | **Module 07**: ≥3 experiments each, conflict PR, changes-requested review | Both | — |
-| 10 | **Module 08**: CI workflow (ruff, pytest, pre-commit), red/green screenshots | Saad | — |
-| 11 | **Module 09**: Release `model-v1.0`, independent reproduction, final REPORT.md | Both | — |
+| 1 | 📸 Screenshot both blocked commits (5 MB + `sk-…`) for this report | Uzair | REPORT.md screenshot 1 & 2 |
+| 2 | Saad runs `uv run pre-commit install` in **his** clone | Saad | M03 checkbox |
+| 3 | 📸 optional: collaborators / protection screenshots | Uzair | — (not required) |
+| 4 | **Module 04**: `dvc init` + DagsHub remote + `dvc add data/raw/*.csv` + `dvc push`, PR `data/initial-dataset` (author Uzair, reviewer Saad) | Uzair | DagsHub account + token; data now present in `data/raw/` |
+| 5 | **Module 05**: EDA notebook + jupytext pair + promoted `src/` function (author Saad) | Saad | — |
+| 6 | **Module 06**: `dvc.yaml` pipeline, fresh-clone identical metrics; **Uzair requests changes here once** | Saad / Uzair | — |
+| 7 | **Module 07**: ≥3 experiments each, data-update PR, conflict PR, abandoned `exp/` branch | Both | M04–M06 |
+| 8 | **Module 08**: CI workflow + red/green screenshots + required status checks | Uzair | — |
+| 9 | **Module 09**: `dev → staging → main`, `model-v1.0`, independent reproduction, final REPORT.md | Both | M04–M08 |
+
+> Scoreboard reminder: Uzair still needs **1 more review**; Saad still needs **1 more authored
+> merged PR** (both are covered by the Module 04–07 PR budget in `docs/00-overview.md`).
 
 ---
 
@@ -208,16 +223,18 @@ pytest -q
 - Pushed initial import to `main` (only direct push), created `staging`/`dev`
 - Applied branch protection ×3 via API, proved GH006 rejection, switched default branch
 - Wrote `CONTRIBUTING.md`, `docs/PROGRESS.md`, module docs
-- **PRs authored**: PR #2 (docs close-out)
-- **PRs reviewed**: 0 (awaiting PR #3 review)
+- Re-verified the M02/M03 checkpoints on `dev`: pipeline metrics reproduced exactly, both guard
+  rails re-proven, `pre-commit run --all-files` green, merged/stale branches cleaned up
+- **PRs authored**: PR #2 (docs close-out, merged), PR #4 (progress board, merged) — **2 / 2 ✅**
+- **PRs reviewed**: PR #3 (pre-commit, APPROVED → merged) — **1 / 2** (second review lands in M04+)
 
 **Muhammad Saad Sabir** — Model owner + Platform B
 - Cloned repo, set per-clone identity, pushed `chore/saad-setup` (Phase 1 checkpoint)
 - Authored Module 03 pre-commit configuration (`.pre-commit-config.yaml`, `.gitleaks.toml`, PR template)
 - Proved both guard rails block (5 MB file, fake API key) with transcript evidence
 - Updated Module 03 docs with checkboxes and evidence links
-- **PRs authored**: PR #1 (closed), PR #3 (pre-commit guard rails)
-- **PRs reviewed**: 0 (awaiting PR #2 review)
+- **PRs authored**: PR #1 (closed), PR #3 (pre-commit guard rails, merged) — **1 / 2** (second authored PR lands in M05/M06)
+- **PRs reviewed**: PR #2 (APPROVED), PR #4 (APPROVED) — **2 / 2 ✅**
 
 ---
 
@@ -279,12 +296,12 @@ git rev-list --objects --all | grep -c "\.csv$"  # should be 0
 
 | Issue | Module | Status |
 |-------|--------|--------|
-| Instructor not added as collaborator | 01 | **SKIPPED** (user decision) |
-| PR #2 awaiting Saad review | 02 | 🟡 Blocked |
-| PR #3 awaiting Uzair review | 03 | 🟡 Blocked |
-| DagsHub account + token not created | 04 | ⬜ Pending |
-| Network downloads for pre-commit hooks slow/flaky | 03 | ⚠️ Known |
-| Screenshots for REPORT.md not captured | 03, 08 | ⬜ Pending |
+| Instructor not added as collaborator | 01 | **SKIPPED** (graded from the repo alone) |
+| Saad to run `pre-commit install` in his own clone | 03 | ⬜ pending (per-clone) |
+| 📸 Screenshots (blocked file/secret, collaborators) | 01, 03 | ⬜ manual |
+| DagsHub account + token not created | 04 | ⬜ pending — next module |
+| CI screenshots (red/green) | 08 | ⬜ pending |
+| Network downloads for pre-commit hooks slow/flaky | 03 | ⚠️ known (envs now cached) |
 
 ---
 
