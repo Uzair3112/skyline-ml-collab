@@ -85,8 +85,9 @@ First `--all-files` run: `ruff format` reformatted the Python snippets in
 `docs/module-05-notebooks.md` and `docs/module-06-reproducible-pipeline.md`; everything else was
 already clean. Those fixes are committed on this branch.
 
-- [ ] Uzair: `pre-commit install` ✅
-- [ ] Saad: `pre-commit install` ✅
+- [x] Uzair: `pre-commit install` — `.git/hooks/pre-commit` present in this clone ✅
+- [ ] Saad: `pre-commit install` — **still to run in Saad's own clone** (per-clone, cannot be done
+      from this machine)
 
 ### 4. Prove the guards work (before opening the PR)
 
@@ -109,6 +110,7 @@ The hooks run on `git commit`, not on `git add`, so the commit is what gets bloc
 - [x] 5 MB file blocked
 - [x] fake API key blocked
 - Transcript of both blocked commits: [`docs/evidence/module-03-guard-rails.txt`](evidence/module-03-guard-rails.txt)
+- Re-run on `dev` after the merge: [`docs/evidence/module-03-reverify-on-dev.txt`](evidence/module-03-reverify-on-dev.txt)
 - [ ] **📸 screenshot both for REPORT.md**
 
 ### 5. Open the PR
@@ -119,17 +121,28 @@ git commit -m "chore: add pre-commit hooks (ruff, nbstripout, large files, secre
 git push -u origin feat/pre-commit
 ```
 
-- [ ] PR title: `chore: add pre-commit guard rails` → base **`dev`**
-- [x] Use the PR template (create `.github/pull_request_template.md` now — content in Module 07)
-- [ ] **Uzair reviews**: checks out the branch, runs `uv run pre-commit run --all-files`,
-      fills the checklist as a PR comment
-- [ ] Squash-merge into `dev`, delete `feat/pre-commit`
+- [x] PR title: `chore: add pre-commit guard rails` → base **`dev`** — **PR #3**
+- [x] Use the PR template (`.github/pull_request_template.md` created here — content in Module 07)
+- [x] **Uzair reviews**: approved PR #3 at 2026-09-29T07:05:48Z (after an earlier review was
+      dismissed and re-requested)
+- [x] Squash-merge into `dev` — merged as `a6b7435` · head branch deleted (see close-out below)
 
 ## Checkpoint
 
-- [ ] `.pre-commit-config.yaml` on `dev`
-- [ ] Screenshot: blocked large file + blocked secret
-- [ ] PR merged with a real review from Uzair
+- [x] `.pre-commit-config.yaml` on `dev` (merged in PR #3 → `a6b7435`)
+- [ ] 📸 Screenshot: blocked large file + blocked secret (transcripts exist, images are manual)
+- [x] PR merged with a real review from Uzair (APPROVED, then squash-merged)
+
+## Module 03 close-out (2026-09-29)
+
+| Item | Result |
+|------|--------|
+| Hooks on `dev` | PR **#3** merged → `a6b7435`; head branch deleted |
+| Guard rails re-proven **on `dev`** with hooks installed | ✅ 5 MB `big.bin` → `check-added-large-files` · fake `sk-…` → gitleaks `sk-prefixed-api-key` |
+| Evidence | [`docs/evidence/module-03-guard-rails.txt`](evidence/module-03-guard-rails.txt) (original) · [`docs/evidence/module-03-reverify-on-dev.txt`](evidence/module-03-reverify-on-dev.txt) (re-run on `dev`) |
+| `pre-commit run --all-files` on `dev` | ✅ green after fixing missing final newlines in `REPORT.md` + `docs/PROGRESS.md` |
+| Suite on the branch | ✅ `pytest` 16 passed, 1 skipped · `ruff check` clean |
+| Outstanding | 📸 2 screenshots (REPORT.md) · Saad runs `pre-commit install` in his clone |
 
 ## Pitfalls
 

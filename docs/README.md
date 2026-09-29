@@ -12,9 +12,9 @@ each one ends with a checkpoint that must be visible in the repository.
 | # | Module | Phase | Owner | Branch | Status |
 |---|--------|-------|-------|--------|--------|
 | 00 | [Overview & decisions](00-overview.md) | — | both | — | ✅ done |
-| 01 | [Team & repository setup](module-01-team-and-repo-setup.md) | Phase 1 | Uzair | `main` | ✅ (collaborators 📸 pending) |
-| 02 | [Scaffold & import starter code](module-02-scaffold-and-import.md) | Phase 2 | both | `main` · PR **#2** | 🟡 GitHub side ✅ · awaiting Saad's review |
-| 03 | [Guard rails: pre-commit & secrets](module-03-guard-rails-pre-commit.md) | Phase 3 | Saad | `feat/pre-commit` | ⬜ |
+| 01 | [Team & repository setup](module-01-team-and-repo-setup.md) | Phase 1 | Uzair | `main` | ✅ (collaborators 📸 optional) |
+| 02 | [Scaffold & import starter code](module-02-scaffold-and-import.md) | Phase 2 | both | `main` · PR **#2 merged** | ✅ |
+| 03 | [Guard rails: pre-commit & secrets](module-03-guard-rails-pre-commit.md) | Phase 3 | Saad | `feat/pre-commit` · PR **#3 merged** | ✅ (📸 pending) |
 | 04 | [Version the data with DVC](module-04-dvc-data-versioning.md) | Phase 4 | Uzair | `data/initial-dataset` | ⬜ |
 | 05 | [Notebooks done right](module-05-notebooks.md) | Phase 5 | Saad | `feat/eda-notebook` | ⬜ |
 | 06 | [Reproducible DVC pipeline](module-06-reproducible-pipeline.md) | Phase 6 | Saad | `feat/dvc-pipeline` | ⬜ |
@@ -22,7 +22,7 @@ each one ends with a checkpoint that must be visible in the repository.
 | 08 | [CI on every pull request](module-08-ci.md) | Phase 8 | Uzair | `feat/ci` | ⬜ |
 | 09 | [Release: dev → staging → main](module-09-release.md) | Phase 9 | both | `staging` | ⬜ |
 | — | [REPORT.md outline](REPORT-outline.md) | submission | both | — | ⬜ |
-| — | [Progress board](PROGRESS.md) | all | both | — | ⬜ |
+| — | [Progress board](PROGRESS.md) | all | both | — | ✅ |
 
 ## What we submit
 
