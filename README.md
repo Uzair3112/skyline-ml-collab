@@ -46,6 +46,42 @@ pre-commit install      # ruff, nbstripout, large-file and secret guards
 dvc pull                # dataset from the DVC remote
 ```
 
+## Release status
+
+| | |
+|---|---|
+| Modules | **01–09 complete** — full walkthrough in [`REPORT.md`](REPORT.md) |
+| Release | tag **`model-v1.0`** → `bb6517a` on `main` · hotfix **`model-v1.0.1`** → `e7ccda0` |
+| Branches | `dev` → `staging` → `main`, all three protected: 1 approving review + `lint`, `tests`, `data-checks`, `smoke-train` required **and green** |
+| CI | every PR runs lint / tests / data-checks / smoke-train (~1 min) and posts a CML metrics comment |
+| Data | DVC remote on DagsHub (`storage`) — pointers only in git, no CSVs in history |
+| Experiments | `exp/uzair-model-sweep`, `exp/saad-depth-sweep` deliberately **unmerged** (abandoned-branch evidence) |
+
+## Reproduce the release
+
+```bash
+git clone https://github.com/Uzair3112/skyline-ml-collab.git
+cd skyline-ml-collab
+git checkout model-v1.0          # or branch staging / main — all share one tree
+uv sync --frozen                 # pinned environment from uv.lock
+dvc pull                         # data + trained model from the DagsHub remote
+dvc repro                        # no-ops: outputs already match dvc.lock
+cat metrics.json
+```
+
+Expected (seed 42, `max_depth 24`, single-threaded scoring):
+
+| metric | value |
+|--------|-------|
+| accuracy | `0.9624657138732496` |
+| precision | `0.9683407356793076` |
+| recall | `0.9442531926707385` |
+| f1 | `0.9561452828067019` |
+| roc_auc | `0.9941573399364485` |
+
+Only `commit_sha` differs if you run it from a later checkout — it records the commit the run
+happened on. Full transcript: [`docs/evidence/module-09-reproduction.txt`](docs/evidence/module-09-reproduction.txt).
+
 ## Documentation
 
 | Doc | Purpose |
