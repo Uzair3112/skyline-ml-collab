@@ -1,0 +1,33 @@
+=== Module 08 bonus: CML metrics comment posted on PR #21 ===
+captured: 2026-09-30T16:08:08.650Z
+PR: #21  head: 05fbcc5652e2422fa46dfed20e0eeb2705b003ef  merged: 330b89be28f832055f2dc3723395c18cd79d0484
+run: https://github.com/Uzair3112/skyline-ml-collab/actions/runs/36741151650
+comment author: github-actions[bot] (via cml comment create --pr)
+comment posted at: 2026-09-30T16:02:14Z
+
+check-runs:
+  cml-comment    completed / success
+  tests          completed / success
+  data-checks    completed / success
+  smoke-train    completed / success
+  lint           completed / success
+
+comment body:
+| metric | value |
+|---|---|
+| accuracy | 0.8833333333333333 |
+| precision | 0.9523809523809523 |
+| recall | 0.7692307692307693 |
+| f1 | 0.851063829787234 |
+| roc_auc | 0.9473981900452488 |
+| n_train | 240 |
+| n_test | 60 |
+| model | random_forest |
+| seed | 42 |
+
+![](https://cml.dev/watermark.png#05fbcc5652e2422fa46dfed20e0eeb2705b003ef "CML watermark")
+
+
+Result: the cml-comment job (needs the 4 required checks) ran setup-cml,
+rebuilt the smoke metrics with ml_skyline.smoke --report and posted the table
+as a PR comment - PDF Phase 8 step 5 (bonus) proven live.

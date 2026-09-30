@@ -75,4 +75,4 @@ jobs:
       - name: Publish metrics table as a PR comment
         env:
           REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: cml comment create cml-report.md --pr
+        run: cml comment create cml-report.md --target=pr
