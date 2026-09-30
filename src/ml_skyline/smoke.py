@@ -26,6 +26,7 @@ from ml_skyline.prepare import (
 
 DEFAULT_ROWS = 300
 METRIC_NAMES = ("accuracy", "precision", "recall", "f1", "roc_auc")
+REPORT_HEADER = "| metric | value |"
 
 
 def run_smoke(data_path: str, *, rows: int = DEFAULT_ROWS, params: dict | None = None) -> dict:
@@ -93,7 +94,7 @@ def check_metrics(metrics: dict) -> list[str]:
 
 def format_report(metrics: dict) -> str:
     lines = [
-        "| metric | value |",
+        REPORT_HEADER,
         "|---|---|",
         *(f"| {name} | {metrics[name]!r} |" for name in METRIC_NAMES),
         f"| n_train | {metrics['n_train']} |",
@@ -102,6 +103,15 @@ def format_report(metrics: dict) -> str:
         f"| seed | {metrics['seed']} |",
     ]
     return "\n".join(lines) + "\n"
+
+
+def is_smoke_report(path) -> bool:
+    """True when *path* already holds a smoke report, i.e. is safe to overwrite."""
+    try:
+        head = path.read_text(encoding="utf-8", errors="ignore")
+    except OSError:
+        return False
+    return head.startswith(REPORT_HEADER)
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -142,6 +152,14 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.report:
         report_path = repo_path(args.report)
+        if report_path.exists() and not is_smoke_report(report_path):
+            print(
+                f"smoke-train FAILED - refusing to overwrite {args.report}: "
+                "it is not a smoke report (on case-insensitive filesystems "
+                "`--report report.md` resolves to REPORT.md)",
+                file=sys.stderr,
+            )
+            return 2
         report_path.write_text(format_report(metrics), encoding="utf-8")
         print(f"report: {args.report}")
     return 0
