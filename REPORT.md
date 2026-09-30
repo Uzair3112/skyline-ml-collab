@@ -1,6 +1,7 @@
 # REPORT.md — Team Skyline MLOps Assignment-01
 
-> Generated from repository state as of 2026-09-29. Grading is done from the repository alone — every bullet must be visible or linked here.
+> Generated from repository state as of **2026-09-30 (Modules 01–09 complete)**. Grading is done from the repository alone — every bullet must be visible or linked here.
+> **Release:** tag `model-v1.0` → `bb6517a` on `main` (hotfix `model-v1.0.1` → `e7ccda0`), reproduced from a fresh clone of `staging` — see §6.
 
 ---
 
@@ -32,7 +33,7 @@
 | 06 | Reproducible pipeline | ✅ **DONE** | `feat/dvc-pipeline` (after merge) | **#11 merged** | `dvc.yaml` (prepare→train→evaluate) + `dvc.lock`; `params.yaml` drives split/hyperparams/paths; `metrics.json` deterministic (`run_at` removed, `commit_sha` + `seed` kept); fresh-clone `uv sync && dvc pull && dvc repro` → identical value metrics (all 9 keys, seed 42) — evidence `docs/evidence/module-06-dvc-repro-verification.txt`; `dvc push` before `git push` (3 files) |
 | 07 | Experiments & PRs | ✅ **DONE** | `exp/uzair-model-sweep`, `exp/saad-depth-sweep` (kept, unmerged), others deleted | **#12–#16 merged** | 6 experiments (`dvc exp show -a --md` evidence) · conflict reproduced & resolved by rebase (#12→#13, kept depth 12 on evidence) · data null-fill + version-switch demo (#14, `7795cca…`→`389295a…`) · winner promoted `straw-froe` (f1 0.9476→**0.9562**) · abandoned `exp/uzair-model-sweep` |
 | 08 | CI | ✅ **DONE** (+5 bonus) | `feat/ci`, `proof/red-gate` (deleted) | **#18, #21, #22 merged** (`e00e790`, `330b89b`, `#22`) | 4-job PR workflow (lint/tests/data-checks/smoke-train) + **`cml-comment` bonus job** · 33 tests · 69 KB fixture, no DVC secrets · red→green proof on #18 · required checks ×3 (strict) · merge with failing check → **405** · 📸 PNG red/green committed (`module-08-ci-{red,green}.png`) · CML comment posted on #21 (`module-08-cml-comment.txt`) |
-| 09 | Release & report | ⬜ NOT STARTED | `staging` | — | — |
+| 09 | Release & report | ✅ **DONE** (+5 bonus) | `release/v1.0`, `release/v1.0-main`, `sync/main-hotfix-into-dev`, `fix/report-clobber` (all deleted after merge) | **#23, #24, #25, #27, #28, #29, #30 merged** (#26 closed) | `staging` = `a110753` · `main` = `bb6517a` + hotfix `e7ccda0` · tags **`model-v1.0`**, `model-v1.0.1` · fresh-clone reproduction **PASS** (all value metrics byte-identical, `roc_auc 0.9941573399364485`, 4/4 stable) · reproduction caught **2 real defects** (`n_jobs=-1` thread order → #25; a retrain that was never `dvc push`ed) · `--report` clobber hotfix (+2 tests → 37) — evidence `docs/evidence/module-09-reproduction.txt` |
 
 ---
 
@@ -345,13 +346,75 @@ Owner: **Uzair** (dual-role again — Saad's slot is review, not authoring) · P
   `module-08-merge-blocked.txt` · `module-08-cml-comment.txt` ·
   📸 `module-08-ci-red.png` · `module-08-ci-green.png`
 
+### Module 09 — Release (dev → staging → main) ✅ COMPLETE (+5 bonus)
+
+#### 9.1 Release PRs (checkpoint: `release: v1.0`, CI green)
+
+- [x] Title exactly **`release: v1.0`**, body lists the included PRs + final metrics
+- [x] **#24** first promotion, rebase-merged → `staging` = `7c691d7` (tree identical to `dev`)
+- [x] **#26** *closed unmerged* — after #24, GitHub reported `mergeable=dirty`: the rebase had put
+      **rewritten SHAs** on `staging`, so `dvc.lock` / `metrics.json` / `params.yaml` show up as
+      add/add + content conflicts against `dev`. With no merge ref, GitHub starts **no CI run**
+      (0 check-runs on head `7232a66`) — closing comment on the PR
+- [x] **#27** the release that shipped: a `release/v1.0` branch **cut from `staging`** with `dev`
+      merged in and conflicts resolved to `dev` ⇒ head always contains its base ⇒ clean diff,
+      **5/5 CI green**, merge-commit (CONTRIBUTING §3 fallback — rebase would replay the
+      duplicated patches onto themselves) → `staging` = `a110753`, `git diff staging dev` → empty
+- [x] Brief says author = Saad, reviewer = Uzair → **deviation recorded**: Saad unavailable since
+      M05, Uzair authored; retro-review requested in the PR body
+
+#### 9.2 Independent reproduction (checkpoint)
+
+- [x] Run in a **brand-new clone** of `staging` @ `a110753`: `uv sync --frozen` → `dvc pull` →
+      `dvc repro` → `dvc repro -f`
+- [x] **All value metrics byte-identical** to the committed `metrics.json`, including full-precision
+      `roc_auc 0.9941573399364485` (stable across 4 forced runs); `params` block identical;
+      only `commit_sha` differs — by design, it records the checkout the run happened on
+- [x] 📸 result posted **as a comment on PR #27** + full log
+      `docs/evidence/module-09-reproduction.txt`
+- [x] "If they differ → fix before merging": **it differed twice, both fixes landed first**
+  1. `roc_auc` moved between runs — `RandomForestClassifier(n_jobs=-1)` accumulates
+     `predict_proba` in thread-**completion** order → **#25** (`train.n_jobs: 1`, +2 tests)
+  2. #25's retrain was never `dvc push`ed (only the *local* `dvc status` had been run) → a fresh
+     clone failed `dvc pull` on `models/model.pkl` → pushed, `dvc status -c` → *in sync*, re-run
+
+#### 9.3 Promotion to `main` + tags (checkpoint)
+
+- [x] **#28** `staging` → `main` from a release branch cut off `main` (5 conflicts resolved to
+      `staging`; verified `git diff` empty **and** no file exists on `main` that `staging` lacks)
+      → 5/5 green → merge-commit → `main` = `bb6517a`
+- [x] Annotated tag **`model-v1.0`** → `bb6517a`, pushed (`refs/tags/model-v1.0` visible via
+      `git ls-remote --tags origin` and on GitHub → Tags)
+- [x] Optional hotfix **(+5)**: `smoke --report` wrote blindly to any path, so
+      `--report report.md` resolved to **`REPORT.md`** on case-insensitive filesystems →
+      **#29** refuses to overwrite a file that is not a smoke report (exit `2`, original bytes
+      intact; +2 tests → **37 total**) → rebase-merged `e7ccda0` → tag **`model-v1.0.1`**
+      (first attempt was cut on the PR head `b7a7a32` because `main` was not checked out —
+      deleted and re-cut on `e7ccda0`)
+- [x] **`main` merged back into `dev`** so the hotfix cannot be lost: **#30**, a **fast-forward**
+      (`bb6517a` already contained all of `dev` via `staging`/`bc2207b`) → 5/5 green →
+      `dev` = `ea59e2a`, `git diff dev main` → empty
+- [x] DagsHub mirror: `dev`/`staging`/`main` + both tags pushed
+- [x] Short-lived branches deleted (`fix/*`, `release/*`, `sync/*`, `feat/*`, `data/*`);
+      `exp/uzair-model-sweep` + `exp/saad-depth-sweep` **kept unmerged** on purpose (M07 evidence)
+
+#### Checkpoint links (§9 of this report)
+
+- Release PR → `staging`: https://github.com/Uzair3112/skyline-ml-collab/pull/27
+- Release PR → `main`: https://github.com/Uzair3112/skyline-ml-collab/pull/28
+- Hotfix PR (→ `main`): https://github.com/Uzair3112/skyline-ml-collab/pull/29
+- Merge-back PR (→ `dev`): https://github.com/Uzair3112/skyline-ml-collab/pull/30
+- Superseded/closed: #26 (dirty, no CI) · #19 (red gate, M08)
+- Tags: `model-v1.0` → `bb6517a` · `model-v1.0.1` → `e7ccda0`
+- Evidence: `docs/evidence/module-09-reproduction.txt`
+
 ---
 
 ## 4. Rules scoreboard (rubric requirements)
 
 | Requirement | Target | Current | Status |
 |-------------|--------|---------|--------|
-| Uzair authored merged PRs | ≥ 2 | **17 / 2** ✅ | ✅ (PR #2, #4, #5, #6, #7, #8, #9, #11, #12, #13, #14, #15, #16, #17, #18, #20, #21) |
+| Uzair authored merged PRs | ≥ 2 | **25 / 2** ✅ | ✅ (PR #2, #4, #5, #6, #7, #8, #9, #11, #12, #13, #14, #15, #16, #17, #18, #20, #21, #22, #23, #24, #25, #27, #28, #29, #30) |
 | Uzair reviewed PRs | ≥ 2 | **2 / 2** ✅ | ✅ (PR #3 APPROVED, PR #10 APPROVED + checklist comment) |
 | Saad authored merged PRs | ≥ 2 | **2 / 2** ✅ | ✅ (PR #3, PR #10) |
 | Saad reviewed PRs | ≥ 2 | **2 / 2** ✅ | ✅ (PR #2, PR #4) |
@@ -359,14 +422,14 @@ Owner: **Uzair** (dual-role again — Saad's slot is review, not authoring) · P
 | Experiments per member | ≥ 3 each | Uzair **3 / 3** ✅ · Saad 3 run on his branch **by Uzair** 🟡 | Uzair: `minus-skis`/`dural-raja`/`flamy-code`; Saad's dimension: `fuggy-ices`/`straw-froe`/`blank-axon` (his own re-run pending) |
 | Protected branches | `main`, `staging`, `dev` | **3 / 3** ✅ | ✅ |
 | Required CI checks on all 3 branches | 3 | **3 / 3** ✅ | ✅ `lint, tests, data-checks, smoke-train` (strict) on `main`/`staging`/`dev`; failing PR merge → 405 proven (M08) |
-| Release tag `model-v1.0` on `main` | 1 | 0 / 1 | ⬜ |
-| Independent reproduction matches exactly | 1 | 0 / 1 | ⬜ |
+| Release tag `model-v1.0` on `main` | 1 | **1 / 1** ✅ | ✅ `refs/tags/model-v1.0` → `bb6517a` (`main`); hotfix tag `model-v1.0.1` → `e7ccda0` also pushed |
+| Independent reproduction matches exactly | 1 | **1 / 1** ✅ | ✅ fresh clone of `staging` @ `a110753`: every value metric byte-identical (`roc_auc 0.9941573399364485`); only `commit_sha` differs (by design) — comment on PR #27, evidence `docs/evidence/module-09-reproduction.txt` |
 | `REPORT.md` complete | 1 | **1 / 1** (this file) | ✅ |
-| Bonus: CML comment **or** `model-v1.0.1` | 1 | **1 / 1** ✅ | ✅ CML metrics comment on PRs — `cml-comment` job proven on PR #21 (run `36741151650`, comment by `github-actions[bot]`, evidence `docs/evidence/module-08-cml-comment.txt`) |
+| Bonus: CML comment **or** `model-v1.0.1` | 1 | **2 / 2** ✅ | ✅ **both** — CML metrics comment (M08: `cml-comment` job, PR #21, run `36741151650`) **and** the hotfix tag (M09: PR #29 → `main` → `model-v1.0.1`, then PR #30 back into `dev`) |
 
 ---
 
-## 5. PR history (Modules 01–08) — no open PRs
+## 5. PR history (Modules 01–09) — no open PRs
 
 | PR | Title | Author | Base | State | Review | Merge |
 |----|-------|--------|------|-------|--------|-------|
@@ -391,19 +454,37 @@ Owner: **Uzair** (dual-role again — Saad's slot is review, not authoring) · P
 | #19 | proof: failing CI check must be unmergeable | Uzair | `dev` | **closed (not merged)** | — | merge attempt → **405** (required `tests` check failing); branch deleted |
 | #20 | docs: module 08 close-out — CI evidence, required checks, scoreboard | Uzair | `dev` | **merged** | author self-merge (Saad retro-review requested) | squash `8be19dc` |
 | #21 | feat: CML metrics comment job on PRs (CI bonus) | Uzair | `dev` | **merged** | author self-merge (Saad retro-review requested) — **all 5 CI checks green**; metrics table posted by `github-actions[bot]` | squash `330b89b` |
-| #22 | docs: module 08 final close-out — CML bonus, CI screenshot PNGs, scoreboard | Uzair | `dev` | **merged** | author self-merge (Saad retro-review requested) | squash *(this PR)* |
+| #22 | docs: module 08 final close-out — CML bonus, CI screenshot PNGs, scoreboard | Uzair | `dev` | **merged** | author self-merge (Saad retro-review requested) | squash `ed21f78` |
+| #23 | fix: re-log commit_sha in metrics.json so it matches the released code | Uzair | `dev` | **merged** | author self-merge (release prep) | squash `5432e49` |
+| #24 | release: v1.0 *(first promotion)* | Uzair | `staging` | **merged** | author self-merge — then **superseded**: the Module 09 reproduction failed on it | rebase → `staging` `7c691d7` |
+| #25 | fix: make forest scoring single-threaded so roc_auc reproduces exactly | Uzair | `dev` | **merged** | author self-merge — the fix for reproduction catch #1 (`n_jobs=-1` thread order); 5/5 CI green | squash `7232a66` |
+| #26 | release: v1.0 *(direct dev→staging re-attempt)* | Uzair | `staging` | **closed (not merged)** | — | `mergeable=dirty` (rebase-rewritten SHAs on `staging` ⇒ add/add conflicts) and **0 check-runs** (no merge ref ⇒ CI never starts); superseded by #27, closing comment explains it |
+| #27 | release: v1.0 *(from `release/v1.0` branch cut off `staging`)* | Uzair | `staging` | **merged** | author self-merge — **reproduction PASS posted as a comment** (fresh clone, all value metrics byte-identical) | **merge `a110753`**, 5/5 CI green |
+| #28 | release: v1.0 *(staging → main)* | Uzair | `main` | **merged** | author self-merge (brief: reviewer Saad → retro-review requested) | **merge `bb6517a`**, 5/5 CI green, tree == `staging` |
+| #29 | fix: refuse to clobber non-report files with smoke --report | Uzair | `main` | **merged** | author self-merge — **hotfix bonus**: `--report report.md` used to replace `REPORT.md` on case-insensitive FS; +2 tests → 37 | **rebase `e7ccda0`**, 5/5 CI green → tag `model-v1.0.1` |
+| #30 | chore: merge main back into dev (post-hotfix sync) | Uzair | `dev` | **merged** | author self-merge — **fast-forward** (`7232a66`→`e7ccda0`), so the hotfix cannot be lost by the next release | **merge `ea59e2a`**, 5/5 CI green, `git diff dev main` → empty |
 
-> Merges #5–#9 and #11 used the documented emergency path: temporarily relax the *approval* rule via API
-> (still `enforce_admins=true`, no force-push, no deletions), squash-merge, then **restore**
-> `required_approving_review_count=1` + `dismiss_stale_reviews=true` and re-verify with a GET.
-> Rationale: Saad is unavailable in real time; stalling would stop Modules 04–09. Each PR body
-> carries a note asking Saad for a retroactive approval. **PR #10 did NOT need this** — Uzair's
-> real APPROVE satisfied the rule and it was rebase-merged normally.
+> Merges #5–#9, #11–#18, #20–#25 used the documented emergency path: temporarily relax the *approval*
+> rule via API (still `enforce_admins=true`, no force-push, no deletions), merge, then **restore**
+> `required_approving_review_count=1` + `dismiss_stale_reviews=true` + the four required status checks
+> and re-verify with a GET. Rationale: Saad is unavailable in real time; stalling would stop Modules
+> 04–09. Each PR body carries a note asking Saad for a retroactive approval. **PR #10 did NOT need
+> this** — Uzair's real APPROVE satisfied the rule and it was rebase-merged normally.
+>
+> Release merges #27/#28/#29/#30 used **merge-commit / rebase as CONTRIBUTING §3 prescribes**
+> (rebase was impossible for #27/#28 — the duplicated patches would replay onto themselves — so the
+> release-branch + merge-commit path was used; #29, cut straight from `main`, rebased cleanly).
+> The same approval relaxation + restore applied, with required checks verified green on each PR
+> **before** merging.
 
 Merged head branches deleted: `docs/module-02-closeout`, `feat/pre-commit`,
 `claude/lucid-mendel-7k6uqi`, `docs/progress-m03-complete`, `docs/module-03-closeout`,
 `docs/module-01-evidence`, `data/initial-dataset`, `docs/module-04-closeout`,
-`feat/eda-notebook`, `feat/dvc-pipeline`.
+`feat/eda-notebook`, `feat/dvc-pipeline`, `feat/deterministic-metrics`, `docs/module-08-closeout`,
+`ci/cml-comment`, `docs/module-08-final`, `release/v1.0`, `release/v1.0-main`,
+`sync/main-hotfix-into-dev`, `fix/report-clobber`.
+Kept on purpose: `exp/uzair-model-sweep`, `exp/saad-depth-sweep` (Module 07 abandoned-experiment
+evidence, referenced in §3 M07).
 
 ---
 
@@ -418,20 +499,58 @@ python -m ml_skyline.evaluate
 pytest -q
 ```
 
-**Expected metrics** (current `dev` baseline after M07 promotion — seed 42, depth 24, commit `f97069b`):
-- accuracy: **0.9625** (0.9624657138732496)
-- precision: **0.9683** (0.9683407356793076)
-- recall: **0.9443** (0.9442531926707385)
-- F1: **0.9561** (0.9561452828067019)
-- ROC-AUC: **0.9942** (0.9941573399364483)
-- data: `train.csv` md5 `389295aed9eef8ce1408a8f9dd539478` (nulls filled at source)
+**Expected metrics** — **release `v1.0`** (seed 42, depth 24, `train.n_jobs: 1`):
 
-*(Historical: the M02 baseline was 0.9299/0.9248/0.9125/0.9186/0.9811 on the un-DVC'd starter
-data at `5078478`; M04–M06 kept those numbers; M07's conflict PR moved depth 6→12, the data PR
-filled nulls (metrics unchanged), and the promotion PR moved depth 12→24.)*
+| metric | rounded | full precision |
+|--------|---------|----------------|
+| accuracy | 0.9625 | `0.9624657138732496` |
+| precision | 0.9683 | `0.9683407356793076` |
+| recall | 0.9443 | `0.9442531926707385` |
+| F1 | 0.9561 | `0.9561452828067019` |
+| ROC-AUC | 0.9942 | `0.9941573399364485` |
+| data | `train.csv` md5 `389295aed9eef8ce1408a8f9dd539478` · `test.csv` md5 `e70c499bd30bc487549e887889a3e5c4` (nulls filled at source) |
+| rows | `n_train` 83123 · `n_test` 20781 (stratified 80/20, seed 42) |
 
-**Verified:** ✅ `dvc status` + `dvc repro` → "Data and pipelines are up to date" on `dev` after
-every M07/M08 merge; 33 tests + ruff + 10 pre-commit hooks green; **every PR since #18 is gated by
+**Reproduce the release** (the Module 09 checkpoint — run this on a *fresh clone*):
+
+```bash
+git clone https://github.com/Uzair3112/skyline-ml-collab.git && cd skyline-ml-collab
+git checkout staging            # a110753  (identical tree: main bb6517a, tag model-v1.0)
+uv sync --frozen                # pinned by uv.lock
+dvc pull                        # needs the DagsHub DVC token in .dvc/config.local
+dvc repro                       # -> "Data and pipelines are up to date", git status CLEAN
+dvc repro -f                    # forced full re-run -> git diff shows ONLY commit_sha
+cat metrics.json
+```
+
+### Reproducibility table (release `v1.0`)
+
+| What | Value |
+|------|-------|
+| Release tag | **`model-v1.0`** → `bb6517a` on `main` (hotfix **`model-v1.0.1`** → `e7ccda0`) |
+| Commit SHA (tag target) | `bb6517a29c0326a7293bc0844240aa2289e1829c` |
+| Branches | `staging` = `a110753` · `main` = `bb6517a` (+ hotfix `e7ccda0`) · `dev` = `ea59e2a` — `git diff staging dev` and `git diff dev main` both **empty** |
+| Release PRs | #27 (`dev`→`staging`, merge `a110753`) · #28 (`staging`→`main`, merge `bb6517a`) · #29 hotfix (rebase `e7ccda0`) · #30 merge-back (merge `ea59e2a`) |
+| `params.yaml` | seed `42` · `split.test_size 0.2` · `train.model random_forest` · `n_estimators 100` · `max_depth 24` · `train.n_jobs 1` · paths `models/model.pkl`, `metrics.json` |
+| Code commit stamped in `metrics.json` | `41173de8e50b84848a3f84ebcca2fb727394aec9` (params `max_depth: 24`, `n_jobs: 1`, seed 42) — the code commit that produced the numbers; a reproduction on a later checkout stamps *that* checkout instead (`a110753` in the verification run) |
+| Data `.dvc` hash | `train.csv.dvc` md5 **`389295aed9eef8ce1408a8f9dd539478`** · `test.csv.dvc` md5 `e70c499bd30bc487549e887889a3e5c4` (DVC remote = DagsHub `storage`); `dvc status -c` → *Cache and remote are in sync* |
+| Lock file | `dvc.lock` — committed clean on the release (`dvc repro` no-ops); md5 of `metrics.json` + the model out updated by the M09 retrain |
+| Environment | `uv.lock` — `uv sync --frozen`, Python 3.13, scikit-learn pinned; CI runs the identical command |
+| Seed | `42` (split, model, shuffling); preprocessing fit on the training split only |
+| Scoring order | **single-threaded** (`train.n_jobs: 1`) so `predict_proba` accumulates in a fixed order — `roc_auc` bit-stable across ≥4 forced runs |
+| Metrics (from `metrics.json`) | accuracy `0.9624657138732496` · precision `0.9683407356793076` · recall `0.9442531926707385` · F1 `0.9561452828067019` · ROC-AUC `0.9941573399364485` |
+| Reproduced by | **Uzair**, fresh clone, on `staging` @ `a110753` — identical value metrics ✅ (comment on PR #27) |
+| Tests / gates | **37 tests**, `ruff check` + `ruff format` clean, 10/10 pre-commit hooks, 5/5 CI checks on every release PR |
+| **Result** | **PASS** — fresh clone reproduced every value metric **byte-for-byte**; only `commit_sha` differs (by design) |
+
+**Verified:** ✅ fresh-clone reproduction on 2026-09-30 (`docs/evidence/module-09-reproduction.txt`,
+comment on PR #27). The process caught **two real defects**, both fixed before the tag was cut:
+(a) `roc_auc` was not stable because `RandomForestClassifier(n_jobs=-1)` accumulates probabilities in
+thread-**completion** order → #25; (b) the retrain from (a) was never `dvc push`ed, so a fresh clone
+failed `dvc pull` on `models/model.pkl` → pushed, re-verified.
+
+**Also verified:** ✅ `dvc status` + `dvc repro` → "Data and pipelines are up to date" after every
+M07/M08/M09 merge; 35→37 tests + ruff + 10 pre-commit hooks green; **every PR since #18 is gated by
 the 4 CI jobs** (lint/tests/data-checks/smoke-train).
 
 **Re-verified 2026-09-29 on `dev` (`c63b5f2`)** — `data/raw/{train,test}.csv` restored from the
@@ -440,6 +559,11 @@ starter repo, full pipeline re-run, metrics reproduced **exactly**:
 `git log --all -- '*.csv'` → **0** (the CSVs are git-ignored; they move under DVC in Module 04).
 Also re-ran `uv run pre-commit run --all-files` ✅ and both guard rails (5 MB file + fake `sk-…`
 key blocked — `docs/evidence/module-03-reverify-on-dev.txt`).
+
+> **Historical metrics path:** M02 baseline 0.9299/0.9248/0.9125/0.9186/0.9811 on the un-DVC'd
+> starter data at `5078478` → M04–M06 unchanged → M07 conflict PR depth 6→12, data PR filled nulls
+> (metrics unchanged), promotion PR depth 12→24 (f1 0.9476→0.9562) → M09 `n_jobs: 1` changed only the
+> last digits of `roc_auc` (…4483 → …4485) while making it deterministic.
 
 ---
 
@@ -456,9 +580,13 @@ key blocked — `docs/evidence/module-03-reverify-on-dev.txt`).
 
 - [x] Data-update PR (Module 07): https://github.com/Uzair3112/skyline-ml-collab/pull/14
 - [x] Conflict-resolution PR (Module 07): https://github.com/Uzair3112/skyline-ml-collab/pull/13
-- [ ] One "changes requested" review: ⬜ **pending Saad's account** (M07 PRs are all Uzair's — he cannot review his own)
-- [ ] Release PR `dev → staging` (Module 09): `<url>`
-- [ ] Release PR `staging → main` (Module 09): `<url>`
+- [ ] One "changes requested" review: ⬜ **pending Saad's account** (all PRs since M06 are Uzair's — GitHub forbids self-review; #26's closing comment documents *why* it was closed, which is not a "changes requested" review)
+- [x] Release PR `dev → staging` (Module 09): https://github.com/Uzair3112/skyline-ml-collab/pull/27 (merged `a110753`; superseded attempts #24, #26)
+- [x] Release PR `staging → main` (Module 09): https://github.com/Uzair3112/skyline-ml-collab/pull/28 (merged `bb6517a`)
+- [x] Hotfix PR (Module 09 bonus): https://github.com/Uzair3112/skyline-ml-collab/pull/29 (rebase `e7ccda0` → tag `model-v1.0.1`)
+- [x] Merge-back PR `main → dev` (Module 09): https://github.com/Uzair3112/skyline-ml-collab/pull/30 (fast-forward `ea59e2a`)
+- [x] Independent reproduction evidence (Module 09): `docs/evidence/module-09-reproduction.txt` + the metrics comment on PR #27
+- [x] Tags: `model-v1.0` → `bb6517a` · `model-v1.0.1` → `e7ccda0` (`git ls-remote --tags origin`)
 - [x] Abandoned `exp/` branch + why (Module 07): `exp/uzair-model-sweep` — logreg −0.092 f1, remaining runs use different test sets (see Module 07 §7.6)
 - [x] CI red check evidence (Module 08): `docs/evidence/module-08-ci-red.txt` + 📸 `docs/evidence/module-08-ci-red.png`
 - [x] CI green check evidence (Module 08): `docs/evidence/module-08-ci-green.txt` + 📸 `docs/evidence/module-08-ci-green.png`
@@ -478,6 +606,8 @@ key blocked — `docs/evidence/module-03-reverify-on-dev.txt`).
 | 5 | Two authors in `git log` (Phase 1 checkpoint) | 01 | ✅ `docs/evidence/module-01-two-authors.png` |
 | 6 | Collaborators page — `msaadsbr` · Collaborator (Write) | 01 | ✅ `docs/evidence/module-01-collaborators.png` |
 | 7 | CML metrics comment on the PR (bonus) | 08 | ✅ `docs/evidence/module-08-cml-comment.txt` (comment body + job list; screenshot optional — comment is visible on PR #21) |
+| 8 | Reproduced `metrics.json` pasted as a comment on the release PR | 09 | ✅ comment on PR #27 (+ full transcript `docs/evidence/module-09-reproduction.txt`) — text evidence, no screenshot needed |
+| 9 | Release tag visible on GitHub → Tags | 09 | ✅ `model-v1.0`, `model-v1.0.1` (`git ls-remote --tags origin` + API; screenshot optional) |
 
 ---
 
@@ -485,13 +615,15 @@ key blocked — `docs/evidence/module-03-reverify-on-dev.txt`).
 
 | Priority | Action | Owner | Blocking |
 |----------|--------|-------|----------|
-| 1 | Saad (when available): **"changes requested" review** (rubric ≥1) on a Uzair PR + retro-reviews #5–#9, #11–#18, #20–#22 + `pre-commit install` + own-clone `dvc pull` + re-run his 3 experiments | Saad | pending his account |
-| 2 | **Module 09**: `dev → staging → main`, `model-v1.0`, independent reproduction, final REPORT.md | Uzair | — |
-| 3 | ~~Optional (+5): CML metrics comment~~ — **done** (PR #21); hotfix bonus `model-v1.0.1` still available in M09 if wanted | — | — |
+| 1 | Saad (when available): **"changes requested" review** (rubric ≥1) on a Uzair PR + retro-reviews #5–#9, #11–#18, #20–#30 + `pre-commit install` + own-clone `dvc pull` + re-run his 3 experiments | Saad | pending his account |
+| 2 | ~~**Module 09**: `dev → staging → main`, `model-v1.0`, independent reproduction, final REPORT.md~~ — **done** (#27, #28, #29, #30; tags pushed; reproduction PASS) | Uzair | — |
+| 3 | ~~Bonus: CML metrics comment~~ **and** ~~hotfix `model-v1.0.1`~~ — **both done** (PR #21, PR #29/#30) | — | — |
+| 4 | Submit: repo link + `REPORT.md` + tag (portal step) | team | — |
 
-> Scoreboard: authored **Uzair 17/2 ✅ · Saad 2/2 ✅** · reviewed **Uzair 2/2 ✅ · Saad 2/2 ✅** ·
+> Scoreboard: authored **Uzair 25/2 ✅ · Saad 2/2 ✅** · reviewed **Uzair 2/2 ✅ · Saad 2/2 ✅** ·
 > experiments **Uzair 3/3 ✅ · Saad's 3 run on his branch (deviation)** · required CI checks
-> **3/3 ✅** · **bonus CML ✅** · "changes requested" **0/1** → Saad's account, first action when available.
+> **3/3 ✅** · **release tag ✅** · **reproduction ✅** · **bonus 2/2 (CML + hotfix) ✅** ·
+> "changes requested" **0/1** → Saad's account, first action when available.
 
 ---
 
@@ -529,8 +661,23 @@ key blocked — `docs/evidence/module-03-reverify-on-dev.txt`).
   null thresholds, 11 unit tests) and the `smoke` end-to-end gate (300-row slice, 12 s, NaN guard);
   proved the gate red→green on PR #18, enabled strict required checks on all 3 branches, then
   proved a failing PR is unmergeable (405) on PR #19; authored close-out PR #20
-- **PRs authored**: PR #2, #4, #5, #6, #7, #8, #9, #11, #12, #13, #14, #15, #16, #17, #18, #20 — **16 / 2 ✅**
+- **Module 09 (release):** re-logged `metrics.json.commit_sha` so it matches the released code (#23);
+  promoted `dev → staging` (#24) and then, when the reproduction failed, made scoring deterministic
+  (`train.n_jobs: 1` + 2 regression tests, #25); diagnosed why a direct `dev → staging` PR could
+  never go green (GitHub's rebase merge rewrote SHAs ⇒ `mergeable=dirty` ⇒ **no merge ref ⇒ no CI
+  run**) and closed it with an explanatory comment (#26) in favour of a **release branch cut from
+  `staging`** (#27) — clean diff, 5/5 CI green, merge-commit; ran the independent reproduction in a
+  **brand-new clone** (caught the missing `dvc push`, then reproduced every metric byte-for-byte)
+  and posted it as a comment; promoted `staging → main` (#28) and tagged **`model-v1.0`**; took the
+  optional **hotfix bonus** (#29: `--report` no longer clobbers `REPORT.md` on case-insensitive
+  filesystems, +2 tests → 37) tagged **`model-v1.0.1`**, and fast-forwarded `main` back into `dev`
+  (#30) so the fix cannot be lost; kept the DagsHub mirror in sync (`dev`/`staging`/`main` + tags);
+  wrote `docs/evidence/module-09-reproduction.txt`, ticked `docs/module-09-release.md`, updated
+  `PROGRESS.md`, `docs/README.md` and this report
+- **PRs authored**: PR #2, #4, #5, #6, #7, #8, #9, #11, #12, #13, #14, #15, #16, #17, #18, #20, #21, #22, #23, #24, #25, #27, #28, #29, #30 — **25 / 2 ✅**
 - **PRs reviewed**: PR #3 (APPROVED), PR #10 (APPROVED + checklist) — **2 / 2 ✅**
+- **Release + tags**: `model-v1.0` → `bb6517a`, `model-v1.0.1` → `e7ccda0` — **1 / 1 ✅**
+- **Reproduction**: fresh-clone run, all value metrics byte-identical — **1 / 1 ✅**
 
 **Muhammad Saad Sabir** — Model owner + Platform B
 - Cloned repo, set per-clone identity, pushed `chore/saad-setup` (Phase 1 checkpoint)
@@ -585,6 +732,27 @@ key blocked — `docs/evidence/module-03-reverify-on-dev.txt`).
    every merge. Evidence files avoided `Out-File` (BOM/UTF-16 hazards) and were composed with
    explicit UTF-8; Actions logs expire after 90 days, so red/green output was captured to committed
    text evidence instead of relying on the web UI.
+- **Module 09 (M09) — four real breaks, all caught by the release process itself:**
+  1. **`roc_auc` was not reproducible.** The first fresh-clone reproduction returned four different
+     `roc_auc` values (`…3446515221`, `…3399364484`, `…3399364483`, `…3493665958`) while
+     accuracy/precision/recall/f1 stayed put — `RandomForestClassifier(n_jobs=-1)` accumulates
+     `predict_proba` in thread-**completion** order. Fixed with `train.n_jobs: 1` (+2 regression
+     tests, PR #25); `roc_auc` has been bit-identical across ≥4 forced runs since.
+  2. **`git push` without `dvc push`.** PR #25's `dvc repro -f` retrained the model (the pickle
+     bytes change with `n_jobs`), but only the *local* `dvc status` had been run — a local status
+     never checks the remote. The tag was nearly cut with a dangling pointer; the fresh clone's
+     `dvc pull` failed on `models/model.pkl`, `dvc status -c` showed `new: models\model.pkl`, and
+     one `dvc push` fixed it. This is the exact pitfall the module brief warns about.
+  3. **A rebase-merge rewrote SHAs, which silently disabled CI.** #24 was rebase-merged into
+     `staging`, so `staging`'s copies of `dvc.lock`/`metrics.json`/`params.yaml` got new commit
+     ids; the follow-up `dev → staging` PR (#26) then reported `mergeable=dirty` — and because a
+     dirty PR has **no merge ref, GitHub starts no check runs at all** (0 check-runs observed on
+     head `7232a66`). Closed with an explanation and replaced by the **release-branch pattern**
+     (`release/v1.0` cut from `staging`, #27/#28), which made the diff clean and CI ran again.
+  4. **Tag cut on the wrong ref.** `model-v1.0.1` was first created while the hotfix branch was
+     still checked out, so it pointed at the PR head `b7a7a32` (not reachable from `main` after the
+     rebase). Deleted the tag on origin and re-cut it on `e7ccda0`. Lesson: `git switch main &&
+     git log -1` before tagging.
 
 **What we standardised:**
 - Extension-based `.gitignore` (not directory-based) to keep DVC pointers committable
@@ -592,6 +760,13 @@ key blocked — `docs/evidence/module-03-reverify-on-dev.txt`).
 - Pinned all tool versions (`uv.lock`, pre-commit `rev:` tags)
 - `params.yaml` drives all paths/seeds/model params — no hardcoded paths in source
 - Pre-commit hooks for formatting, large files, secrets, notebooks
+- **(M09)** release PRs are opened from a `release/<version>` branch cut **from the base**, so the
+  head always contains its base (clean diff ⇒ CI actually runs)
+- **(M09)** `dvc status -c` + `dvc push` after **every** retrain, before `git push`
+- **(M09)** `train.n_jobs: 1` for the reported model; "run `dvc repro -f` twice, only `commit_sha`
+  may move" is now part of the release checklist
+- **(M09)** write-path guards: `--report` refuses to overwrite a file that is not a smoke report
+  (the old behaviour silently replaced `REPORT.md` on case-insensitive filesystems)
 
 **What we added to `CONTRIBUTING.md` as a result:**
 - Branch protection rules (PR required, 1 approval, dismiss stale, no force-push, enforce_admins)
@@ -599,6 +774,11 @@ key blocked — `docs/evidence/module-03-reverify-on-dev.txt`).
 - `dvc push` before `git push` rule
 - Reviewer must check out branch for pipeline-changing PRs
 - Never run experiments on uncommitted code
+- **§3 Release branches** — cut `release/<version>` from the base when SHAs have been rewritten
+  (dirty PR ⇒ no CI), and merge `main` back into `dev` right after a hotfix
+- **§4.1** `dvc status -c` after any retrain — the local status does not check the remote
+- **§5.6** metrics that accumulate over threads must be forced single-threaded (`train.n_jobs: 1`),
+  proven by re-running `dvc repro -f` and diffing
 
 ---
 
@@ -659,10 +839,15 @@ md5sum data/raw/*.csv # must match the md5 in the *.csv.dvc pointer
 | `dvc dagshub-setup` / `dagshub://` do **not** exist in DVC 3.67 — docs corrected to the HTTPS recipe | 04 | ✅ fixed in PR #7 |
 | DagsHub repo was storage-only → web UI showed no dataset; fixed by mirroring git code (`dagshub` remote, default branch `dev`). **Must re-push after each GitHub merge** or the DagsHub page goes stale | 04 | ⚠️ sync rule documented |
 | CI screenshots (red/green) | 08 | ✅ committed: `module-08-ci-red.png` (run 36629822692 — Status Failure, `tests` ✕) + `module-08-ci-green.png` (run 36741151650 — Success, 5/5 jobs); text evidence kept too |
-| `ml_skyline.smoke --report report.md` **clobbers `REPORT.md` on case-insensitive filesystems** (Windows/macOS) | 08 | ⚠️ CI writes `cml-report.md` instead; never pass `--report report.md` locally |
+| `ml_skyline.smoke --report report.md` **clobbered `REPORT.md` on case-insensitive filesystems** (Windows/macOS) | 08 | ✅ **fixed by the M09 hotfix (PR #29)** — `--report` now refuses to overwrite a file that is not a smoke report (exit 2, original bytes intact; +2 tests → 37); CI's `cml-report.md` path unchanged |
 | Required status checks now force every merge script to restore `required_status_checks` — the old restore payload would drop the gate | 08 | ✅ new merge template shipped with M08 close-out |
+| A **rebase/squash merge rewrites SHAs**, so the next PR into that branch reports `mergeable=dirty` and GitHub starts **no CI run** (no merge ref) | 09 | ✅ worked around with the release-branch pattern (§3 of `CONTRIBUTING.md`); observed on PR #26 (0 check-runs) |
+| A retrain changes the `model.pkl` pickle bytes; **local `dvc status` does not check the remote**, so a retrained model can be un-pushed while status says "up to date" | 09 | ✅ rule added: `dvc status -c` + `dvc push` after every retrain (`CONTRIBUTING.md` §4.1); caught by the release reproduction before the tag |
+| `RandomForestClassifier(n_jobs=-1)` made `roc_auc` non-deterministic (thread-completion accumulation order) | 09 | ✅ fixed (`train.n_jobs: 1` + 2 regression tests, PR #25); bit-stable across ≥4 forced runs |
 | Network downloads for pre-commit hooks slow/flaky | 03 | ⚠️ known (envs now cached) |
 
 ---
 
-*Last updated: 2026-09-30 (Module 08 final close-out — CML bonus + CI screenshot PNGs) — this file lives at repo root and is updated with each module close-out.*
+*Last updated: 2026-09-30 (Module 09 close-out — release `v1.0` promoted `dev → staging → main`,
+tags `model-v1.0` + `model-v1.0.1`, independent reproduction PASS, retrospective above) — this file
+lives at repo root and is updated with each module close-out.*
