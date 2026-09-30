@@ -72,3 +72,13 @@ def test_preprocessor_is_part_of_the_pipeline_so_it_cannot_leak():
     pipeline = build_pipeline(TRAIN_FRAME, params)
     assert set(pipeline.named_steps) == {"prep", "model"}
     assert build_preprocessor(TRAIN_FRAME, TARGET) is not None
+
+
+def test_random_forest_defaults_to_single_threaded_scoring():
+    """Parallel predict_proba is not order-stable, so n_jobs must default to 1."""
+    assert build_model(_params(model="random_forest")).n_jobs == 1
+
+
+def test_n_jobs_stays_a_params_yaml_knob():
+    """params.yaml remains the only place hyperparameters are set."""
+    assert build_model(_params(model="random_forest", n_jobs=4)).n_jobs == 4
