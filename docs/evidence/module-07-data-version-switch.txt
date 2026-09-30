@@ -1,0 +1,26 @@
+=== Module 07 / 7.4 - DVC version-switch demonstration ===
+repo: Uzair3112/skyline-ml-collab   date: 2026-09-30
+branch: data/fill-arrival-delay-nulls @ 1977858  (NEW data version)
+
+step 1 | on data branch (NEW):              md5(train.csv) = 389295aed9eef8ce1408a8f9dd539478
+       | pointer: - md5: 389295aed9eef8ce1408a8f9dd539478 hash: md5
+
+$ git -c advice.detachedHead=false checkout 4cc62cf   # commit before the data change
+$ dvc checkout                                  # restore OLD data version from DVC cache
+  M data/processed/test.csv, data/processed/train.csv, data/raw/train.csv   (switched)
+step 2 | old data version checked out:       md5(train.csv) = 7795cca073013498de22f07333cc4e97
+       | pointer: - md5: 7795cca073013498de22f07333cc4e97 hash: md5
+
+$ git switch data/fill-arrival-delay-nulls    # back to the PR branch
+$ dvc checkout                                  # restore NEW data version
+  M data/processed/test.csv, data/processed/train.csv, data/raw/train.csv   (switched back)
+step 3 | back on data branch (NEW):           md5(train.csv) = 389295aed9eef8ce1408a8f9dd539478
+
+old pointer md5 : 7795cca073013498de22f07333cc4e97  (size 14873245)
+new pointer md5 : 389295aed9eef8ce1408a8f9dd539478  (size 14873565)
+verification: step2 == old pointer: True  |  step1 == step3 == new pointer: True
+=> hashes differ; old version fully recoverable via 'git checkout <old-sha> && dvc checkout'
+
+$ git status --short                            # clean after the round-trip (only this evidence file was untracked at capture time)
+  ?? docs/evidence/module-07-data-version-switch.txt
+=== end of demo ===
