@@ -2,10 +2,11 @@
 
 **Phase 8** · Owner: **Uzair** (Platform A), **Saad** (reviewer) · Rubric: *CI (10)*, *PRs (20)*
 **Branch:** `feat/ci` → PR **#18** (merged `e00e790`) → `dev` · proof PR **#19** (closed, unmergeable) ·
-close-out PR **#20**
+close-out PR **#20** · CML bonus PR **#21** (merged `330b89b`) · final close-out PR **#22**
 **Checkpoint:** ✅ a deliberately broken test caused a **red check that blocks merging** (HTTP 405 —
-`docs/evidence/module-08-merge-blocked.txt`). 📸 PNG capture of the check pages pending Uzair (text
-evidence committed: `docs/evidence/module-08-ci-red.txt` / `module-08-ci-green.txt`).
+`docs/evidence/module-08-merge-blocked.txt`), with 📸 PNG captures now committed:
+[`module-08-ci-red.png`](evidence/module-08-ci-red.png) (run `36629822692`: `tests` ✕, Status *Failure*)
+· [`module-08-ci-green.png`](evidence/module-08-ci-green.png) (run `36741151650`: 5/5 green, Status *Success*).
 
 ## Objective
 
@@ -103,28 +104,40 @@ Solutions (pick one):
 - [x] finishes in < ~2 min (measured **12 s**), exits non-zero if metrics are NaN / pipeline throws
       (also rejects values outside 0..1; `--report report.md` writes a markdown metrics table for CML)
 
-### 5. Bonus: CML metrics comment (+5)
+### 5. Bonus: CML metrics comment (+5) — ✅ done (PR #21, merged `330b89b`)
+
+> ⚠️ **Correction to the original sketch below:** `iterative/report-pull-request@v2` **does not
+> exist** (GitHub API 404). The real CML path is `iterative/setup-cml@v2` + the `cml` CLI, and
+> `--pr` is deprecated — current syntax is `--target=pr` (default is `pr` anyway).
 
 ```yaml
   cml-comment:
     runs-on: ubuntu-latest
     needs: [lint, tests, data-checks, smoke-train]
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    permissions:
+      contents: read
+      pull-requests: write
+      issues: write
     steps:
       - uses: actions/checkout@v4
-      - uses: iterative/setup-cml@v2
       - uses: astral-sh/setup-uv@v5
-      - run: uv sync --frozen
-      - run: uv run python -m ml_skyline.smoke --rows 300 --report report.md
-      - name: Publish metrics
-        uses: iterative/report-pull-request@v2
         with:
-          path: report.md
+          enable-cache: true
+      - uses: iterative/setup-cml@v2
+      - run: uv sync --frozen
+      - run: uv run python -m ml_skyline.smoke --rows 300 --data tests/fixtures/sample.csv --report cml-report.md
+      - name: Publish metrics table as a PR comment
+        env:
+          REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: cml comment create cml-report.md --target=pr
 ```
 
-- [ ] *(optional)* CML posts the metrics table as a PR comment → **+5 bonus**
-      (`smoke --report` already writes the table — workflow job not added yet; defer or take the
-      hotfix bonus in Module 09)
-- [ ] Alternatively take the **hotfix bonus** in Module 09
+- [x] *(bonus)* CML posts the metrics table as a PR comment → **+5 bonus** — proven live on
+      PR #21 (run `36741151650`, job `cml-comment` success, comment by `github-actions[bot]`;
+      evidence `docs/evidence/module-08-cml-comment.txt`)
+- [x] Not a required status check + fork guard → the bonus **cannot block a merge**
+- [x] ~~Alternatively take the **hotfix bonus** in Module 09~~ — bonus taken here instead
 
 ### 6. Prove CI fails
 
@@ -138,11 +151,13 @@ git push -u origin feat/ci
 - [x] PR shows a **red** `tests` check — commit `c60fdfd` on PR #18; `lint`/`data-checks`/
       `smoke-train` stayed green → `docs/evidence/module-08-ci-red.txt`
       (run `36629822692`, log: `FAILED tests/test_ci_gate.py::test_broken - assert 1 == 2`)
-- [ ] 📸 screenshot (red check) for REPORT.md — **text evidence committed; PNG pending Uzair**
-      (https://github.com/Uzair3112/skyline-ml-collab/actions/runs/36629822692)
+- [x] 📸 screenshot (red check) for REPORT.md → [`docs/evidence/module-08-ci-red.png`](evidence/module-08-ci-red.png)
+      (Actions run page: Status *Failure*, `tests` ✕ with "Process completed with exit code 1",
+      other three green)
 - [x] Then delete the broken test, commit, and show a **green** PR — commit `9495a97`, all four
       checks success → `docs/evidence/module-08-ci-green.txt`
-- [ ] 📸 screenshot (passing check) for REPORT.md — **text evidence committed; PNG pending Uzair**
+- [x] 📸 screenshot (passing check) for REPORT.md → [`docs/evidence/module-08-ci-green.png`](evidence/module-08-ci-green.png)
+      (Actions run page: Status *Success*, 5/5 jobs green incl. `cml-comment`)
 
 ### 7. Make the checks required
 
@@ -161,9 +176,11 @@ After `feat/ci` merged into `dev` (PR #18, `e00e790`):
 
 ## Checkpoint (evidence for REPORT.md)
 
-- [x] 📸 failing CI check screenshot → 🟡 text: `docs/evidence/module-08-ci-red.txt` (PNG pending)
-- [x] 📸 passing CI check screenshot → 🟡 text: `docs/evidence/module-08-ci-green.txt` (PNG pending)
+- [x] 📸 failing CI check screenshot → `docs/evidence/module-08-ci-red.png` (+ `module-08-ci-red.txt`)
+- [x] 📸 passing CI check screenshot → `docs/evidence/module-08-ci-green.png` (+ `module-08-ci-green.txt`)
 - [x] Required status checks enabled on all three protected branches (`strict: true`, 4 contexts)
+- [x] Bonus: CML metrics comment posted on PR #21 → `docs/evidence/module-08-cml-comment.txt`
+      (run `36741151650`, `cml-comment` job green)
 
 ## Pitfalls
 
