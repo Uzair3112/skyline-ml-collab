@@ -63,19 +63,26 @@ def build_preprocessor(df: pd.DataFrame, target: str) -> ColumnTransformer:
 
 
 def build_model(params: dict[str, Any]):
-    """Instantiate the estimator named by ``params['train']['model']``."""
+    """Instantiate the estimator named by ``params['train']['model']``.
+
+    ``train.n_jobs`` defaults to ``1``: the forest accumulates per-tree
+    probabilities in thread-completion order, so a parallel ``predict_proba``
+    is not order-stable and moved ``roc_auc`` between fresh clones (Module 09
+    reproduction test). Single-threaded accumulation is bit-reproducible.
+    """
     cfg = params["train"]
     seed = int(params["seed"])
     name = cfg["model"]
     n_estimators = int(cfg.get("n_estimators", 100))
     max_depth = int(cfg.get("max_depth", 6))
+    n_jobs = int(cfg.get("n_jobs", 1))
 
     if name == "random_forest":
         return RandomForestClassifier(
             n_estimators=n_estimators,
             max_depth=max_depth,
             random_state=seed,
-            n_jobs=-1,
+            n_jobs=n_jobs,
         )
     if name == "logreg":
         return LogisticRegression(max_iter=1000, random_state=seed)
