@@ -3,7 +3,7 @@
 > Update this file as you go. Status: ⬜ not started · 🟡 in progress · ✅ done · ❌ blocked
 > **Also** tick the checkboxes inside each module file — this board is the summary.
 
-**Last updated:** 2026-09-30 · **Current phase:** Modules 01–08 ✅ DONE → next: **Module 09**
+**Last updated:** 2026-09-30 · **Current phase:** Modules 01–09 … → Module 08 **fully complete incl. CML bonus** → next: **Module 09**
 
 ## Module status
 
@@ -16,14 +16,14 @@
 | 05 | Notebooks | ✅ | `feat/eda-notebook` (after merge) | **#9 merged** | ✅ 0 outputs/base64 in ipynb (8.9 KB) · ✅ jupytext pair `01-eda.py` + metadata · ✅ `build_features` promoted + 5 tests · ✅ executed top-to-bottom via nbconvert |
 | 06 | Reproducible pipeline | ✅ | `feat/dvc-pipeline` (after merge) | **#11 merged** | ✅ `dvc.yaml` 3 stages + `dvc.lock` + `params.yaml` · ✅ `run_at` removed (deterministic) · ✅ fresh-clone `dvc pull && dvc repro` identical metrics (`docs/evidence/module-06-dvc-repro-verification.txt`) · ✅ `dvc push` before `git push` |
 | 07 | Experiments & PRs | ✅ | `exp/*` (kept), others deleted | **#12–#16 merged** | ✅ 6 experiments (`dvc exp show` evidence) · ✅ conflict reproduced+resolved by rebase (#12→#13) · ✅ data update + version-switch demo (#14) · ✅ winner promoted (#15) · ✅ `exp/uzair-model-sweep` abandoned unmerged · ⬜ Saad's changes-requested review + his own 3 exps (account, pending) |
-| 08 | CI | ✅ | `feat/ci`, `proof/red-gate` (deleted) | **#18 merged** (`e00e790`) | ✅ 4-job PR workflow (`uv sync --frozen`) · ✅ fixture-based data-checks (no DVC secrets) · ✅ smoke 12 s · ✅ 33 tests · ✅ red→green on #18 · ✅ required checks ×3 (strict) · ✅ failing-check merge → **405** (#19) · text evidence `docs/evidence/module-08-*.txt` · ⬜ 📸 PNG red/green (pending Uzair) |
+| 08 | CI | ✅ | `feat/ci`, `proof/red-gate` (deleted) | **#18, #21 merged** (`e00e790`, `330b89b`) | ✅ 4-job PR workflow (`uv sync --frozen`) · ✅ fixture-based data-checks (no DVC secrets) · ✅ smoke 12 s · ✅ 33 tests · ✅ red→green on #18 · ✅ required checks ×3 (strict) · ✅ failing-check merge → **405** (#19) · ✅ **CML bonus** — `cml-comment` job posts metrics table on PRs (#21, run `36741151650`) · ✅ 📸 PNG red/green committed (`module-08-ci-{red,green}.png`) · evidence `docs/evidence/module-08-*.txt` |
 | 09 | Release & report | ⬜ | `staging` | # | `model-v1.0` + independent reproduction |
 
 ## Rules scoreboard
 
 | Requirement | Target | Status |
 |-------------|--------|--------|
-| Uzair authored merged PRs | ≥ 2 | **16 / 2** ✅ (PR #2, #4, #5, #6, #7, #8, #9, #11, #12, #13, #14, #15, #16, #17, #18, #20) |
+| Uzair authored merged PRs | ≥ 2 | **17 / 2** ✅ (PR #2, #4, #5, #6, #7, #8, #9, #11, #12, #13, #14, #15, #16, #17, #18, #20, #21) |
 | Uzair reviewed PRs | ≥ 2 | **2 / 2** ✅ (PR #3, #10) |
 | Saad authored merged PRs | ≥ 2 | **2 / 2** ✅ (PR #3, #10) |
 | Saad reviewed PRs | ≥ 2 | **2 / 2** ✅ (PR #2, PR #4) |
@@ -34,7 +34,7 @@
 | Release tag | `model-v1.0` on `main` | ⬜ |
 | Independent reproduction | matches exactly | ⬜ |
 | `REPORT.md` | complete | ✅ **created** |
-| Bonus | CML comment **or** `model-v1.0.1` | ⬜ |
+| Bonus | CML comment **or** `model-v1.0.1` | ✅ **CML comment** — `cml-comment` job posted the smoke-metrics table on PR #21 (run `36741151650`); hotfix bonus still available in M09 |
 
 ## Open decisions / blockers
 
@@ -203,4 +203,6 @@ refactor scores 93 %.
 | 2026-09-30 | **M08 build (Uzair):** `feat/ci` — `.github/workflows/ci.yml` (4 jobs on `pull_request`, `uv sync --frozen`, concurrency cancel); `ml_skyline.data_checks` (schema/labels/0..5 ranges/1% nulls) against committed **69 KB fixture** `tests/fixtures/sample.csv` (500-row raw slice, no DVC secrets needed); `ml_skyline.smoke --rows 300` (12 s, NaN/exception → exit 1, `--report` for CML); +11 tests → **33 total**; local pre-flight identical to CI commands |
 | 2026-09-30 | **PR #18 CI run:** all 4 checks green on first push (`89dfeb4`) → red proof `c60fdfd` (broken test → `tests` FAILURE, others green) → evidence captured → green restore `9495a97` → **PR #18 merged** (`e00e790`) |
 | 2026-09-30 | **Required status checks enabled ×3** (`lint, tests, data-checks, smoke-train`, strict) on `main`/`staging`/`dev`; **merge-block proof:** PR #19 (red `tests`) `PUT /merge` → **HTTP 405** → PR #19 closed, branch deleted; merge-script restore payload updated to keep `required_status_checks` |
-| 2026-09-30 | **M08 close-out (Uzair):** REPORT/PROGRESS/module-08/docs README + red/green/405 evidence synced → PR #20 (this PR) — 📸 PNG screenshots of the check pages still to be captured by Uzair |
+| 2026-09-30 | **M08 close-out (Uzair):** REPORT/PROGRESS/module-08/docs README + red/green/405 evidence synced → PR #20 — 📸 PNG screenshots of the check pages still to be captured by Uzair |
+| 2026-09-30 | **M08 bonus (Uzair):** `cml-comment` job added to `ci.yml` (`iterative/setup-cml@v2` + `ml_skyline.smoke --report` + `cml comment create --target=pr`; the doc's sketched `iterative/report-pull-request@v2` action **404s — does not exist**); fork guard + non-required so it can never block a merge → PR **#21**, all 5 checks green, metrics table posted by `github-actions[bot]` → squash-merged `330b89b`, protection restored ×3, DagsHub `dev` synced, branch deleted |
+| 2026-09-30 | **M08 final close-out (Uzair):** 📸 PNG screenshots captured headless from the Actions run pages — red `module-08-ci-red.png` (run 36629822692: Status Failure, `tests` ✕) + green `module-08-ci-green.png` (run 36741151650: Success, 5/5 incl. `cml-comment`); CML evidence `module-08-cml-comment.txt`; `--pr` → `--target=pr` (deprecation); module-08/PROGRESS/REPORT synced → this PR |
