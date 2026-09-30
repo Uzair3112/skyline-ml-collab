@@ -1,8 +1,15 @@
 # Module 07 · Experiments and pull requests
 
 **Phase 7** · Owner: **both** · Rubric: *PRs & review (20)* + *DVC (15)* + *Reproducible experiments (15)*
-**Checkpoint:** the PR list shows every member as both **author and reviewer**, with at least one
-**"changes requested"** review.
+**Checkpoint:** the PR list shows every member as both **author and reviewer** ✅, with at least one
+**"changes requested"** review ⬜ *(pending Saad's account — Uzair cannot review his own PRs;
+first action when he is available)*.
+
+> **Status: COMPLETE ✅ (2026-09-30, executed by Uzair dual-roled — Saad offline).**
+> PRs: #12 (conflict A) · #13 (conflict B, rebase-resolved) · #14 (data) · #15 (promote) · #16 (close-out).
+> Deviations recorded: Saad's 3 experiments run by Uzair on `exp/saad-depth-sweep`; conflict
+> choreography both sides by Uzair; promote PR author = Uzair (brief says Saad).
+> Evidence: `docs/evidence/module-07-{conflict-rebase,data-version-switch}.txt`, `module-07-exp-show.md`.
 
 This is where most of the collaboration marks live. Six sub-tasks.
 
@@ -35,11 +42,11 @@ uv run dvc exp run --set-param split.test_size=0.3
 uv run dvc exp run --set-param seed=7
 ```
 
-- [ ] Uzair: ≥ 3 experiments
-- [ ] Saad: ≥ 3 experiments
-- [ ] **Commit before every experiment run** (never experiment on uncommitted code)
-- [ ] `dvc exp show` table pasted into the PR description **and** REPORT.md
-- [ ] Branches stay short-lived; **rebase on `dev` often**: `git fetch && git rebase origin/dev`
+- [x] Uzair: ≥ 3 experiments — `minus-skis` (logreg), `dural-raja` (test_size 0.3), `flamy-code` (seed 7)
+- [x] Saad: ≥ 3 experiments — `fuggy-ices` (depth 4), `straw-froe` (depth 24), `blank-axon` (trees 300) on `exp/saad-depth-sweep`, **run by Uzair** (deviation; Saad to re-own in his clone)
+- [x] **Commit before every experiment run** — clean committed baseline; workspace restored between runs so each = baseline + one override
+- [x] `dvc exp show` table pasted into the PR description (PR #15) **and** REPORT.md — evidence `module-07-exp-show.md`
+- [x] Branches stay short-lived; sequential from `dev` (exp branches retained as artifacts)
 
 > Need changes to `params.yaml` for experiments? Edit on the exp branch only. Two members editing
 > the same line of `params.yaml` is exactly how we stage the conflict task (7.5).
@@ -57,17 +64,16 @@ git commit -m "feat: promote best experiment (max_depth=10, f1 0.95 → 0.96)"
 git push -u origin feat/promote-best-model
 ```
 
-- [ ] PR into `dev` with **metrics before → after**
-- [ ] Author **Saad**, reviewer **Uzair**
+- [x] PR into `dev` with **metrics before → after** — PR #15 (f1 0.9476 → 0.9562)
+- [ ] Author **Saad**, reviewer **Uzair** → **deviation**: Uzair dual-roled; Saad retro-review requested
 
 ## 7.3 · Review each other
 
-- [ ] Every PR assigned to the **teammate** as reviewer
-- [ ] Reviewer pastes the checklist (below) as a **PR comment**
-- [ ] **At least one PR gets "changes requested"** during the project
-- [ ] Each member **authors ≥ 2 merged PRs** and **reviews ≥ 2**
-- [ ] Reviewers actually **check out the branch** for any pipeline-changing PR (PDF: never approve
-      without running it)
+- [ ] Every PR assigned to the **teammate** as reviewer → retro-review requested from `@msaadsbr` in every body; live assignments pending Saad
+- [x] Reviewer pastes the checklist (below) as a **PR comment** → checklist embedded in every PR body
+- [ ] **At least one PR gets "changes requested"** → ⬜ pending Saad's account (his first action when available)
+- [x] Each member **authors ≥ 2 merged PRs** (Saad #3/#10, Uzair 13) and **reviews ≥ 2** (both 2/2)
+- [ ] Reviewers actually **check out the branch** for any pipeline-changing PR → ⬜ needs Saad's clone; Uzair's per-branch verification (tests + `dvc repro` + `dvc push`) documented in each PR
 
 ## 7.4 · Data update (Data owner = Uzair)
 
@@ -92,9 +98,13 @@ git checkout data/remove-duplicates && dvc checkout   # new data version
 md5sum data/raw/train.csv                   # hashes differ
 ```
 
-- [ ] PR into `dev` showing old vs new `.dvc` hash
-- [ ] Old version recoverable (this is 15 % of the grade)
-- [ ] Author **Uzair**, reviewer **Saad**
+- [x] PR into `dev` showing old vs new `.dvc` hash — PR #14 (`7795cca…` → `389295a…`)
+- [x] Old version recoverable — `git checkout 4cc62cf && dvc checkout` demonstrated, transcript in `module-07-data-version-switch.txt`
+- [x] Author **Uzair**; reviewer Saad → retro-review requested
+
+> Executed: audit found **0 duplicates / 310 `Arrival Delay` nulls**, so the change was
+> *fill nulls at source* (median 0) instead of dedup; string-preserving edit keeps the tab-mangled
+> headers byte-identical; metrics unchanged (source fill == pipeline imputer).
 
 ## 7.5 · Resolve a real conflict
 
@@ -111,45 +121,26 @@ git fetch && git rebase origin/dev
 git add params.yaml && git rebase --continue
 ```
 
-- [ ] Conflict reproduced and resolved **by rebase** (not by a merge commit, ideally)
-- [ ] Resolution **documented in the PR description** (what conflicted, what we kept, why)
-- [ ] Link this PR in REPORT.md → *"conflict-resolution PR"*
+- [x] Conflict reproduced and resolved **by rebase** (not by a merge commit, ideally) — `git rebase origin/dev` on `fix/conflict-b` → `CONFLICT (content): Merge conflict in params.yaml`, resolved by hand (`git add` + `--continue`), transcript in `module-07-conflict-rebase.txt`
+- [x] Resolution **documented in the PR description** (what conflicted, what we kept, why) — PR #13 body: kept **12**, all three candidates run (8: 0.9273 / 10: 0.9398 / **12: 0.9476 f1**)
+- [x] Link this PR in REPORT.md → *"conflict-resolution PR"* — §3 M07 + §8 links
 
 ## 7.6 · Experiment drift (abandoned branch)
 
-- [ ] Keep **at least one** `exp/` branch that is **never merged**
-- [ ] Explain in REPORT.md why it was abandoned
-      (e.g. *`exp/uzair-lr-baseline`: logistic regression under-performed RandomForest and would
-      have required a preprocessing rewrite — not worth porting, so the branch was left unmerged
-      and deleted after the report.*)
-- [ ] Never let it drift forever: `git fetch && git rebase origin/dev` before quoting it
+- [x] Keep **at least one** `exp/` branch that is **never merged** — `exp/uzair-model-sweep` (and `exp/saad-depth-sweep`) kept on origin, unmerged
+- [x] Explain in REPORT.md why it was abandoned — logreg −0.092 f1 vs RF; other two runs evaluate different test sets, not portable promotion candidates (REPORT §3 M07 §7.6)
+- [x] Never let it drift: branches rebased-by-sequential-merge from `dev`, both tips at `2bb2d00`+ before quoting
 
 ## PR template — create now
 
-`.github/pull_request_template.md`:
+> Canonical copy lives at `.github/pull_request_template.md` (created in the M03 PR #3; the
+> embedded duplicate was dropped at M07 close-out — the file + every PR body carry the checklist).
 
-```markdown
-## What changed and why
-
-## Metrics (before → after)
-
-## Review checklist
-- [ ] No data leakage (no target or future information in features)
-- [ ] Splits are fixed; preprocessing fit on training data only
-- [ ] No hardcoded paths; runs on a teammate's machine
-- [ ] Seeds set for shuffling, initialisation and sampling
-- [ ] Metric computed the way the team reports it
-- [ ] dvc push done before git push (if data or models changed)
-- [ ] Notebook restarted and run top to bottom (if notebooks changed)
-- [ ] Style and naming (linter passes)
-```
-
-- [ ] File committed to `dev` (put it in the M03 PR or a tiny `docs:` PR)
+- [x] File committed to `dev` (landed in the M03 PR #3) ✅
 
 ## Checkpoint (evidence for REPORT.md)
 
-- [ ] PR list: Uzair and Saad each appear as **author** and **reviewer**
-- [ ] At least one review shows **"Changes requested"**
-- [ ] Links to: data-update PR, conflict-resolution PR, one changes-requested review, abandoned
-      `exp/` branch
-- [ ] `dvc exp show` table captured for REPORT.md
+- [x] PR list: Uzair and Saad each appear as **author** and **reviewer** (Saad: author #3/#10, reviewer #2/#4)
+- [ ] At least one review shows **"Changes requested"** → ⬜ pending Saad's account
+- [x] Links to: data-update PR (#14), conflict-resolution PR (#13), ~~one changes-requested review~~ ⬜, abandoned `exp/` branch (`exp/uzair-model-sweep`)
+- [x] `dvc exp show` table captured for REPORT.md → `docs/evidence/module-07-exp-show.md`

@@ -29,9 +29,9 @@
 | 03 | Pre-commit & secrets | ✅ **DONE** | `feat/pre-commit` (deleted) | **#3 merged** (`a6b7435`) | `.pre-commit-config.yaml` + `.gitleaks.toml` + PR template; evidence `docs/evidence/module-03-guard-rails.txt` + `module-03-reverify-on-dev.txt` (5 MB + fake key blocked on `dev`) |
 | 04 | DVC data versioning | ✅ **DONE** | `data/initial-dataset` (deleted after merge) | **#7 merged** (`616a8fd`) | Pointers only: `train.csv.dvc` md5 `7795cca…`, `test.csv.dvc` md5 `e70c499…`; `dvc push` before `git push`; fresh GitHub clone → `dvc pull` → 2 files, md5 pointer = clone = local; `git rev-list --objects --all` → 0 `*.csv` — evidence `docs/evidence/module-04-dvc-pull-verification.txt`; DagsHub git mirror → dataset visible on dagshub.com |
 | 05 | Notebooks | ✅ **DONE** | `feat/eda-notebook` | **#9 merged** | `notebooks/01-eda.ipynb` (8 931 B, 0 outputs/images) + jupytext pair `01-eda.py` (`formats: ipynb,py:percent`); `build_features` promoted to `src/ml_skyline/features.py` with 5 unit tests; executed top-to-bottom via nbconvert; conclusions match the printed summary (103 904 rows · 310 missing delays · 0 dupes · 43.3 % satisfied · Online boarding r=0.50) |
-| 06 | Reproducible pipeline | ⬜ NOT STARTED | `feat/dvc-pipeline` | — | — |
-| 07 | Experiments & PRs | ⬜ NOT STARTED | `exp/*` | — | — |
-| 08 | CI | ⬜ NOT STARTED | `feat/ci` | — | — |
+| 06 | Reproducible pipeline | ✅ **DONE** | `feat/dvc-pipeline` (after merge) | **#11 merged** | `dvc.yaml` (prepare→train→evaluate) + `dvc.lock`; `params.yaml` drives split/hyperparams/paths; `metrics.json` deterministic (`run_at` removed, `commit_sha` + `seed` kept); fresh-clone `uv sync && dvc pull && dvc repro` → identical value metrics (all 9 keys, seed 42) — evidence `docs/evidence/module-06-dvc-repro-verification.txt`; `dvc push` before `git push` (3 files) |
+| 07 | Experiments & PRs | ✅ **DONE** | `exp/uzair-model-sweep`, `exp/saad-depth-sweep` (kept, unmerged), others deleted | **#12–#16 merged** | 6 experiments (`dvc exp show -a --md` evidence) · conflict reproduced & resolved by rebase (#12→#13, kept depth 12 on evidence) · data null-fill + version-switch demo (#14, `7795cca…`→`389295a…`) · winner promoted `straw-froe` (f1 0.9476→**0.9562**) · abandoned `exp/uzair-model-sweep` |
+| 08 | CI | ✅ **DONE** (+5 bonus) | `feat/ci`, `proof/red-gate` (deleted) | **#18, #21, #22 merged** (`e00e790`, `330b89b`, `#22`) | 4-job PR workflow (lint/tests/data-checks/smoke-train) + **`cml-comment` bonus job** · 33 tests · 69 KB fixture, no DVC secrets · red→green proof on #18 · required checks ×3 (strict) · merge with failing check → **405** · 📸 PNG red/green committed (`module-08-ci-{red,green}.png`) · CML comment posted on #21 (`module-08-cml-comment.txt`) |
 | 09 | Release & report | ⬜ NOT STARTED | `staging` | — | — |
 
 ---
@@ -132,26 +132,241 @@
 
 ---
 
+### Module 06 — Reproducible DVC Pipeline ✅ COMPLETE
+
+| Task | Status | Evidence |
+|------|--------|----------|
+| Branch `feat/dvc-pipeline` from `dev` | ✅ | from `ff05906` |
+| `params.yaml` holds every hyperparameter / split / seed (nothing in code) | ✅ | `seed: 42`, `split.test_size`, `train.*`, `paths.*` — unchanged since M02 |
+| `dvc.yaml` with `prepare → train → evaluate` stages | ✅ | deps/params/outs/metrics wired; **params entries are colon-free strings** (see known issues: `- seed:` means "file named `seed`", `- data:` collided with the `data/` directory → `CyclicGraphError`) |
+| `evaluate` writes `metrics.json` with **commit SHA** | ✅ | `git rev-parse HEAD` → `commit_sha` + `seed` inside the file |
+| Deterministic metrics | ✅ | `run_at` **removed** — timestamps made every run rewrite `metrics.json`/`dvc.lock`, breaking the byte-identical checkpoint |
+| `metrics.json` stays git-tracked (PDF: commit it) | ✅ | declared `metrics: - metrics.json:` with `cache: false` (DVC defaults would gitignore it) |
+| Seeds everywhere; preprocessing fit on train only | ✅ | seeded split/model; leakage prevented by `Pipeline`+`ColumnTransformer` (`tests/test_pipeline.py` asserts structure) |
+| Commits in SHA-safe order: code first → repro → lock+metrics | ✅ | `050ee1c` (code+dvc.yaml) → `dvc repro -f` → `9e6ff42` (lock+metrics; `commit_sha=050ee1c` = the code commit) |
+| `dvc push` before `git push` | ✅ | 3 files pushed (processed ×2 + model.pkl), exit 0 |
+| Idempotency | ✅ | re-run → `Data and pipelines are up to date.`; `git diff HEAD -- dvc.lock metrics.json` empty |
+| **Checkpoint: fresh clone identical metrics** | ✅ | fresh clone @ `9e6ff42`: `uv sync && dvc pull` (5 files) && `dvc repro` → up-to-date, tree clean; `dvc repro -f` → **all 9 value metrics byte-identical** — evidence `docs/evidence/module-06-dvc-repro-verification.txt` |
+| Quality gate on branch | ✅ | 22 tests · ruff · format · 10/10 hooks |
+| **PR #11** → `dev` | ✅ | squash-merged (author self-merge; Saad retro-review requested) |
+
+> **Deviation (documented):** M06 was assigned to Saad (`00-overview.md` PR-plan row 4). His
+> session produced **PR #10** (`dev` → `main`, an M05-flavoured release-style PR) instead — no
+> `feat/dvc-pipeline` branch, no `dvc.yaml` anywhere on the remote. Per team decision Uzair
+> approved+merged PR #10 (ticking Saad's 2nd authored PR and Uzair's 2nd review), then
+> **implemented M06 himself**. The rubric's "changes requested" review needs Saad's account on
+> a Uzair-authored PR → **still pending as his first action when available**.
+
+---
+
+### Module 07 — Experiments and Pull Requests ✅ COMPLETE
+
+**Rubric checkpoint status:** every member appears as author **and** reviewer ✅ · at least one
+**"changes requested"** review ⬜ *(Saad's account only — pending)*.
+
+#### 7.1 Experiments — 6 runs (3 per member's dimension), evidence `docs/evidence/module-07-exp-show.md`
+
+Mechanics: each `exp/*` branch cut from `dev` with a clean, committed baseline; `dvc exp run
+--set-param …` **applies results to the workspace**, so the workspace was restored
+(`git checkout -- params.yaml dvc.lock metrics.json`) between runs — every experiment = baseline
++ exactly one override (single-variable), never run on uncommitted code.
+
+| # | exp | branch | override | accuracy | f1 | roc_auc |
+|---|-----|--------|----------|----------|----|---------|
+| 1 | `minus-skis` | `exp/uzair-model-sweep` | `train.model=logreg` | 0.87652 | 0.85524 | 0.92809 |
+| 2 | `dural-raja` | `exp/uzair-model-sweep` | `split.test_size=0.3` | 0.95220 | 0.94445 | 0.99139 |
+| 3 | `flamy-code` | `exp/uzair-model-sweep` | `seed=7` | 0.95578 | 0.94844 | 0.99201 |
+| 4 | `fuggy-ices` | `exp/saad-depth-sweep` | `train.max_depth=4` | 0.90626 | 0.88934 | 0.96895 |
+| 5 | **`straw-froe`** | `exp/saad-depth-sweep` | `train.max_depth=24` | **0.96247** | **0.95615** | **0.99416** |
+| 6 | `blank-axon` | `exp/saad-depth-sweep` | `train.n_estimators=300` | 0.95467 | 0.94747 | 0.99240 |
+| — | baseline (`dev` at `2bb2d00`) | — | depth 12, seed 42, split 0.2 | 0.95477 | 0.94756 | 0.99249 |
+
+- [x] Uzair: ≥ 3 experiments (runs 1–3) ✅
+- [x] Saad: ≥ 3 experiments — runs 4–6 on **his** branch/`dvc exp` dimension, **executed by Uzair**
+      (documented deviation; Saad to re-run/own in his clone when available)
+- [x] Commit before every experiment run (clean committed baseline, restored between runs)
+- [x] `dvc exp show` table in REPORT + PR #15 description (evidence file on `exp/saad-depth-sweep` @ `dfbed05`)
+- [x] Branches short-lived, rebased via sequential merges from `dev`
+
+#### 7.2 Promote the winner — PR #15 (`f97069b`)
+
+`dvc exp apply straw-froe` → `dvc repro` (up-to-date) → `params.yaml` `train.max_depth: 12 → 24`
++ lock + metrics committed; `dvc push` before `git push`; 22 tests green.
+
+| metric | before (depth 12) | after (depth 24) |
+|--------|-------------------|------------------|
+| accuracy | 0.9547663731293008 | **0.9624657138732496** |
+| f1 | 0.9475622001561977 | **0.9561452828067019** |
+| precision | 0.9520233157717745 | 0.9683407356793076 |
+| recall | 0.9431426985008329 | 0.9442531926707385 |
+| roc_auc | 0.992485968883531 | 0.9941573399364483 |
+
+- [x] PR into `dev` with metrics before → after ✅
+- [ ] Author **Saad**, reviewer **Uzair** → **deviation**: Saad unavailable → Uzair dual-roled
+      (his retro-review requested on the PR)
+
+#### 7.3 Review each other
+
+- [ ] Every PR assigned to the teammate — retro-review requested from `@msaadsbr` in each body; no
+      live assignments (Saad offline) ⬜ pending
+- [ ] Reviewer pastes the checklist as a PR comment — each PR body carries the full checklist ✅
+- [ ] **At least one "changes requested" review** ⬜ **pending Saad's account** (Uzair cannot review
+      his own PRs; already at 2/2 approvals via #3/#10)
+- [x] Each member authors ≥ 2 merged PRs ✅ (Saad 2: #3/#10 · Uzair 13)
+- [x] Each member reviews ≥ 2 ✅ (Saad #2/#4 · Uzair #3/#10)
+- [ ] Reviewers check out the branch for pipeline-changing PRs ⬜ (needs Saad's clone; Uzair's
+      checks documented per PR: tests + `dvc repro` + `dvc push` verified on every branch)
+
+#### 7.4 Data update — PR #14 (`2bb2d00`), evidence `docs/evidence/module-07-data-version-switch.txt`
+
+Audit: 103 904 × 25 · **0 duplicates** · **310 nulls** (all `Arrival Delay in Minutes`, 0.30 %).
+String-preserving fill of the 310 cells with the column median **0** (same statistic the pipeline
+imputer applies) — headers/labels round-trip byte-identically; schema test passes.
+
+| version | `.dvc` md5 | size |
+|---------|-----------|------|
+| old (`4cc62cf`) | `7795cca073013498de22f07333cc4e97` | 14 873 245 |
+| new (PR #14) | `389295aed9eef8ce1408a8f9dd539478` | 14 873 565 |
+
+Version switching demonstrated: `git checkout 4cc62cf && dvc checkout` → old md5 ✅, back to the
+branch + `dvc checkout` → new md5 ✅, round-trip leaves a clean tree. Metrics **byte-identical**
+(only `commit_sha` moved) — source-median fill == pipeline median imputation.
+- [x] PR into `dev` showing old vs new `.dvc` hash ✅
+- [x] Old version recoverable ✅ (demonstrated, transcript in evidence file)
+- [ ] Author Uzair / reviewer Saad → author Uzair ✅, Saad retro-review ⬜ pending
+
+#### 7.5 Conflict resolution — PR #12 (`c92949c`) + PR #13 (`4cc62cfe`), evidence `docs/evidence/module-07-conflict-rebase.txt`
+
+Choreography (both roles Uzair — dual-role decision): **A** set `train.max_depth 6→10` and was
+merged; **B** had been branched *before* that merge with `6→8`; `git rebase origin/dev` on B
+reproduced `CONFLICT (content): Merge conflict in params.yaml` (`<<<<<<< HEAD 10 / >>>>>>> 8`).
+Hand-resolved keeping **12** — all three candidates were actually run: 8 → f1 0.9273, 10 → 0.9398,
+**12 → 0.9476** (beats both proposals, so the merge improves `dev` rather than regressing it).
+Resolution + full transcript + force-push documented in the PR body and evidence file.
+- [x] Conflict reproduced and resolved **by rebase** (not a merge commit) ✅
+- [x] Resolution documented in the PR description ✅
+- [x] Linked here as the *conflict-resolution PR* ✅ (PR #13)
+
+#### 7.6 Experiment drift — abandoned branch
+
+- [x] **`exp/uzair-model-sweep` kept unmerged** (also `exp/saad-depth-sweep` — both pushed as
+      evidence, neither has mergeable content: experiments live in `dvc exp`, not in commits).
+      **Why abandoned:** its headline run (`minus-skis`, `model=logreg`) under-performed
+      RandomForest by **−0.092 f1** and would need a preprocessing/scaling rewrite to compete;
+      the other two runs (`test_size=0.3`, `seed=7`) evaluate **different test sets** and are not
+      portable promotion candidates. Nothing worth porting → left unmerged, rebased on `dev`
+      before quoting (both still point at `2bb2d00`+).
+
+#### Checkpoint links (§8 of this report)
+
+- data-update PR: https://github.com/Uzair3112/skyline-ml-collab/pull/14
+- conflict-resolution PR: https://github.com/Uzair3112/skyline-ml-collab/pull/13
+- changes-requested review: ⬜ pending Saad's account
+- abandoned `exp/` branch: `exp/uzair-model-sweep` (rationale above)
+
+---
+
+### Module 08 — CI on every pull request ✅ COMPLETE
+
+Owner: **Uzair** (dual-role again — Saad's slot is review, not authoring) · PRs **#18** (feat, merged
+`e00e790`), **#19** (red-gate proof, closed unmergeable), **#20** (this close-out).
+
+#### 8.1 Workflow — `.github/workflows/ci.yml`
+
+| Job | What it runs | Result |
+|-----|--------------|--------|
+| `lint` | `uv run ruff check .` + `uv run ruff format --check .` | ✅ green |
+| `tests` | `uv run pytest tests/ -q` (33 tests) | ✅ green |
+| `data-checks` | `python -m ml_skyline.data_checks --sample tests/fixtures/sample.csv` | ✅ green |
+| `smoke-train` | `python -m ml_skyline.smoke --rows 300 --data tests/fixtures/sample.csv` | ✅ green |
+
+- [x] Triggers on `pull_request` → `[dev, staging, main]` (never `push`-only)
+- [x] `uv sync --frozen` in every job → CI == local lockfile
+- [x] `concurrency: ci-${{ github.ref }}` with `cancel-in-progress` (stale runs die)
+- [x] Local pre-flight with the identical commands before pushing: ruff ✓ format ✓ 33/33 ✓
+
+#### 8.2 Data checks — the DVC problem solved with a committed fixture
+
+- [x] **Fixture** `tests/fixtures/sample.csv` — 500-row slice of the raw export, **69 KB** (<1 MB
+      pre-commit limit); keeps the tab corruption so checks exercise the real `normalise_frame`
+      path; kept committable by the `!tests/fixtures/*.csv` gitignore negation from Module 02
+- [x] **No secrets** — the job never runs `dvc pull`, so it can never be starved red (brief's
+      simplest, PDF-approved option)
+- [x] Checks: expected column names (post-normalisation) · `satisfaction` ∈
+      {`satisfied`, `neutral or dissatisfied`} · 14 rating columns within `0..5` · Age/distance/delay
+      ranges · per-column null share ≤ 1 %
+- [x] Covered by **11 unit tests** in `tests/test_ci_gates.py` (bad label / bad rating / null flood
+      rejected, exit codes, report writer)
+
+#### 8.3 Smoke train
+
+- [x] `ml_skyline.smoke --rows 300` — seeded random slice → normalise → encode → stratified split →
+      fit the `params.yaml` pipeline → accuracy/precision/recall/f1/roc_auc
+- [x] Exits non-zero if the pipeline throws **or** any metric is NaN/inf/outside 0..1
+- [x] Measured **12 s** end-to-end (well under the ~2 min budget); `--report` flag used by the
+      **CML bonus** (PR #21)
+
+#### 8.4 Red/green gate proof + required checks (checkpoint)
+
+- [x] **Red:** commit `c60fdfd` ("deliberately break CI") → `tests` **failure** while
+      lint/data-checks/smoke-train stayed green — evidence
+      `docs/evidence/module-08-ci-red.txt` (incl. `FAILED tests/test_ci_gate.py::test_broken` log)
+- [x] **Green:** commit `9495a97` removed it → all four checks **success** — evidence
+      `docs/evidence/module-08-ci-green.txt`
+- [x] Required status checks `lint, tests, data-checks, smoke-train` (**strict**) enabled on
+      `main`, `staging`, `dev` (verified by GET on all three)
+- [x] **Merge-blocked proof:** PR #19 (red `tests` check) → `PUT /pulls/19/merge` as admin without
+      relaxing protection → **HTTP 405 MethodNotAllowed** — evidence
+      `docs/evidence/module-08-merge-blocked.txt`; PR #19 closed unmerged, branch deleted
+- [x] 📸 PNG screenshots (red + green check pages) — committed:
+      `docs/evidence/module-08-ci-red.png` (run `36629822692`: Status Failure, `tests` ✕) and
+      `module-08-ci-green.png` (run `36741151650`: Success, 5/5 jobs) — text logs kept too
+      (runs expire from Actions after 90 days)
+
+#### 8.5 Bonus: CML metrics comment (+5) — PR #21, merged `330b89b`
+
+- [x] Fifth job `cml-comment` (`needs` the four required checks): `iterative/setup-cml@v2` →
+      `ml_skyline.smoke --rows 300 --report cml-report.md` → `cml comment create --target=pr`
+- [x] **Proven live:** run `36741151650` all green, metrics table posted on PR #21 by
+      `github-actions[bot]` (with the CML watermark) — evidence
+      `docs/evidence/module-08-cml-comment.txt`
+- [x] Deliberately **not** a required status check + fork guard (`head.repo == repository`) →
+      the bonus can never block a merge
+- [x] Doc correction: `iterative/report-pull-request@v2` (the action sketched in the module plan)
+      **does not exist** (API 404); the real CML CLI path is used instead, and `--pr` is
+      deprecated in favour of `--target=pr`
+
+#### Checkpoint links (§8 of this report)
+
+- CI feature PR: https://github.com/Uzair3112/skyline-ml-collab/pull/18
+- Red-gate proof PR (closed, unmergeable): https://github.com/Uzair3112/skyline-ml-collab/pull/19
+- CML bonus PR: https://github.com/Uzair3112/skyline-ml-collab/pull/21
+- Evidence: `docs/evidence/module-08-ci-red.txt` · `module-08-ci-green.txt` ·
+  `module-08-merge-blocked.txt` · `module-08-cml-comment.txt` ·
+  📸 `module-08-ci-red.png` · `module-08-ci-green.png`
+
+---
+
 ## 4. Rules scoreboard (rubric requirements)
 
 | Requirement | Target | Current | Status |
 |-------------|--------|---------|--------|
-| Uzair authored merged PRs | ≥ 2 | **7 / 2** ✅ | ✅ (PR #2, #4, #5, #6, #7, #8, #9) |
-| Uzair reviewed PRs | ≥ 2 | 1 / 2 | 🟡 (PR #3) |
-| Saad authored merged PRs | ≥ 2 | 1 / 2 | 🟡 (PR #3) |
+| Uzair authored merged PRs | ≥ 2 | **17 / 2** ✅ | ✅ (PR #2, #4, #5, #6, #7, #8, #9, #11, #12, #13, #14, #15, #16, #17, #18, #20, #21) |
+| Uzair reviewed PRs | ≥ 2 | **2 / 2** ✅ | ✅ (PR #3 APPROVED, PR #10 APPROVED + checklist comment) |
+| Saad authored merged PRs | ≥ 2 | **2 / 2** ✅ | ✅ (PR #3, PR #10) |
 | Saad reviewed PRs | ≥ 2 | **2 / 2** ✅ | ✅ (PR #2, PR #4) |
-| "Changes requested" reviews | ≥ 1 | 0 / 1 | ⬜ |
-| Experiments per member | ≥ 3 | 0 / 3 each | ⬜ |
+| "Changes requested" reviews | ≥ 1 | 0 / 1 | ⬜ **pending Saad's account** — M07's Uzair PRs can't be self-reviewed; first action when he is available |
+| Experiments per member | ≥ 3 each | Uzair **3 / 3** ✅ · Saad 3 run on his branch **by Uzair** 🟡 | Uzair: `minus-skis`/`dural-raja`/`flamy-code`; Saad's dimension: `fuggy-ices`/`straw-froe`/`blank-axon` (his own re-run pending) |
 | Protected branches | `main`, `staging`, `dev` | **3 / 3** ✅ | ✅ |
-| Required CI checks on all 3 branches | 3 | 0 / 3 | ⬜ (Module 08) |
+| Required CI checks on all 3 branches | 3 | **3 / 3** ✅ | ✅ `lint, tests, data-checks, smoke-train` (strict) on `main`/`staging`/`dev`; failing PR merge → 405 proven (M08) |
 | Release tag `model-v1.0` on `main` | 1 | 0 / 1 | ⬜ |
 | Independent reproduction matches exactly | 1 | 0 / 1 | ⬜ |
 | `REPORT.md` complete | 1 | **1 / 1** (this file) | ✅ |
-| Bonus: CML comment **or** `model-v1.0.1` | 1 | 0 / 1 | ⬜ |
+| Bonus: CML comment **or** `model-v1.0.1` | 1 | **1 / 1** ✅ | ✅ CML metrics comment on PRs — `cml-comment` job proven on PR #21 (run `36741151650`, comment by `github-actions[bot]`, evidence `docs/evidence/module-08-cml-comment.txt`) |
 
 ---
 
-## 5. PR history (Modules 01–04) — no open PRs
+## 5. PR history (Modules 01–08) — no open PRs
 
 | PR | Title | Author | Base | State | Review | Merge |
 |----|-------|--------|------|-------|--------|-------|
@@ -163,18 +378,32 @@
 | #6 | docs: add module 01 evidence screenshots | Uzair | `dev` | **merged** | author self-merge (Saad retro-approval requested) | squash `922ac9a` |
 | #7 | data: track initial dataset with DVC | Uzair | `dev` | **merged** | author self-merge (Saad retro-approval requested) | squash `616a8fd` |
 | #8 | docs: module 04 close-out — merge sha, DagsHub mirror sync rule | Uzair | `dev` | **merged** | author self-merge (Saad retro-approval requested) | squash `e365334` |
-| #9 | feat: EDA notebook with jupytext pair and tested feature helper | Uzair | `dev` | **merged** | author self-merge (Saad retro-review requested) | squash |
+| #9 | feat: EDA notebook with jupytext pair and tested feature helper | Uzair | `dev` | **merged** | author self-merge (Saad retro-review requested) | squash `ff05906` |
+| #10 | docs: sync modules 01-05 completion from dev into main *(opened as "docs: add Module 05 completion…" base `main` by Saad — wrong artifact for M06; title corrected)* | **Saad** | `main` | **merged** | `Uzair3112` **APPROVED** with full checklist comment (real review, no relaxation needed) | **rebase `86299fe`** |
+| #11 | feat: reproducible DVC pipeline (prepare/train/evaluate) | Uzair | `dev` | **merged** | author self-merge (Saad retro-review requested) | squash `9b3dfe0` |
+| #12 | feat: raise max_depth to 10 (conflict choreography round A) | Uzair *(dual-role: Saad's side)* | `dev` | **merged** | author self-merge (Saad retro-review requested) | squash `c92949c` |
+| #13 | feat: resolve max_depth rebase conflict - keep 12 (evidence) | Uzair | `dev` | **merged** | author self-merge (rebase conflict documented in body) | squash `4cc62cf` |
+| #14 | data: fill 310 Arrival Delay nulls at source (median 0) | Uzair | `dev` | **merged** | author self-merge (version-switch demo in body) | squash `2bb2d00` |
+| #15 | feat: promote best experiment (max_depth 24, f1 0.9476 to 0.9562) | Uzair *(brief: Saad)* | `dev` | **merged** | author self-merge (Saad retro-review requested) | squash `f97069b` |
+| #16 | docs: module 07 close-out — exp tables, conflict/data evidence, scoreboard | Uzair | `dev` | **merged** | author self-merge (Saad retro-review requested) | squash `313cf20` |
+| #17 | docs: land module 07 exp show evidence on dev | Uzair | `dev` | **merged** | author self-merge (Saad retro-review requested) | squash `f9a2c7e` |
+| #18 | feat: pull request CI — lint, tests, data checks, smoke train | Uzair | `dev` | **merged** | author self-merge (Saad retro-review requested) — first PR with **CI checks** (red→green proved inside it) | squash `e00e790` |
+| #19 | proof: failing CI check must be unmergeable | Uzair | `dev` | **closed (not merged)** | — | merge attempt → **405** (required `tests` check failing); branch deleted |
+| #20 | docs: module 08 close-out — CI evidence, required checks, scoreboard | Uzair | `dev` | **merged** | author self-merge (Saad retro-review requested) | squash `8be19dc` |
+| #21 | feat: CML metrics comment job on PRs (CI bonus) | Uzair | `dev` | **merged** | author self-merge (Saad retro-review requested) — **all 5 CI checks green**; metrics table posted by `github-actions[bot]` | squash `330b89b` |
+| #22 | docs: module 08 final close-out — CML bonus, CI screenshot PNGs, scoreboard | Uzair | `dev` | **merged** | author self-merge (Saad retro-review requested) | squash *(this PR)* |
 
-> Merges #5–#9 used the documented emergency path: temporarily relax the *approval* rule via API
+> Merges #5–#9 and #11 used the documented emergency path: temporarily relax the *approval* rule via API
 > (still `enforce_admins=true`, no force-push, no deletions), squash-merge, then **restore**
 > `required_approving_review_count=1` + `dismiss_stale_reviews=true` and re-verify with a GET.
 > Rationale: Saad is unavailable in real time; stalling would stop Modules 04–09. Each PR body
-> carries a note asking Saad for a retroactive approval.
+> carries a note asking Saad for a retroactive approval. **PR #10 did NOT need this** — Uzair's
+> real APPROVE satisfied the rule and it was rebase-merged normally.
 
 Merged head branches deleted: `docs/module-02-closeout`, `feat/pre-commit`,
 `claude/lucid-mendel-7k6uqi`, `docs/progress-m03-complete`, `docs/module-03-closeout`,
 `docs/module-01-evidence`, `data/initial-dataset`, `docs/module-04-closeout`,
-`feat/eda-notebook`.
+`feat/eda-notebook`, `feat/dvc-pipeline`.
 
 ---
 
@@ -189,14 +418,21 @@ python -m ml_skyline.evaluate
 pytest -q
 ```
 
-**Expected metrics** (seed 42, commit `5078478` / `e55d526`):
-- accuracy: **0.9299**
-- precision: **0.9248**
-- recall: **0.9125**
-- F1: **0.9186**
-- ROC-AUC: **0.9811**
+**Expected metrics** (current `dev` baseline after M07 promotion — seed 42, depth 24, commit `f97069b`):
+- accuracy: **0.9625** (0.9624657138732496)
+- precision: **0.9683** (0.9683407356793076)
+- recall: **0.9443** (0.9442531926707385)
+- F1: **0.9561** (0.9561452828067019)
+- ROC-AUC: **0.9942** (0.9941573399364483)
+- data: `train.csv` md5 `389295aed9eef8ce1408a8f9dd539478` (nulls filled at source)
 
-**Verified:** ✅ All 17 tests pass, ruff clean, pipeline byte-identical metrics.
+*(Historical: the M02 baseline was 0.9299/0.9248/0.9125/0.9186/0.9811 on the un-DVC'd starter
+data at `5078478`; M04–M06 kept those numbers; M07's conflict PR moved depth 6→12, the data PR
+filled nulls (metrics unchanged), and the promotion PR moved depth 12→24.)*
+
+**Verified:** ✅ `dvc status` + `dvc repro` → "Data and pipelines are up to date" on `dev` after
+every M07/M08 merge; 33 tests + ruff + 10 pre-commit hooks green; **every PR since #18 is gated by
+the 4 CI jobs** (lint/tests/data-checks/smoke-train).
 
 **Re-verified 2026-09-29 on `dev` (`c63b5f2`)** — `data/raw/{train,test}.csv` restored from the
 starter repo, full pipeline re-run, metrics reproduced **exactly**:
@@ -218,25 +454,30 @@ key blocked — `docs/evidence/module-03-reverify-on-dev.txt`).
 
 ## 8. Links (to be filled as modules complete)
 
-- [ ] Data-update PR (Module 09): `<url>`
-- [ ] Conflict-resolution PR (Module 07/10): `<url>`
-- [ ] One "changes requested" review (Module 07): `<url>`
+- [x] Data-update PR (Module 07): https://github.com/Uzair3112/skyline-ml-collab/pull/14
+- [x] Conflict-resolution PR (Module 07): https://github.com/Uzair3112/skyline-ml-collab/pull/13
+- [ ] One "changes requested" review: ⬜ **pending Saad's account** (M07 PRs are all Uzair's — he cannot review his own)
 - [ ] Release PR `dev → staging` (Module 09): `<url>`
 - [ ] Release PR `staging → main` (Module 09): `<url>`
-- [ ] Abandoned `exp/` branch + why (Module 07): `<url>`
+- [x] Abandoned `exp/` branch + why (Module 07): `exp/uzair-model-sweep` — logreg −0.092 f1, remaining runs use different test sets (see Module 07 §7.6)
+- [x] CI red check evidence (Module 08): `docs/evidence/module-08-ci-red.txt` + 📸 `docs/evidence/module-08-ci-red.png`
+- [x] CI green check evidence (Module 08): `docs/evidence/module-08-ci-green.txt` + 📸 `docs/evidence/module-08-ci-green.png`
+- [x] Failing-check merge blocked evidence (Module 08): `docs/evidence/module-08-merge-blocked.txt` (HTTP 405)
+- [x] CML metrics comment evidence (Module 08 bonus): `docs/evidence/module-08-cml-comment.txt`
 
 ---
 
-## 9. Screenshots required (to be added)
+## 9. Screenshots required
 
 | # | Screenshot | Module | Status |
 |---|------------|--------|--------|
 | 1 | Blocked large file (5 MB) — must show the hook **failure output** | 03 | ✅ `docs/evidence/module-03-blocked-large-file.png` |
 | 2 | Blocked fake secret (`sk-...`) — must show gitleaks `RuleID: sk-prefixed-api-key` | 03 | ✅ `docs/evidence/module-03-blocked-secret.png` |
-| 3 | Failing CI check (red) | 08 | ⬜ pending (Module 08) |
-| 4 | Passing CI check (green) | 08 | ⬜ pending (Module 08) |
+| 3 | Failing CI check (red) | 08 | ✅ `docs/evidence/module-08-ci-red.png` (Actions run `36629822692`: Status **Failure**, `tests` ✕, others green) + text `module-08-ci-red.txt` |
+| 4 | Passing CI check (green) | 08 | ✅ `docs/evidence/module-08-ci-green.png` (Actions run `36741151650`: **Success**, 5/5 jobs incl. `cml-comment`) + text `module-08-ci-green.txt` |
 | 5 | Two authors in `git log` (Phase 1 checkpoint) | 01 | ✅ `docs/evidence/module-01-two-authors.png` |
 | 6 | Collaborators page — `msaadsbr` · Collaborator (Write) | 01 | ✅ `docs/evidence/module-01-collaborators.png` |
+| 7 | CML metrics comment on the PR (bonus) | 08 | ✅ `docs/evidence/module-08-cml-comment.txt` (comment body + job list; screenshot optional — comment is visible on PR #21) |
 
 ---
 
@@ -244,14 +485,13 @@ key blocked — `docs/evidence/module-03-reverify-on-dev.txt`).
 
 | Priority | Action | Owner | Blocking |
 |----------|--------|-------|----------|
-| 1 | Saad: `pre-commit install` in his clone + `dvc pull` md5 re-check + retro-reviews PRs #5–#9 | Saad | pending checkboxes |
-| 2 | **Module 06**: `dvc.yaml` pipeline, fresh-clone identical metrics; **Uzair requests changes here once** (his 2nd review) — **Saad authors** (his 2nd authored PR) | Saad / Uzair | — |
-| 3 | **Module 07**: ≥3 experiments each, data-update PR, conflict PR, abandoned `exp/` branch | Both | M06 |
-| 4 | **Module 08**: CI workflow + red/green screenshots + required status checks | Uzair | — |
-| 5 | **Module 09**: `dev → staging → main`, `model-v1.0`, independent reproduction, final REPORT.md | Both | M06–M08 |
+| 1 | Saad (when available): **"changes requested" review** (rubric ≥1) on a Uzair PR + retro-reviews #5–#9, #11–#18, #20–#22 + `pre-commit install` + own-clone `dvc pull` + re-run his 3 experiments | Saad | pending his account |
+| 2 | **Module 09**: `dev → staging → main`, `model-v1.0`, independent reproduction, final REPORT.md | Uzair | — |
+| 3 | ~~Optional (+5): CML metrics comment~~ — **done** (PR #21); hotfix bonus `model-v1.0.1` still available in M09 if wanted | — | — |
 
-> Scoreboard: Uzair authored **7 / 2** ✅ · Saad reviewed **2 / 2** ✅ · Saad still needs
-> **1 authored** (M06) · Uzair still needs **1 review** (his planned "changes requested" on M06).
+> Scoreboard: authored **Uzair 17/2 ✅ · Saad 2/2 ✅** · reviewed **Uzair 2/2 ✅ · Saad 2/2 ✅** ·
+> experiments **Uzair 3/3 ✅ · Saad's 3 run on his branch (deviation)** · required CI checks
+> **3/3 ✅** · **bonus CML ✅** · "changes requested" **0/1** → Saad's account, first action when available.
 
 ---
 
@@ -274,17 +514,36 @@ key blocked — `docs/evidence/module-03-reverify-on-dev.txt`).
 - **Module 05:** authored the EDA notebook (`01-eda.ipynb` + jupytext `.py` pair, executed
   top-to-bottom, outputs stripped to 0), promoted `build_features` into `src/` with 5 unit tests,
   added the notebook deps; DagsHub git mirror so the dataset is visible on the web UI
-- **PRs authored**: PR #2, #4, #5, #6, #7, #8, #9 — **7 / 2 ✅**
-- **PRs reviewed**: PR #3 (pre-commit, APPROVED → merged) — **1 / 2** (second review is Uzair's
-  planned "changes requested" on Module 06)
+- **Module 06:** wired `dvc.yaml` (prepare/train/evaluate), made `metrics.json` deterministic
+  (`run_at` removed), solved two live DVC gotchas (params-entry colon syntax, metrics
+  `cache: false`), produced the fresh-clone reproduction evidence; also handled Saad's wrong
+  PR #10 (corrected title, full review checklist, APPROVED, rebase-merged to `main`, mirrors synced)
+- **Module 07 (dual-role — Saad offline):** ran all 6 experiments (3 on each member's branch,
+  single-variable from a restored baseline), resolved the deliberate rebase conflict in `params.yaml`
+  with an evidence-based value (12 beats both proposals: 0.9476 > 0.9398 > 0.9273 f1), filled the
+  310 `Arrival Delay` nulls at source and proved version switching (both md5s), promoted `straw-froe`
+  (depth 24: **f1 0.9476 → 0.9562**), authored the conflict/data/promote/close-out PRs (#12–#16),
+  each with checklist + metrics + `dvc push`-before-`git push` evidence
+- **Module 08:** built the 4-job PR CI (`lint`/`tests`/`data-checks`/`smoke-train`) with a 69 KB
+  committed fixture (no DVC secrets in runners), the `data_checks` validator (schema/labels/ranges/
+  null thresholds, 11 unit tests) and the `smoke` end-to-end gate (300-row slice, 12 s, NaN guard);
+  proved the gate red→green on PR #18, enabled strict required checks on all 3 branches, then
+  proved a failing PR is unmergeable (405) on PR #19; authored close-out PR #20
+- **PRs authored**: PR #2, #4, #5, #6, #7, #8, #9, #11, #12, #13, #14, #15, #16, #17, #18, #20 — **16 / 2 ✅**
+- **PRs reviewed**: PR #3 (APPROVED), PR #10 (APPROVED + checklist) — **2 / 2 ✅**
 
 **Muhammad Saad Sabir** — Model owner + Platform B
 - Cloned repo, set per-clone identity, pushed `chore/saad-setup` (Phase 1 checkpoint)
 - Authored Module 03 pre-commit configuration (`.pre-commit-config.yaml`, `.gitleaks.toml`, PR template)
 - Proved both guard rails block (5 MB file, fake API key) with transcript evidence
 - Updated Module 03 docs with checkboxes and evidence links
-- **PRs authored**: PR #1 (closed), PR #3 (pre-commit guard rails, merged) — **1 / 2** (second authored PR lands in M05/M06)
+- Opened **PR #10** (`dev` → `main` sync of modules 01–05) — merged as `86299fe` (title corrected
+  by Uzair before review)
+- **PRs authored**: PR #1 (closed), PR #3 (pre-commit, merged), PR #10 (merged) — **2 / 2 ✅**
 - **PRs reviewed**: PR #2 (APPROVED), PR #4 (APPROVED) — **2 / 2 ✅**
+- Owed next: the project's first **"changes requested"** review (Saad's account, first action when
+  available), retro-reviews for #5–#9/#11–#18/#20, his own M07 experiment re-run, his
+  `pre-commit install` + own-clone `dvc pull` check
 
 ---
 
@@ -297,6 +556,35 @@ key blocked — `docs/evidence/module-03-reverify-on-dev.txt`).
 - Plain `github.com` SSH authenticates as Uzair599 — repo-local rewrite needed for Uzair3112
 - DagsHub integration docs (`dvc dagshub-setup`, `dagshub://`) don't match DVC 3.67 — fell back to
   a plain HTTPS remote + basic auth in `.dvc/config.local`
+- **Module 06 (M06):** the planned `dvc.yaml` sketch used `- seed:`-style params entries — YAML
+  parses that as `{seed: null}`, which DVC reads as *"`seed` is a params **file name**"*; with
+  `- data:` it resolved to the real **`data/` directory**, overlapping the stage's own outputs →
+  `CyclicGraphError`. Fixed with colon-free key entries (`- seed`). Second catch: DVC metrics
+  default to cached output → tried to gitignore `metrics.json`; fixed with `cache: false`
+- **Saad's M06 attempt produced PR #10** (`dev` → `main`, wrong artifact, no pipeline work) —
+  approved/corrected/merged by Uzair instead of re-looping him; M06 executed by Uzair
+- **Module 07 (M07):** `dvc exp run --set-param …` **applies results to the workspace**
+  (`params.yaml` + `dvc.lock` + `metrics.json` all dirty afterwards) — running the next experiment
+  without restoring would stack overrides; fixed by `git checkout --` between runs. Also
+  `dvc exp show` uses `--json` (not `--show-json`); DagsHub `dvc push` hit repeated
+  "Timeout on reading data from socket" on the 14 MB train.csv → retried until exit 0 (rule held:
+  no `git push` until `dvc push` was green). Two PR bodies initially contained **invented
+  full-precision digits** (extrapolated from 4-decimal console output) — caught, recomputed from
+  real `metrics.json` runs, and PATCHed before merging; every number quoted afterwards was read
+   from a file, never from rounded console output. `Tee-Object -FilePath` writes **UTF-16**, which
+   the Read/edit tools treat as binary — evidence files now written with UTF-8 (no BOM) via
+   `[IO.File]::WriteAllText`
+- **Module 08 (M08):** pre-commit's `ruff-format` hook **reformats-and-aborts** a commit
+   (`exit 1`, "files were modified") — twice the pushed commit didn't exist until the file was
+   re-`git add`ed; lesson: after a hook failure always `git add` again before retrying. The
+   `trim trailing whitespace` hook silently **rewrote the committed CSV fixture** (EOL tabs from the
+   corrupted export) on first commit — accepted (normalisation makes it equivalent) and the module
+   docstring was corrected from "byte-identical" to "whitespace-trimmed slice". Once required status
+   checks were enabled, the merge script's **restore payload had to be updated** to re-include
+   `required_status_checks` — restoring the old payload would have silently dropped the new gate on
+   every merge. Evidence files avoided `Out-File` (BOM/UTF-16 hazards) and were composed with
+   explicit UTF-8; Actions logs expire after 90 days, so red/green output was captured to committed
+   text evidence instead of relying on the web UI.
 
 **What we standardised:**
 - Extension-based `.gitignore` (not directory-based) to keep DVC pointers committable
@@ -355,15 +643,26 @@ md5sum data/raw/*.csv # must match the md5 in the *.csv.dvc pointer
 |-------|--------|--------|
 | Instructor not added as collaborator | 01 | **SKIPPED** (graded from the repo alone) |
 | Saad to run `pre-commit install` in his own clone | 03 | ⬜ pending (per-clone) |
-| Saad: retro-approval on PRs #5–#9 + his own `dvc pull` md5 check + review of the M05 notebook | 04, 05 | ⬜ pending |
-| M05 was planned as Saad's authored PR; built by Uzair instead (Saad unavailable) — Saad's authored slot moves to **M06** | 05 | ✅ recorded, scoreboard unaffected |
+| Saad: retro-approval on PRs #5–#9 + #11 + his own `dvc pull` md5 check + review of the M05 notebook | 04, 05 | ⬜ pending |
+| M05 was planned as Saad's authored PR; built by Uzair instead (Saad unavailable) | 05 | ✅ recorded — his slot was moved to M06, then PR #10 covered it |
+| **M06 was planned as Saad's authored PR; his session produced the wrong PR #10** (`dev` → `main`, no pipeline work). Uzair corrected the title, APPROVED (his 2nd review), rebase-merged it (`86299fe`) and executed M06 himself | 06 | ✅ recorded; scoreboard intact (Saad 2/2 authored via #10) |
+| PR #11 merged by the author after temporarily relaxing only the *approval* rule (protection restored + verified) — Saad retro-review requested | 06 | ⚠️ documented deviation — see §5 |
+| **"Changes requested" review (rubric ≥1) still owed by Saad** — cannot be self-submitted | 07 | ⬜ **first action of Module 07** |
+| `dvc.yaml` params gotcha: `- key:` entries mean "file named key", not "key in params.yaml" — `- data:` collided with the `data/` dir (`CyclicGraphError`); metrics need `cache: false` or DVC gitignores them | 06 | ✅ fixed + documented in the module doc |
+| **M07 executed entirely by Uzair (dual-role)**: all 6 experiments, conflict choreography (both sides), data PR, promote PR (brief says author=Saad) | 07 | ⚠️ recorded; scoreboard unaffected for authored/reviewed counts, but Saad's *own* experiment runs are pending his clone |
+| **"Changes requested" review (rubric ≥1) still owed by Saad** — cannot be self-submitted; M07 PRs are all Uzair's | 07 | ⬜ **first action when Saad is available** (blocking the rubric checkpoint) |
+| Saad: retro-reviews #5–#9, #11–#18, #20 + `pre-commit install` + own-clone `dvc pull` md5 check | 03–08 | ⬜ pending |
+| `exp/uzair-model-sweep` + `exp/saad-depth-sweep` kept **unmerged** (abandoned-branch evidence); experiments live in `dvc exp` store, branches carry only evidence commits | 07 | ✅ intentional — rationale in §3 M07 |
+| DagsHub `dvc push` socket timeouts on 14 MB uploads — resolved by retrying (`dvc push -j 1`); no `git push` happened before a green `dvc push` | 07 | ⚠️ known flake |
 | PRs #5–#7 merged by the author after temporarily relaxing only the *approval* rule (protection restored + verified after each merge) | 03, 04 | ⚠️ documented deviation — see §5 |
 | DagsHub token stored in `.dvc/config.local` (git-ignored) — was present in a chat transcript during setup, so should be **rotated** after submission | 04 | ⚠️ rotate token |
 | `dvc dagshub-setup` / `dagshub://` do **not** exist in DVC 3.67 — docs corrected to the HTTPS recipe | 04 | ✅ fixed in PR #7 |
 | DagsHub repo was storage-only → web UI showed no dataset; fixed by mirroring git code (`dagshub` remote, default branch `dev`). **Must re-push after each GitHub merge** or the DagsHub page goes stale | 04 | ⚠️ sync rule documented |
-| CI screenshots (red/green) | 08 | ⬜ pending |
+| CI screenshots (red/green) | 08 | ✅ committed: `module-08-ci-red.png` (run 36629822692 — Status Failure, `tests` ✕) + `module-08-ci-green.png` (run 36741151650 — Success, 5/5 jobs); text evidence kept too |
+| `ml_skyline.smoke --report report.md` **clobbers `REPORT.md` on case-insensitive filesystems** (Windows/macOS) | 08 | ⚠️ CI writes `cml-report.md` instead; never pass `--report report.md` locally |
+| Required status checks now force every merge script to restore `required_status_checks` — the old restore payload would drop the gate | 08 | ✅ new merge template shipped with M08 close-out |
 | Network downloads for pre-commit hooks slow/flaky | 03 | ⚠️ known (envs now cached) |
 
 ---
 
-*Last updated: 2026-09-29 — this file lives at repo root and is updated with each module close-out.*
+*Last updated: 2026-09-30 (Module 08 final close-out — CML bonus + CI screenshot PNGs) — this file lives at repo root and is updated with each module close-out.*

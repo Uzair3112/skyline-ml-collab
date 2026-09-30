@@ -9,7 +9,6 @@ from __future__ import annotations
 import argparse
 import json
 import subprocess
-from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -65,7 +64,6 @@ def run(params: dict | None = None) -> dict[str, Any]:
         "model": params["train"]["model"],
         "params": {"split": params["split"], "train": params["train"]},
         "commit_sha": git_sha(),
-        "run_at": datetime.now(UTC).isoformat(timespec="seconds"),
     }
 
     metrics_path = repo_path(params["paths"]["metrics"])

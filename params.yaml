@@ -15,7 +15,8 @@ data:
 train:
   model: random_forest
   n_estimators: 100
-  max_depth: 6
+  max_depth: 24
+  n_jobs: 1                 # 1 = reproducible; parallel trees reorder FP sums in predict_proba
 
 paths:
   model: models/model.pkl

@@ -1,0 +1,45 @@
+stages:
+  prepare:
+    cmd: uv run python -m ml_skyline.prepare
+    deps:
+      - src/ml_skyline/prepare.py
+      - src/ml_skyline/common.py
+      - data/raw/train.csv
+    params:
+      - seed
+      - split
+      - data
+    outs:
+      - data/processed/train.csv
+      - data/processed/test.csv
+
+  train:
+    cmd: uv run python -m ml_skyline.train
+    deps:
+      - src/ml_skyline/train.py
+      - src/ml_skyline/pipeline.py
+      - src/ml_skyline/common.py
+      - data/processed/train.csv
+    params:
+      - seed
+      - train
+      - paths
+      - data
+    outs:
+      - models/model.pkl
+
+  evaluate:
+    cmd: uv run python -m ml_skyline.evaluate
+    deps:
+      - src/ml_skyline/evaluate.py
+      - src/ml_skyline/common.py
+      - models/model.pkl
+      - data/processed/test.csv
+    params:
+      - seed
+      - train
+      - paths
+      - data
+    metrics:
+      - metrics.json:
+          cache: false
