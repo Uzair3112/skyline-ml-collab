@@ -93,6 +93,23 @@ def test_smoke_main_fails_on_missing_data(capsys):
     assert "FAILED" in capsys.readouterr().err
 
 
+def test_smoke_report_refuses_to_clobber_non_report(tmp_path, capsys):
+    target = tmp_path / "REPORT.md"
+    target.write_text("# Release report\nkeep me\n", encoding="utf-8")
+    code = smoke_main(["--rows", "300", "--data", FIXTURE, "--report", str(target)])
+    assert code == 2
+    assert "refusing to overwrite" in capsys.readouterr().err
+    assert target.read_text(encoding="utf-8").startswith("# Release report")
+
+
+def test_smoke_report_overwrites_previous_smoke_report(tmp_path, capsys):
+    report = tmp_path / "cml-report.md"
+    for _ in range(2):
+        assert smoke_main(["--rows", "300", "--data", FIXTURE, "--report", str(report)]) == 0
+    capsys.readouterr()
+    assert report.read_text(encoding="utf-8").startswith("| metric | value |")
+
+
 def test_smoke_rejects_unmapped_labels(tmp_path):
     path = tmp_path / "bad-target.csv"
     _frame_with(target="angry").to_csv(path, index=False)
