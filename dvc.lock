@@ -47,8 +47,8 @@ stages:
       size: 1999
     - path: src/ml_skyline/pipeline.py
       hash: md5
-      md5: cd9eec46bca409c1a9bd6e9f25c62da5
-      size: 3455
+      md5: 79e2ccb768993306ee3aa519ce4eeda7
+      size: 3813
     - path: src/ml_skyline/train.py
       hash: md5
       md5: 5f53df6f4348cdb4bd4ed582aad1e5a8
@@ -68,10 +68,11 @@ stages:
           model: random_forest
           n_estimators: 100
           max_depth: 24
+          n_jobs: 1
     outs:
     - path: models/model.pkl
       hash: md5
-      md5: 1e62f3c59255b929b3107fa1995b2a28
+      md5: 9a6616313d277771d2ace2515634618f
       size: 63825547
   evaluate:
     cmd: uv run python -m ml_skyline.evaluate
@@ -82,7 +83,7 @@ stages:
       size: 1856801
     - path: models/model.pkl
       hash: md5
-      md5: 1e62f3c59255b929b3107fa1995b2a28
+      md5: 9a6616313d277771d2ace2515634618f
       size: 63825547
     - path: src/ml_skyline/common.py
       hash: md5
@@ -107,8 +108,9 @@ stages:
           model: random_forest
           n_estimators: 100
           max_depth: 24
+          n_jobs: 1
     outs:
     - path: metrics.json
       hash: md5
-      md5: ca97a223455082b297e781dd0b5d352c
-      size: 494
+      md5: a3ba2b57470fe7d7d6a1e8e4d46e49d1
+      size: 514
