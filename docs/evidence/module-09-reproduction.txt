@@ -1,0 +1,94 @@
+MODULE 09 - RELEASE REPRODUCTION EVIDENCE  (independent reproduction of v1.0)
+================================================================================
+Date: 2026-09-30
+Assigned to: the member who did NOT train the model. Saad (msaadsbr) has been
+unavailable since Module 05, so Uzair ran it himself - documented deviation, same
+as M05-M08 (see REPORT.md section 5). Reproduction runs in a BRAND-NEW CLONE, not
+in the working clone, so it is still independent of the authoring environment.
+
+RELEASE UNDER TEST
+  branch    : staging
+  tag       : model-v1.0 (signed-off annotated tag, pushed with the release)
+  head      : a110753570879947d62166a62cb54306175ab536  ("release: v1.0")
+  release PR: #27 dev -> staging (head release/v1.0 @ bc2207b, merge commit a110753)
+  tree      : git diff origin/staging origin/dev  ->  EMPTY (identical)
+
+ATTEMPT 1 (superseded) - staging @ 7c691d7, clone D:\...\repro-v1 (first)
+  uv sync --frozen .......... OK
+  dvc pull .................. OK, md5s matched
+                             train.csv 389295aed9eef8ce1408a8f9dd539478
+                             test.csv  e70c499bd30bc487549e887889a3e5c4
+  dvc repro ................. OK, clean tree
+  RESULT: roc_auc NOT stable across runs:
+                             0.9941573446515221
+                             0.9941573399364484
+                             0.9941573399364483
+                             0.9941573493665958
+  CAUSE: RandomForestClassifier(n_jobs=-1) accumulates predict_proba in
+         thread-COMPLETION order -> accumulation order (and therefore roc_auc)
+         is non-deterministic. accuracy/precision/recall/f1 unaffected (computed
+         from a single hard-prediction array).
+  FIX: PR #25 (merged into dev 7232a66): params.yaml train.n_jobs: 1,
+       build_model reads cfg.get("n_jobs", 1), 2 regression tests added.
+  So attempt 1 FAILED the checkpoint -> release was re-cut (PR #26 closed as
+  conflicted, superseded by release-branch PR #27).
+
+ATTEMPT 2 (the release reproduction) - staging @ a110753, NEW clone
+  commands run in a fresh clone D:\...\repro-v1 (recreated from origin):
+
+  $ git clone https://github.com/Uzair3112/skyline-ml-collab.git repro-v1
+  $ git checkout staging                 -> HEAD a110753 (release: v1.0)
+  $ copy <working clone>\.dvc\config.local  (DagsHub token is git-ignored,
+                                             teammates get it from DagsHub UI)
+  $ uv sync --frozen                     exit 0
+  $ dvc pull                             FAILED: Checkout failed for
+                                             models\model.pkl
+  CAUSE (caught by this reproduction): PR #25 ran `dvc repro -f`, which
+         retrained the model. n_jobs=1 changes the pickled bytes, so
+         dvc.lock pointed at a model object that was NEVER `dvc push`ed
+         (only the LOCAL `dvc status` was run, which does not check the
+         remote - `dvc status -c` / `dvc push` were missed before git push).
+         This is exactly the pitfall "git push without dvc push" from the brief.
+  FIX (before completing the release): in the authoring clone
+       $ dvc status -c     -> "new: models\model.pkl"
+       $ dvc push          -> 1 file pushed
+       $ dvc status -c     -> "Cache and remote 'storage' are in sync."
+
+  RETRY in the fresh clone:
+  $ dvc pull                             1 file fetched and 1 file added
+  $ dvc repro                            "Data and pipelines are up to date."
+                                         git status --porcelain -> EMPTY
+                                         (byte-identical outputs, cache hit)
+  $ dvc repro -f                         forced full re-run -> exit 0
+  $ git diff                             ONLY commit_sha changed
+
+  METRIC COMPARISON (committed metrics.json vs fresh-clone re-run)
+  key                 committed (staging)      fresh clone re-run      match
+  -----------------------------------------------------------------------------
+  accuracy            0.9624657138732496       0.9624657138732496      TRUE
+  precision           0.9683407356793076       0.9683407356793076      TRUE
+  recall              0.9442531926707385       0.9442531926707385      TRUE
+  f1                  0.9561452828067019       0.9561452828067019      TRUE
+  roc_auc             0.9941573399364485       0.9941573399364485      TRUE
+  model               random_forest            random_forest           TRUE
+  seed                42                       42                      TRUE
+  n_train             83123                    83123                   TRUE
+  n_test              20781                    20781                   TRUE
+  params block        identical                identical               TRUE
+  commit_sha          41173de8e50b8484...      a110753570879947...     FALSE
+  -----------------------------------------------------------------------------
+  ALL value metrics byte-identical .......... TRUE
+  Second forced re-run: roc_auc -> 0.9941573399364485 (stable, 4/4 identical)
+
+  WHY commit_sha DIFFERS (by design, documented in REPORT.md):
+  The pipeline stamps metrics.json with HEAD at the time `dvc repro` runs, so a
+  reproduction on a later commit always records that commit. The VALUES are the
+  contract; the SHA documents which checkout produced the numbers. Pattern:
+  code commit -> dvc repro -> commit lock+metrics.
+
+CHECKPOINT RESULT ......................... PASS
+  Fresh clone of `staging` reproduces every reported metric exactly
+  (full precision, byte-for-byte), after `uv sync --frozen` + `dvc pull`.
+  Two real defects were found and fixed BY this process:
+    1. roc_auc non-determinism (n_jobs=-1)  -> PR #25
+    2. missing dvc push after retrain       -> dvc push before release sign-off

@@ -67,6 +67,16 @@ Good: `feat: add scaling step` · `data: remove duplicate rows` · `exp: try max
   `dev`'s history linear and readable.
 - **PRs into `staging` and `main` are rebase-merged** (or merge-commit if rebase is impossible),
   so the release history keeps the shape of the branch that was reproduced.
+- **Release branches (`release/<version>`)** — added after Module 09. Once a rebase/squash merge has
+  *rewritten* commit SHAs, a direct `dev → staging` or `staging → main` PR reports
+  `mergeable=dirty`, and GitHub then creates **no merge ref — so no CI run starts at all**. Fix:
+  cut `release/<version>` **from the base branch**, merge the source into it (resolve conflicts to
+  the newer side), verify `git diff release/<version> <source>` is empty, then open the PR. The head
+  always contains its base, so the diff is clean, CI runs, and the merge-commit fallback applies.
+  Release PRs **#27** and **#28** follow this; the release tag is only cut after the independent
+  reproduction passes.
+- **Sync back from `main`** — after any hotfix, merge `main` back into `dev` in the same session
+  (PR #30), otherwise the next release re-introduces the bug.
 
 Squash-merge message follows the same Conventional Commit format as above.
 
@@ -76,6 +86,9 @@ Squash-merge message follows the same Conventional Commit format as above.
 
 1. **`dvc push` before `git push`** whenever data or models changed. A pushed `.dvc` pointer with
    no corresponding object breaks every teammate's `dvc pull`.
+   *Added after Module 09:* a plain `dvc status` only checks the **local** cache. After any
+   `dvc repro`/`dvc repro -f` run `dvc status -c` (cloud) and `dvc push` — the release reproduction
+   failed on exactly this (#25 retrained the model, the new `model.pkl` object was never pushed).
 2. Never `git add` a dataset, checkpoint or model file. `.gitignore` blocks `*.csv`, `*.pkl`, … and
    `pre-commit` blocks any file over 1 MB. If one lands in history, remove it with
    `git filter-repo` — a follow-up commit is not enough.
@@ -93,6 +106,11 @@ Squash-merge message follows the same Conventional Commit format as above.
 4. Fit preprocessing (imputers, scalers, encoders) on the **training split only**.
 5. Notebooks: restart the kernel and *Run All* before opening a PR. Outputs are stripped by
    `nbstripout`; every notebook has a `.py:percent` jupytext pair.
+6. **Any metric that accumulates over threads or floats must be deterministic.**
+   `RandomForestClassifier` runs with `train.n_jobs: 1` (a `params.yaml` knob) because
+   `predict_proba` is summed in thread-**completion** order — with `n_jobs=-1`, `roc_auc` changed
+   between identical runs (Module 09, caught by the release reproduction). Prove it: run
+   `dvc repro -f` twice and check that only `commit_sha` moves.
 
 ---
 
