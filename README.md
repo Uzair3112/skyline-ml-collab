@@ -41,10 +41,21 @@ CI green. Full rules land in `CONTRIBUTING.md` (Phase 2); the plan lives in [`do
 ```bash
 git clone git@github.com:Uzair3112/skyline-ml-collab.git
 cd skyline-ml-collab
-uv sync                 # reproducible environment from uv.lock
-pre-commit install      # ruff, nbstripout, large-file and secret guards
-dvc pull                # dataset from the DVC remote
+uv sync                  # reproducible environment from uv.lock
+uv run pre-commit install   # ruff, nbstripout, large-file and secret guards
+
+# one-time DVC auth — credentials are git-ignored, so they don't arrive with the clone.
+# Dagshub -> Settings -> Access Tokens -> New token, then:
+uv run dvc remote modify --local storage auth basic
+uv run dvc remote modify --local storage user <dagshub-username>
+uv run dvc remote modify --local storage password <dagshub-token>
+
+uv run dvc pull          # dataset from the DVC remote
 ```
+
+Always call the tools through `uv run` — `uv sync` installs them into `.venv/`, which is not on
+`PATH` unless you activate it, and a globally installed copy of a different version could run
+instead of the one pinned in `uv.lock`.
 
 ## Release status
 
@@ -62,10 +73,12 @@ dvc pull                # dataset from the DVC remote
 ```bash
 git clone https://github.com/Uzair3112/skyline-ml-collab.git
 cd skyline-ml-collab
-git checkout model-v1.0          # or branch staging / main — all share one tree
-uv sync --frozen                 # pinned environment from uv.lock
-dvc pull                         # data + trained model from the DagsHub remote
-dvc repro                        # no-ops: outputs already match dvc.lock
+git checkout model-v1.0     # the release tag; branch staging / main give the same metrics
+                            # (identical params.yaml + dvc.lock — the tag predates the
+                            #  v1.0.1 hotfix and the docs, so trees differ there)
+uv sync --frozen            # pinned environment from uv.lock
+uv run dvc pull             # data + trained model from the DVC remote (auth above)
+uv run dvc repro            # no-ops: outputs already match dvc.lock
 cat metrics.json
 ```
 
@@ -79,8 +92,11 @@ Expected (seed 42, `max_depth 24`, single-threaded scoring):
 | f1 | `0.9561452828067019` |
 | roc_auc | `0.9941573399364485` |
 
-Only `commit_sha` differs if you run it from a later checkout — it records the commit the run
-happened on. Full transcript: [`docs/evidence/module-09-reproduction.txt`](docs/evidence/module-09-reproduction.txt).
+`uv run dvc repro` leaves `metrics.json` exactly as committed (`commit_sha` = `41173de`, the commit
+the model was **trained** on — the tag object itself is `bb6517a`). To retrain from scratch run
+`uv run dvc repro -f`: every metric above must match, and only `commit_sha` changes, to your
+checkout. Full transcript:
+[`docs/evidence/module-09-reproduction.txt`](docs/evidence/module-09-reproduction.txt).
 
 ## Documentation
 
