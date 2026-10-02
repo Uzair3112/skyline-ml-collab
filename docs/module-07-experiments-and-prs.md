@@ -2,8 +2,8 @@
 
 **Phase 7** · Owner: **both** · Rubric: *PRs & review (20)* + *DVC (15)* + *Reproducible experiments (15)*
 **Checkpoint:** the PR list shows every member as both **author and reviewer** ✅, with at least one
-**"changes requested"** review ⬜ *(pending Saad's account — Uzair cannot review his own PRs;
-first action when he is available)*.
+**"changes requested"** review ✅ *(Saad on **PR #34**, 2026-09-30 — 4 blocking inline comments,
+all fixed in `f15b167` before the merge)*.
 
 > **Status: COMPLETE ✅ (2026-09-30, executed by Uzair dual-roled — Saad offline).**
 > PRs: #12 (conflict A) · #13 (conflict B, rebase-resolved) · #14 (data) · #15 (promote) · #16 (close-out).
@@ -69,10 +69,10 @@ git push -u origin feat/promote-best-model
 
 ## 7.3 · Review each other
 
-- [ ] Every PR assigned to the **teammate** as reviewer → retro-review requested from `@msaadsbr` in every body; live assignments pending Saad
+- [x] Every PR assigned to the **teammate** as reviewer → retro-review requested from `@msaadsbr` in every body, and **formally requested + delivered on PR #34** (older retro-reviews optional)
 - [x] Reviewer pastes the checklist (below) as a **PR comment** → checklist embedded in every PR body
-- [ ] **At least one PR gets "changes requested"** → ⬜ pending Saad's account (his first action when available)
-- [x] Each member **authors ≥ 2 merged PRs** (Saad #3/#10, Uzair 13) and **reviews ≥ 2** (both 2/2)
+- [x] **At least one PR gets "changes requested"** → ✅ **PR #34** (Saad, 4 blocking comments → fixed in `f15b167`)
+- [x] Each member **authors ≥ 2 merged PRs** (Saad #3/#10, Uzair 29) and **reviews ≥ 2** (Saad 3, Uzair 2)
 - [ ] Reviewers actually **check out the branch** for any pipeline-changing PR → ⬜ needs Saad's clone; Uzair's per-branch verification (tests + `dvc repro` + `dvc push`) documented in each PR
 
 ## 7.4 · Data update (Data owner = Uzair)
@@ -140,7 +140,7 @@ git add params.yaml && git rebase --continue
 
 ## Checkpoint (evidence for REPORT.md)
 
-- [x] PR list: Uzair and Saad each appear as **author** and **reviewer** (Saad: author #3/#10, reviewer #2/#4)
-- [ ] At least one review shows **"Changes requested"** → ⬜ pending Saad's account
-- [x] Links to: data-update PR (#14), conflict-resolution PR (#13), ~~one changes-requested review~~ ⬜, abandoned `exp/` branch (`exp/uzair-model-sweep`)
+- [x] PR list: Uzair and Saad each appear as **author** and **reviewer** (Saad: author #3/#10, reviewer #2/#4 + #34)
+- [x] At least one review shows **"Changes requested"** → ✅ PR #34 (Saad, 2026-09-30)
+- [x] Links to: data-update PR (#14), conflict-resolution PR (#13), changes-requested review (#34), abandoned `exp/` branch (`exp/uzair-model-sweep`)
 - [x] `dvc exp show` table captured for REPORT.md → `docs/evidence/module-07-exp-show.md`
