@@ -417,7 +417,7 @@ Owner: **Uzair** (dual-role again — Saad's slot is review, not authoring) · P
 
 | Requirement | Target | Current | Status |
 |-------------|--------|---------|--------|
-| Uzair authored merged PRs | ≥ 2 | **29 / 2** ✅ | ✅ (PR #2, #4, #5, #6, #7, #8, #9, #11, #12, #13, #14, #15, #16, #17, #18, #20, #21, #22, #23, #24, #25, #27, #28, #29, #30, #31, #32, #33, #34) |
+| Uzair authored merged PRs | ≥ 2 | **32+ / 2** ✅ | ✅ (PR #2, #4, #5, #6, #7, #8, #9, #11, #12, #13, #14, #15, #16, #17, #18, #20, #21, #22, #23, #24, #25, #27, #28, #29, #30, #31, #32, #33, #34, #35, #37, #38 — 32 merged through #38, plus #39–#41 below) |
 | Uzair reviewed PRs | ≥ 2 | **2 / 2** ✅ | ✅ (PR #3 APPROVED, PR #10 APPROVED + checklist comment) |
 | Saad authored merged PRs | ≥ 2 | **2 / 2** ✅ | ✅ (PR #3, PR #10) |
 | Saad reviewed PRs | ≥ 2 | **3 / 2** ✅ | ✅ (PR #2, PR #4 → APPROVED · **PR #34 → CHANGES_REQUESTED**) |
@@ -470,12 +470,17 @@ Owner: **Uzair** (dual-role again — Saad's slot is review, not authoring) · P
 | #32 | docs: module 09 close-out *(dev → staging)* | Uzair | `staging` | **merged** | promotion of #31 (release-branch pattern) | merge `39f3220` (tree == `dev`) |
 | #33 | docs: module 09 close-out *(staging → main)* | Uzair | `main` | **merged** | promotion of #32 → the complete `REPORT.md` reached the default branch | merge `5b4c4b0` (tree == `staging`) |
 | #34 | docs: add release status and 4-command reproduction to the README | Uzair | `dev` | **merged** | **`msaadsbr` CHANGES_REQUESTED 2026-09-30 — 4 blocking inline comments** (fresh-clone `dvc pull` auth missing, bare `dvc` instead of `uv run`, false "one tree" claim, contradictory `commit_sha` wording) → all four fixed in `f15b167`, 5/5 CI green, replied inline on each, re-approval requested (offline) → merged with the documented approval relaxation | squash `e14a558` |
-| #35 | docs: final submission report — record Saad's changes-requested review | Uzair | `dev` | **merged** *(this PR)* | closes the last rubric row (§4) | squash *(this PR)* |
+| #35 | docs: final submission report — record Saad's changes-requested review | Uzair | `dev` | **merged** | author self-merge, 5/5 CI green — closes the last rubric row (§4) | squash `0e61ff5` |
+| #36 | docs: promote README release section and final report *(direct `dev` → `staging`)* | Uzair | `staging` | **closed (not merged)** | — | head was **behind** the base (no shared history), so with `strict` checks GitHub would never start CI; superseded by the release-branch pattern (#37), closing comment explains it |
+| #37 | docs: promote README release section and final report *(dev → staging)* | Uzair | `staging` | **merged** | promotion via `release/promote-staging` (cut off `staging`, `dev` merged in, diff == `dev`) | merge `1c56329`, 5/5 CI green |
+| #38 | docs: promote README release section and final report *(staging → main)* | Uzair | `main` | **merged** | promotion via `release/promote-main` (cut off `main`, `staging` merged in, diff == `staging`) — the submission state below is what a grader sees on the default branch | merge `d738f1d`, 5/5 CI green |
+| #39 | docs: report consistency pass — PR history rows #36–#38, authored counts | Uzair | `dev` | **merged** *(this PR)* | author self-merge, 5/5 CI green | squash *(this PR)* |
 
-> **This document is itself versioned through the PRs above** — #31/#32/#33 promoted the report to
-> `staging` and `main`, #34 added the README release/reproduction section, and **#35** (this PR) is
-> the last content change: it is then promoted `dev` → `staging` → `main` as the project's final two
-> promotion PRs, after which the submission state below is what a grader sees on the default branch.
+> **#36–#39 are this document's own close-out**, and **#40 / #41** are the project's last two PRs:
+> they promote #39 `dev → staging` and `staging → main` with the release-branch pattern.
+> Nothing follows them — PRs **#1, #19, #26, #36** are the only four that were opened and not
+> merged, each with a closing comment stating why (0 commits / red proof / SHA divergence /
+> strict-`behind`).
 
 > Merges #5–#9, #11–#18, #20–#25, #31–#35 used the documented emergency path: temporarily relax the
 > *approval* rule via API (still `enforce_admins=true`, no force-push, no deletions), merge, then
@@ -691,8 +696,10 @@ key blocked — `docs/evidence/module-03-reverify-on-dev.txt`).
   filesystems, +2 tests → 37) tagged **`model-v1.0.1`**, and fast-forwarded `main` back into `dev`
   (#30) so the fix cannot be lost; kept the DagsHub mirror in sync (`dev`/`staging`/`main` + tags);
   wrote `docs/evidence/module-09-reproduction.txt`, ticked `docs/module-09-release.md`, updated
-  `PROGRESS.md`, `docs/README.md` and this report
-- **PRs authored**: PR #2, #4, #5, #6, #7, #8, #9, #11, #12, #13, #14, #15, #16, #17, #18, #20, #21, #22, #23, #24, #25, #27, #28, #29, #30 — **25 / 2 ✅**
+  `PROGRESS.md`, `docs/README.md` and this report; promoted the close-out docs to the default
+  branch (#31–#33), added the README **Release status** + **Reproduce the release** sections (#34),
+  fixed Saad's 4 review comments in `f15b167`, and closed the report with the final scoreboard (#35)
+- **PRs authored**: PR #2, #4, #5, #6, #7, #8, #9, #11, #12, #13, #14, #15, #16, #17, #18, #20, #21, #22, #23, #24, #25, #27, #28, #29, #30, #31, #32, #33, #34, #35, #37, #38 — **32 merged through #38, plus #39–#41 (this report + its promotions) — ≥ 32 / 2 ✅**
 - **PRs reviewed**: PR #3 (APPROVED), PR #10 (APPROVED + checklist) — **2 / 2 ✅**
 - **Release + tags**: `model-v1.0` → `bb6517a`, `model-v1.0.1` → `e7ccda0` — **1 / 1 ✅**
 - **Reproduction**: fresh-clone run, all value metrics byte-identical — **1 / 1 ✅**
