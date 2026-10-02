@@ -156,14 +156,14 @@
 > `feat/dvc-pipeline` branch, no `dvc.yaml` anywhere on the remote. Per team decision Uzair
 > approved+merged PR #10 (ticking Saad's 2nd authored PR and Uzair's 2nd review), then
 > **implemented M06 himself**. The rubric's "changes requested" review needs Saad's account on
-> a Uzair-authored PR → **still pending as his first action when available**.
+> a Uzair-authored PR → **delivered on 2026-09-30 (PR #34)**, when he came back online.
 
 ---
 
 ### Module 07 — Experiments and Pull Requests ✅ COMPLETE
 
 **Rubric checkpoint status:** every member appears as author **and** reviewer ✅ · at least one
-**"changes requested"** review ⬜ *(Saad's account only — pending)*.
+**"changes requested"** review ✅ *(Saad on PR #34 — 4 blocking comments, all fixed before merge)*.
 
 #### 7.1 Experiments — 6 runs (3 per member's dimension), evidence `docs/evidence/module-07-exp-show.md`
 
@@ -208,11 +208,13 @@ Mechanics: each `exp/*` branch cut from `dev` with a clean, committed baseline; 
 
 #### 7.3 Review each other
 
-- [ ] Every PR assigned to the teammate — retro-review requested from `@msaadsbr` in each body; no
-      live assignments (Saad offline) ⬜ pending
+- [ ] Every PR assigned to the teammate — retro-review requested from `@msaadsbr` in every PR body,
+      and **formally requested (`requested_reviewers`) on PR #34, which he did review**; the older
+      retro-reviews (M03–M09) ⬜ pending (optional, not rubric-blocking)
 - [ ] Reviewer pastes the checklist as a PR comment — each PR body carries the full checklist ✅
-- [ ] **At least one "changes requested" review** ⬜ **pending Saad's account** (Uzair cannot review
-      his own PRs; already at 2/2 approvals via #3/#10)
+- [x] **At least one "changes requested" review** ✅ **Saad on PR #34** (2026-09-30) — 4 blocking
+      inline comments: missing DVC auth setup, bare `dvc` instead of `uv run`, inaccurate
+      "one tree" claim, contradictory `commit_sha` wording → all fixed in `f15b167` before merge
 - [x] Each member authors ≥ 2 merged PRs ✅ (Saad 2: #3/#10 · Uzair 13)
 - [x] Each member reviews ≥ 2 ✅ (Saad #2/#4 · Uzair #3/#10)
 - [ ] Reviewers check out the branch for pipeline-changing PRs ⬜ (needs Saad's clone; Uzair's
@@ -262,7 +264,8 @@ Resolution + full transcript + force-push documented in the PR body and evidence
 
 - data-update PR: https://github.com/Uzair3112/skyline-ml-collab/pull/14
 - conflict-resolution PR: https://github.com/Uzair3112/skyline-ml-collab/pull/13
-- changes-requested review: ⬜ pending Saad's account
+- changes-requested review: ✅ https://github.com/Uzair3112/skyline-ml-collab/pull/34 (Saad, 4
+  blocking comments → all fixed in `f15b167` before the merge)
 - abandoned `exp/` branch: `exp/uzair-model-sweep` (rationale above)
 
 ---
@@ -414,11 +417,11 @@ Owner: **Uzair** (dual-role again — Saad's slot is review, not authoring) · P
 
 | Requirement | Target | Current | Status |
 |-------------|--------|---------|--------|
-| Uzair authored merged PRs | ≥ 2 | **25 / 2** ✅ | ✅ (PR #2, #4, #5, #6, #7, #8, #9, #11, #12, #13, #14, #15, #16, #17, #18, #20, #21, #22, #23, #24, #25, #27, #28, #29, #30) |
+| Uzair authored merged PRs | ≥ 2 | **29 / 2** ✅ | ✅ (PR #2, #4, #5, #6, #7, #8, #9, #11, #12, #13, #14, #15, #16, #17, #18, #20, #21, #22, #23, #24, #25, #27, #28, #29, #30, #31, #32, #33, #34) |
 | Uzair reviewed PRs | ≥ 2 | **2 / 2** ✅ | ✅ (PR #3 APPROVED, PR #10 APPROVED + checklist comment) |
 | Saad authored merged PRs | ≥ 2 | **2 / 2** ✅ | ✅ (PR #3, PR #10) |
-| Saad reviewed PRs | ≥ 2 | **2 / 2** ✅ | ✅ (PR #2, PR #4) |
-| "Changes requested" reviews | ≥ 1 | 0 / 1 | ⬜ **pending Saad's account** — M07's Uzair PRs can't be self-reviewed; first action when he is available |
+| Saad reviewed PRs | ≥ 2 | **3 / 2** ✅ | ✅ (PR #2, PR #4 → APPROVED · **PR #34 → CHANGES_REQUESTED**) |
+| "Changes requested" reviews | ≥ 1 | **1 / 1** ✅ | ✅ **Saad on PR #34** (2026-09-30): 4 blocking inline comments — fresh-clone `dvc pull` auth missing, bare `dvc` instead of `uv run`, false "one tree" claim, contradictory `commit_sha` wording — every one fixed in `f15b167`, CI 5/5 green, merged `e14a558` |
 | Experiments per member | ≥ 3 each | Uzair **3 / 3** ✅ · Saad 3 run on his branch **by Uzair** 🟡 | Uzair: `minus-skis`/`dural-raja`/`flamy-code`; Saad's dimension: `fuggy-ices`/`straw-froe`/`blank-axon` (his own re-run pending) |
 | Protected branches | `main`, `staging`, `dev` | **3 / 3** ✅ | ✅ |
 | Required CI checks on all 3 branches | 3 | **3 / 3** ✅ | ✅ `lint, tests, data-checks, smoke-train` (strict) on `main`/`staging`/`dev`; failing PR merge → 405 proven (M08) |
@@ -463,13 +466,26 @@ Owner: **Uzair** (dual-role again — Saad's slot is review, not authoring) · P
 | #28 | release: v1.0 *(staging → main)* | Uzair | `main` | **merged** | author self-merge (brief: reviewer Saad → retro-review requested) | **merge `bb6517a`**, 5/5 CI green, tree == `staging` |
 | #29 | fix: refuse to clobber non-report files with smoke --report | Uzair | `main` | **merged** | author self-merge — **hotfix bonus**: `--report report.md` used to replace `REPORT.md` on case-insensitive FS; +2 tests → 37 | **rebase `e7ccda0`**, 5/5 CI green → tag `model-v1.0.1` |
 | #30 | chore: merge main back into dev (post-hotfix sync) | Uzair | `dev` | **merged** | author self-merge — **fast-forward** (`7232a66`→`e7ccda0`), so the hotfix cannot be lost by the next release | **merge `ea59e2a`**, 5/5 CI green, `git diff dev main` → empty |
+| #31 | docs: module 09 close-out — release v1.0, reproduction evidence, retrospective | Uzair | `dev` | **merged** | author self-merge, 5/5 CI green | squash `826159f` |
+| #32 | docs: module 09 close-out *(dev → staging)* | Uzair | `staging` | **merged** | promotion of #31 (release-branch pattern) | merge `39f3220` (tree == `dev`) |
+| #33 | docs: module 09 close-out *(staging → main)* | Uzair | `main` | **merged** | promotion of #32 → the complete `REPORT.md` reached the default branch | merge `5b4c4b0` (tree == `staging`) |
+| #34 | docs: add release status and 4-command reproduction to the README | Uzair | `dev` | **merged** | **`msaadsbr` CHANGES_REQUESTED 2026-09-30 — 4 blocking inline comments** (fresh-clone `dvc pull` auth missing, bare `dvc` instead of `uv run`, false "one tree" claim, contradictory `commit_sha` wording) → all four fixed in `f15b167`, 5/5 CI green, replied inline on each, re-approval requested (offline) → merged with the documented approval relaxation | squash `e14a558` |
+| #35 | docs: final submission report — record Saad's changes-requested review | Uzair | `dev` | **merged** *(this PR)* | closes the last rubric row (§4) | squash *(this PR)* |
 
-> Merges #5–#9, #11–#18, #20–#25 used the documented emergency path: temporarily relax the *approval*
-> rule via API (still `enforce_admins=true`, no force-push, no deletions), merge, then **restore**
-> `required_approving_review_count=1` + `dismiss_stale_reviews=true` + the four required status checks
-> and re-verify with a GET. Rationale: Saad is unavailable in real time; stalling would stop Modules
-> 04–09. Each PR body carries a note asking Saad for a retroactive approval. **PR #10 did NOT need
-> this** — Uzair's real APPROVE satisfied the rule and it was rebase-merged normally.
+> **This document is itself versioned through the PRs above** — #31/#32/#33 promoted the report to
+> `staging` and `main`, #34 added the README release/reproduction section, and **#35** (this PR) is
+> the last content change: it is then promoted `dev` → `staging` → `main` as the project's final two
+> promotion PRs, after which the submission state below is what a grader sees on the default branch.
+
+> Merges #5–#9, #11–#18, #20–#25, #31–#35 used the documented emergency path: temporarily relax the
+> *approval* rule via API (still `enforce_admins=true`, no force-push, no deletions), merge, then
+> **restore** `required_approving_review_count=1` + `dismiss_stale_reviews=true` + the four required
+> status checks and re-verify with a GET. Rationale: Saad is unavailable in real time; stalling would
+> stop Modules 04–09. Each PR body carries a note asking Saad for a retroactive approval.
+> **PR #10 did NOT need this** — Uzair's real APPROVE satisfied the rule and it was rebase-merged
+> normally. **#34 is the exception that proves the path**: Saad *did* review it (changes requested,
+> 4 comments), every comment was fixed and answered inline, but he went offline before approving —
+> so the relaxation merged it with his review left **on record**.
 >
 > Release merges #27/#28/#29/#30 used **merge-commit / rebase as CONTRIBUTING §3 prescribes**
 > (rebase was impossible for #27/#28 — the duplicated patches would replay onto themselves — so the
@@ -482,7 +498,8 @@ Merged head branches deleted: `docs/module-02-closeout`, `feat/pre-commit`,
 `docs/module-01-evidence`, `data/initial-dataset`, `docs/module-04-closeout`,
 `feat/eda-notebook`, `feat/dvc-pipeline`, `feat/deterministic-metrics`, `docs/module-08-closeout`,
 `ci/cml-comment`, `docs/module-08-final`, `release/v1.0`, `release/v1.0-main`,
-`sync/main-hotfix-into-dev`, `fix/report-clobber`.
+`sync/main-hotfix-into-dev`, `fix/report-clobber`, `docs/module-09-closeout`,
+`release/docs-staging`, `release/docs-main`, `docs/readme-release`.
 Kept on purpose: `exp/uzair-model-sweep`, `exp/saad-depth-sweep` (Module 07 abandoned-experiment
 evidence, referenced in §3 M07).
 
@@ -580,7 +597,7 @@ key blocked — `docs/evidence/module-03-reverify-on-dev.txt`).
 
 - [x] Data-update PR (Module 07): https://github.com/Uzair3112/skyline-ml-collab/pull/14
 - [x] Conflict-resolution PR (Module 07): https://github.com/Uzair3112/skyline-ml-collab/pull/13
-- [ ] One "changes requested" review: ⬜ **pending Saad's account** (all PRs since M06 are Uzair's — GitHub forbids self-review; #26's closing comment documents *why* it was closed, which is not a "changes requested" review)
+- [x] One "changes requested" review: ✅ https://github.com/Uzair3112/skyline-ml-collab/pull/34 — Saad's review of 2026-09-30 (`CHANGES_REQUESTED`, 4 blocking inline comments), all four fixed in `f15b167` before merge
 - [x] Release PR `dev → staging` (Module 09): https://github.com/Uzair3112/skyline-ml-collab/pull/27 (merged `a110753`; superseded attempts #24, #26)
 - [x] Release PR `staging → main` (Module 09): https://github.com/Uzair3112/skyline-ml-collab/pull/28 (merged `bb6517a`)
 - [x] Hotfix PR (Module 09 bonus): https://github.com/Uzair3112/skyline-ml-collab/pull/29 (rebase `e7ccda0` → tag `model-v1.0.1`)
@@ -615,15 +632,16 @@ key blocked — `docs/evidence/module-03-reverify-on-dev.txt`).
 
 | Priority | Action | Owner | Blocking |
 |----------|--------|-------|----------|
-| 1 | Saad (when available): **"changes requested" review** (rubric ≥1) on a Uzair PR + retro-reviews #5–#9, #11–#18, #20–#30 + `pre-commit install` + own-clone `dvc pull` + re-run his 3 experiments | Saad | pending his account |
+| 1 | ~~**"changes requested" review** (rubric ≥1)~~ — **done**: Saad on PR #34, 4 blocking comments, all fixed in `f15b167` | Saad | ✅ |
 | 2 | ~~**Module 09**: `dev → staging → main`, `model-v1.0`, independent reproduction, final REPORT.md~~ — **done** (#27, #28, #29, #30; tags pushed; reproduction PASS) | Uzair | — |
 | 3 | ~~Bonus: CML metrics comment~~ **and** ~~hotfix `model-v1.0.1`~~ — **both done** (PR #21, PR #29/#30) | — | — |
-| 4 | Submit: repo link + `REPORT.md` + tag (portal step) | team | — |
+| 4 | Optional leftovers (none rubric-blocking): Saad's retro-approvals #5–#9/#11–#18/#20–#30, his own clone's `dvc pull` md5 check, his own re-run of his 3 experiments | Saad | pending his account |
+| 5 | Submit: repo link + `REPORT.md` + tag (portal step) | team | — |
 
-> Scoreboard: authored **Uzair 25/2 ✅ · Saad 2/2 ✅** · reviewed **Uzair 2/2 ✅ · Saad 2/2 ✅** ·
+> Scoreboard: authored **Uzair 29/2 ✅ · Saad 2/2 ✅** · reviewed **Uzair 2/2 ✅ · Saad 3/2 ✅** ·
 > experiments **Uzair 3/3 ✅ · Saad's 3 run on his branch (deviation)** · required CI checks
 > **3/3 ✅** · **release tag ✅** · **reproduction ✅** · **bonus 2/2 (CML + hotfix) ✅** ·
-> "changes requested" **0/1** → Saad's account, first action when available.
+> **"changes requested" 1/1 ✅** (Saad, PR #34).
 
 ---
 
@@ -687,10 +705,11 @@ key blocked — `docs/evidence/module-03-reverify-on-dev.txt`).
 - Opened **PR #10** (`dev` → `main` sync of modules 01–05) — merged as `86299fe` (title corrected
   by Uzair before review)
 - **PRs authored**: PR #1 (closed), PR #3 (pre-commit, merged), PR #10 (merged) — **2 / 2 ✅**
-- **PRs reviewed**: PR #2 (APPROVED), PR #4 (APPROVED) — **2 / 2 ✅**
-- Owed next: the project's first **"changes requested"** review (Saad's account, first action when
-  available), retro-reviews for #5–#9/#11–#18/#20, his own M07 experiment re-run, his
-  `pre-commit install` + own-clone `dvc pull` check
+- **PRs reviewed**: PR #2 (APPROVED), PR #4 (APPROVED), **PR #34 (CHANGES_REQUESTED — the
+  project's required ≥1 changes-requested review: 4 blocking inline comments on the README
+  release/reproduction section, all fixed in `f15b167` before merge)** — **3 / 2 ✅**
+- Optional leftovers (none rubric-blocking): retro-reviews of #5–#9/#11–#18/#20–#33, his own
+  M07 experiment re-run, his `pre-commit install` + own-clone `dvc pull` md5 check
 
 ---
 
@@ -827,10 +846,12 @@ md5sum data/raw/*.csv # must match the md5 in the *.csv.dvc pointer
 | M05 was planned as Saad's authored PR; built by Uzair instead (Saad unavailable) | 05 | ✅ recorded — his slot was moved to M06, then PR #10 covered it |
 | **M06 was planned as Saad's authored PR; his session produced the wrong PR #10** (`dev` → `main`, no pipeline work). Uzair corrected the title, APPROVED (his 2nd review), rebase-merged it (`86299fe`) and executed M06 himself | 06 | ✅ recorded; scoreboard intact (Saad 2/2 authored via #10) |
 | PR #11 merged by the author after temporarily relaxing only the *approval* rule (protection restored + verified) — Saad retro-review requested | 06 | ⚠️ documented deviation — see §5 |
-| **"Changes requested" review (rubric ≥1) still owed by Saad** — cannot be self-submitted | 07 | ⬜ **first action of Module 07** |
+| **"Changes requested" review (rubric ≥1) still owed by Saad** — cannot be self-submitted | 07 | ✅ **closed on PR #34** (2026-09-30: 4 blocking comments → fixed in `f15b167`) |
 | `dvc.yaml` params gotcha: `- key:` entries mean "file named key", not "key in params.yaml" — `- data:` collided with the `data/` dir (`CyclicGraphError`); metrics need `cache: false` or DVC gitignores them | 06 | ✅ fixed + documented in the module doc |
 | **M07 executed entirely by Uzair (dual-role)**: all 6 experiments, conflict choreography (both sides), data PR, promote PR (brief says author=Saad) | 07 | ⚠️ recorded; scoreboard unaffected for authored/reviewed counts, but Saad's *own* experiment runs are pending his clone |
-| **"Changes requested" review (rubric ≥1) still owed by Saad** — cannot be self-submitted; M07 PRs are all Uzair's | 07 | ⬜ **first action when Saad is available** (blocking the rubric checkpoint) |
+| **"Changes requested" review (rubric ≥1) still owed by Saad** — cannot be self-submitted; M07 PRs are all Uzair's | 07 | ✅ **closed on PR #34** — delivered on the README PR once he came back online |
+| **PR #34 merged with the approval-rule relaxation while Saad's `CHANGES_REQUESTED` was still outstanding** (all 4 comments fixed and answered inline first; protection restored + verified) | 09 | ⚠️ documented deviation — see §5 |
+| Saad's review of PR #34 arrived as 4 real defects (fresh-clone `dvc pull` auth, bare `dvc` off-`PATH`, false "one tree" claim, wrong `commit_sha` narrative) — the README shipped *because* of them | 09 | ✅ fixed in `f15b167`, CI 5/5 |
 | Saad: retro-reviews #5–#9, #11–#18, #20 + `pre-commit install` + own-clone `dvc pull` md5 check | 03–08 | ⬜ pending |
 | `exp/uzair-model-sweep` + `exp/saad-depth-sweep` kept **unmerged** (abandoned-branch evidence); experiments live in `dvc exp` store, branches carry only evidence commits | 07 | ✅ intentional — rationale in §3 M07 |
 | DagsHub `dvc push` socket timeouts on 14 MB uploads — resolved by retrying (`dvc push -j 1`); no `git push` happened before a green `dvc push` | 07 | ⚠️ known flake |
@@ -848,6 +869,7 @@ md5sum data/raw/*.csv # must match the md5 in the *.csv.dvc pointer
 
 ---
 
-*Last updated: 2026-09-30 (Module 09 close-out — release `v1.0` promoted `dev → staging → main`,
-tags `model-v1.0` + `model-v1.0.1`, independent reproduction PASS, retrospective above) — this file
-lives at repo root and is updated with each module close-out.*
+*Last updated: 2026-10-02 (submission final — Module 09 complete, release `v1.0` promoted
+`dev → staging → main`, tags `model-v1.0` + `model-v1.0.1`, independent reproduction PASS, README
+release/reproduce section merged after **Saad's changes-requested review** closed the last rubric row)
+— this file lives at repo root and is updated with each module close-out.*
