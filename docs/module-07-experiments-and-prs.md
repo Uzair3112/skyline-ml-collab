@@ -72,7 +72,7 @@ git push -u origin feat/promote-best-model
 - [x] Every PR assigned to the **teammate** as reviewer → retro-review requested from `@msaadsbr` in every body, and **formally requested + delivered on PR #34** (older retro-reviews optional)
 - [x] Reviewer pastes the checklist (below) as a **PR comment** → checklist embedded in every PR body
 - [x] **At least one PR gets "changes requested"** → ✅ **PR #34** (Saad, 4 blocking comments → fixed in `f15b167`)
-- [x] Each member **authors ≥ 2 merged PRs** (Saad #3/#10, Uzair 29) and **reviews ≥ 2** (Saad 3, Uzair 2)
+- [x] Each member **authors ≥ 2 merged PRs** (Saad #3/#10, Uzair 32 through #38) and **reviews ≥ 2** (Saad 3, Uzair 2)
 - [ ] Reviewers actually **check out the branch** for any pipeline-changing PR → ⬜ needs Saad's clone; Uzair's per-branch verification (tests + `dvc repro` + `dvc push`) documented in each PR
 
 ## 7.4 · Data update (Data owner = Uzair)

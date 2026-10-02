@@ -23,7 +23,7 @@
 
 | Requirement | Target | Status |
 |-------------|--------|--------|
-| Uzair authored merged PRs | ≥ 2 | **29 / 2** ✅ (PR #2, #4, #5, #6, #7, #8, #9, #11, #12, #13, #14, #15, #16, #17, #18, #20, #21, #22, #23, #24, #25, #27, #28, #29, #30, #31, #32, #33, #34) |
+| Uzair authored merged PRs | ≥ 2 | **32+ / 2** ✅ (32 merged through #38: #2, #4–#9, #11–#18, #20–#25, #27–#35, #37, #38 — plus #39–#41, this final report and its two promotions) |
 | Uzair reviewed PRs | ≥ 2 | **2 / 2** ✅ (PR #3, #10) |
 | Saad authored merged PRs | ≥ 2 | **2 / 2** ✅ (PR #3, #10) |
 | Saad reviewed PRs | ≥ 2 | **3 / 2** ✅ (PR #2, PR #4, PR #34 → **changes requested**) |
@@ -158,6 +158,8 @@
 | 9 | Close-out: short-lived branches deleted (`fix/*`, `release/*`, `sync/*`), `exp/*` kept, REPORT/module-09/PROGRESS/docs README synced → this PR | Uzair | ✅ |
 | 10 | **Saad's changes-requested review (rubric ≥1)** — reviewed the README release/reproduce section on **PR #34** with 4 blocking inline comments (missing DVC auth setup, bare `dvc` instead of `uv run`, inaccurate "one tree" claim, wrong `commit_sha` wording) → all fixed in `f15b167` | Saad | ✅ 2026-09-30 · ⬜ optional: retro-reviews of #27/#28 |
 | 11 | README gains **Release status** + **Reproduce the release** (4 commands, expected metrics at full precision, evidence link) → PR #34 merged (`e14a558`) | Uzair | ✅ 5/5 CI green |
+| 12 | Submission report finalised: scoreboard **changes-requested 0/1 → 1/1**, PR history, next actions, Saad's contribution → PR #35 (`0e61ff5`) | Uzair | ✅ |
+| 13 | Promoted `dev → staging → main` (#36 closed as *strict-behind* → #37 `1c56329` → #38 `d738f1d`); final consistency pass (#39) then its own two promotions (#40/#41) | Uzair | ✅ default branch = submission state |
 
 ### ⚠️ Data note (from Module 02 — matters for Modules 05/06/07)
 
@@ -234,3 +236,7 @@ refactor scores 93 %.
 | 2026-10-01 | **Docs promoted to the default branch:** #31 (close-out, squash `826159f`) → `dev` · #32 `dev`→`staging` → `39f3220` · #33 `staging`→`main` → `5b4c4b0`; all three trees identical, DagsHub re-synced; `release/docs-*` and `docs/module-09-closeout` branches deleted — the full `REPORT.md` now sits on GitHub's default branch |
 | 2026-09-30 | **Saad delivers the rubric's "changes requested" review** on **PR #34** (README release + reproduce sections): 4 blocking inline comments — (1) a fresh clone cannot `dvc pull` (auth lives in git-ignored `.dvc/config.local`, README silent), (2) bare `dvc`/`pre-commit` are not on `PATH` after `uv sync` → use `uv run`, (3) `model-v1.0` vs `main` do **not** share one tree (v1.0.1 hotfix + docs), (4) the `commit_sha` sentence contradicted what the commands actually do |
 | 2026-10-02 | **All 4 review comments fixed in `f15b167`** (auth block added to *Getting started* per `module-04` recipe, every tool through `uv run`, tree claim reworded to `params.yaml`+`dvc.lock` identity, `commit_sha` wording taken from the reviewer) → 5/5 CI green → replied inline on each comment → re-requested his approval (still offline) → merged with the **documented approval-rule relaxation** (protection restored + verified on `dev`) → `e14a558` |
+| 2026-10-02 | **PR #35** `docs: final submission report` (scoreboard `0/1 -> 1/1`, PR history #31-#35, next actions, Saad's contribution, known-issues rows) -> squash `0e61ff5` on `dev`; reviewer `msaadsbr` requested |
+| 2026-10-02 | **Promotion #36 closed:** a direct `dev -> staging` PR reports **behind** (`dev` lacks `staging`'s merge history) and `strict` required checks would never get a merge ref -> closed with explanation, replaced by **#37** `release/promote-staging` (cut off `staging`, `dev` merged in, diff == `dev`) -> 5/5 green -> merge `1c56329` |
+| 2026-10-02 | **Promotion #38:** `release/promote-main` (cut off `main`, `staging` merged in, diff == `staging`) -> 5/5 green -> merge `d738f1d`; **`main` now carries the final `REPORT.md` + README release/reproduce section**; DagsHub `dev`/`staging`/`main` + tags re-synced; short-lived branches deleted |
+| 2026-10-02 | **Final consistency pass (#39):** PR history extended to #36-#38 (incl. the closed `#36`), authored counts corrected to the audited values (Uzair 32 merged through #38, Saad 2; 34 merged / 38 total, 4 closed-unmerged) -> then promoted as the project's last two PRs #40/#41 |
