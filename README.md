@@ -41,10 +41,62 @@ CI green. Full rules land in `CONTRIBUTING.md` (Phase 2); the plan lives in [`do
 ```bash
 git clone git@github.com:Uzair3112/skyline-ml-collab.git
 cd skyline-ml-collab
-uv sync                 # reproducible environment from uv.lock
-pre-commit install      # ruff, nbstripout, large-file and secret guards
-dvc pull                # dataset from the DVC remote
+uv sync                  # reproducible environment from uv.lock
+uv run pre-commit install   # ruff, nbstripout, large-file and secret guards
+
+# one-time DVC auth — credentials are git-ignored, so they don't arrive with the clone.
+# Dagshub -> Settings -> Access Tokens -> New token, then:
+uv run dvc remote modify --local storage auth basic
+uv run dvc remote modify --local storage user <dagshub-username>
+uv run dvc remote modify --local storage password <dagshub-token>
+
+uv run dvc pull          # dataset from the DVC remote
 ```
+
+Always call the tools through `uv run` — `uv sync` installs them into `.venv/`, which is not on
+`PATH` unless you activate it, and a globally installed copy of a different version could run
+instead of the one pinned in `uv.lock`.
+
+## Release status
+
+| | |
+|---|---|
+| Modules | **01–09 complete** — full walkthrough in [`REPORT.md`](REPORT.md) |
+| Release | tag **`model-v1.0`** → `bb6517a` on `main` · hotfix **`model-v1.0.1`** → `e7ccda0` |
+| Branches | `dev` → `staging` → `main`, all three protected: 1 approving review + `lint`, `tests`, `data-checks`, `smoke-train` required **and green** |
+| CI | every PR runs lint / tests / data-checks / smoke-train (~1 min) and posts a CML metrics comment |
+| Data | DVC remote on DagsHub (`storage`) — pointers only in git, no CSVs in history |
+| Experiments | `exp/uzair-model-sweep`, `exp/saad-depth-sweep` deliberately **unmerged** (abandoned-branch evidence) |
+
+## Reproduce the release
+
+```bash
+git clone https://github.com/Uzair3112/skyline-ml-collab.git
+cd skyline-ml-collab
+git checkout model-v1.0     # the release tag; branch staging / main give the same metrics
+                            # (identical params.yaml + dvc.lock — the tag predates the
+                            #  v1.0.1 hotfix and the docs, so trees differ there)
+uv sync --frozen            # pinned environment from uv.lock
+uv run dvc pull             # data + trained model from the DVC remote (auth above)
+uv run dvc repro            # no-ops: outputs already match dvc.lock
+cat metrics.json
+```
+
+Expected (seed 42, `max_depth 24`, single-threaded scoring):
+
+| metric | value |
+|--------|-------|
+| accuracy | `0.9624657138732496` |
+| precision | `0.9683407356793076` |
+| recall | `0.9442531926707385` |
+| f1 | `0.9561452828067019` |
+| roc_auc | `0.9941573399364485` |
+
+`uv run dvc repro` leaves `metrics.json` exactly as committed (`commit_sha` = `41173de`, the commit
+the model was **trained** on — the tag object itself is `bb6517a`). To retrain from scratch run
+`uv run dvc repro -f`: every metric above must match, and only `commit_sha` changes, to your
+checkout. Full transcript:
+[`docs/evidence/module-09-reproduction.txt`](docs/evidence/module-09-reproduction.txt).
 
 ## Documentation
 
