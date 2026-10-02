@@ -23,11 +23,11 @@
 
 | Requirement | Target | Status |
 |-------------|--------|--------|
-| Uzair authored merged PRs | ≥ 2 | **25 / 2** ✅ (PR #2, #4, #5, #6, #7, #8, #9, #11, #12, #13, #14, #15, #16, #17, #18, #20, #21, #22, #23, #24, #25, #27, #28, #29, #30) |
+| Uzair authored merged PRs | ≥ 2 | **29 / 2** ✅ (PR #2, #4, #5, #6, #7, #8, #9, #11, #12, #13, #14, #15, #16, #17, #18, #20, #21, #22, #23, #24, #25, #27, #28, #29, #30, #31, #32, #33, #34) |
 | Uzair reviewed PRs | ≥ 2 | **2 / 2** ✅ (PR #3, #10) |
 | Saad authored merged PRs | ≥ 2 | **2 / 2** ✅ (PR #3, #10) |
-| Saad reviewed PRs | ≥ 2 | **2 / 2** ✅ (PR #2, PR #4) |
-| "Changes requested" reviews | ≥ 1 | 0 / 1 — **still pending Saad** (needs his account on a Uzair PR; M07+ were dual-roles and GitHub forbids self-review → first action when he is available) |
+| Saad reviewed PRs | ≥ 2 | **3 / 2** ✅ (PR #2, PR #4, PR #34 → **changes requested**) |
+| "Changes requested" reviews | ≥ 1 | **1 / 1** ✅ (Saad on **PR #34**, 2026-09-30: 4 blocking inline comments — DVC auth missing, bare `dvc` instead of `uv run`, inaccurate "one tree" claim, wrong `commit_sha` wording — all addressed in `f15b167`, CI 5/5) |
 | Experiments per member | ≥ 3 | Uzair **3 / 3** ✅ (`exp/uzair-model-sweep`) · Saad 3 run on `exp/saad-depth-sweep` **by Uzair** (deviation recorded; his own runs pending his clone) |
 | Protected branches | `main`, `staging`, `dev` | **3 / 3** ✅ |
 | Required CI checks on | all 3 branches | **3 / 3** ✅ (`lint, tests, data-checks, smoke-train`, strict — failing PR merge proven 405) |
@@ -56,7 +56,7 @@
 | **DagsHub git mirror** — `dagshub` remote added; `dev`/`main`/`staging` pushed (default branch there = `dev`, because DagsHub renders datasets from git pointers) | Uzair | ✅ — **sync rule:** after each GitHub merge also `git push dagshub dev` |
 | Saad retro-reviews PR #9 (M05 notebook; authored by Uzair while Saad was unavailable) | Saad | ⬜ pending |
 | Saad authored 2nd merged PR | Saad | ✅ **PR #10** (opened `dev` → `main` instead of M06; title corrected + approved + rebase-merged by Uzair 2026-09-29) |
-| **"Changes requested" review (≥1)** | Saad | ⬜ pending — needs Saad's account on a Uzair-authored PR; M07 ran out of time with him offline → **first action when available** (before M08 review cycles) |
+| **"Changes requested" review (≥1)** | Saad | ✅ **PR #34** (2026-09-30) — 4 blocking inline comments on the README release/reproduce sections; fixed in `f15b167`, CI 5/5. The one rubric item that needed his account is done |
 | **M06 executed by Uzair** (Saad's attempt produced wrong PR #10; team decision: don't loop Saad back) | Uzair | ✅ PR #11 |
 
 ### ⚠️ Open in Module 02 — **ALL DONE ✅**
@@ -140,10 +140,10 @@
 | 3 | 7.1 experiments ≥3 each: 6 runs — `minus-skis`/`dural-raja`/`flamy-code` (Uzair) + `fuggy-ices`/`straw-froe`/`blank-axon` (Saad's dimension, run by Uzair) | Uzair | ✅ evidence `module-07-exp-show.md`; **Saad's own 3 runs pending his clone** |
 | 4 | 7.2 promote winner `straw-froe` (depth 24, f1 0.9476→0.9562) → PR #15 merged (`f97069b`) | Uzair | ✅ (brief says author=Saad → deviation recorded) |
 | 5 | 7.6 abandoned branch: `exp/uzair-model-sweep` (and `exp/saad-depth-sweep`) **kept unmerged** — logreg −0.09 f1, other runs non-comparable splits | Uzair | ✅ rationale in REPORT §M07 |
-| 6 | 7.3 reviews: every PR asks `@msaadsbr` for retro-review; **changes-requested still owed** | Saad | ⬜ pending (account) |
+| 6 | 7.3 reviews: every PR asks `@msaadsbr` for retro-review; **changes-requested delivered later on PR #34** | Saad | ✅ changes-requested · retro-reviews ⬜ pending |
 | 7 | Close-out: REPORT/PROGRESS/module-07/docs README synced → PR #16 | Uzair | ✅ (this PR) |
 
-### ✅ Open in Module 09 — **DONE** (release + reproduction + report; Saad's retro-review still owed)
+### ✅ Open in Module 09 — **DONE** (release + reproduction + report + Saad's changes-requested review)
 
 | # | Item | Owner | Status |
 |---|------|-------|--------|
@@ -156,7 +156,8 @@
 | 7 | DagsHub mirror: `dev`/`staging`/`main` + both tags pushed | Uzair | ✅ |
 | 8 | Retrospective → `REPORT.md` §5 (reproducibility table, what broke, what we would standardise) | Uzair | ✅ |
 | 9 | Close-out: short-lived branches deleted (`fix/*`, `release/*`, `sync/*`), `exp/*` kept, REPORT/module-09/PROGRESS/docs README synced → this PR | Uzair | ✅ |
-| 10 | Saad retro-reviews the release PRs (#27/#28) and supplies the owed **changes-requested** review | Saad | ⬜ pending (account) |
+| 10 | **Saad's changes-requested review (rubric ≥1)** — reviewed the README release/reproduce section on **PR #34** with 4 blocking inline comments (missing DVC auth setup, bare `dvc` instead of `uv run`, inaccurate "one tree" claim, wrong `commit_sha` wording) → all fixed in `f15b167` | Saad | ✅ 2026-09-30 · ⬜ optional: retro-reviews of #27/#28 |
+| 11 | README gains **Release status** + **Reproduce the release** (4 commands, expected metrics at full precision, evidence link) → PR #34 merged (`e14a558`) | Uzair | ✅ 5/5 CI green |
 
 ### ⚠️ Data note (from Module 02 — matters for Modules 05/06/07)
 
@@ -230,3 +231,6 @@ refactor scores 93 %.
 | 2026-09-30 | **M09 optional hotfix (+5):** `smoke --report <path>` wrote blindly, so `--report report.md` resolved to **`REPORT.md`** on case-insensitive filesystems (already listed under REPORT "Known issues", handled only by convention) → **PR #29** `fix: refuse to clobber non-report files` (`REPORT_HEADER` guard, exit 2, original content untouched; +2 tests → **37 total**) → rebase-merged `e7ccda0` → tag **`model-v1.0.1`** (first tag attempt landed on the PR head `b7a7a32` because `main` wasn't checked out — deleted and re-cut on `e7ccda0`) |
 | 2026-09-30 | **M09 merge-back #30:** `main` → `dev` was a **fast-forward** (`bb6517a` already contains all of `dev` through `staging`/`bc2207b`) → 5/5 CI green → merged `ea59e2a`; `git diff dev main` → **empty**; DagsHub `dev`/`main` + `model-v1.0.1` pushed; short-lived branches deleted (`fix/report-clobber`, `release/v1.0`, `release/v1.0-main`, `sync/main-hotfix-into-dev`), `exp/*` kept |
 | 2026-09-30 | **M09 close-out (Uzair):** `module-09-release.md` checkboxes ticked, PROGRESS + docs README scoreboard + REPORT (reproducibility table, §5 retrospective) synced → this PR |
+| 2026-10-01 | **Docs promoted to the default branch:** #31 (close-out, squash `826159f`) → `dev` · #32 `dev`→`staging` → `39f3220` · #33 `staging`→`main` → `5b4c4b0`; all three trees identical, DagsHub re-synced; `release/docs-*` and `docs/module-09-closeout` branches deleted — the full `REPORT.md` now sits on GitHub's default branch |
+| 2026-09-30 | **Saad delivers the rubric's "changes requested" review** on **PR #34** (README release + reproduce sections): 4 blocking inline comments — (1) a fresh clone cannot `dvc pull` (auth lives in git-ignored `.dvc/config.local`, README silent), (2) bare `dvc`/`pre-commit` are not on `PATH` after `uv sync` → use `uv run`, (3) `model-v1.0` vs `main` do **not** share one tree (v1.0.1 hotfix + docs), (4) the `commit_sha` sentence contradicted what the commands actually do |
+| 2026-10-02 | **All 4 review comments fixed in `f15b167`** (auth block added to *Getting started* per `module-04` recipe, every tool through `uv run`, tree claim reworded to `params.yaml`+`dvc.lock` identity, `commit_sha` wording taken from the reviewer) → 5/5 CI green → replied inline on each comment → re-requested his approval (still offline) → merged with the **documented approval-rule relaxation** (protection restored + verified on `dev`) → `e14a558` |
